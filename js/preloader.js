@@ -1,3 +1,11 @@
+/**
+@author Tom Bleek
+@youtube https://www.youtube.com/letsgamedev
+@twitter https://twitter.com/letsgamedev
+@patreon https://www.patreon.com/letsgamedev
+@mail letsgamedev@gmx.de
+*/
+
 Game.Preloader = function(){
 };
 
