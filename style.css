@@ -1,0 +1,24 @@
+#loading {
+	position: absolute;
+	z-index: -2;
+	color: #333;
+	font-family: "impact", arial;
+	top: 20px;
+	left: 20px;
+}
+
+#game {
+	height: 100vh;
+}
+
+body {
+	margin: 0px; 
+	padding: 0px;
+	background-color: #aaa;
+}
+
+canvas {
+	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
+	cursor: none;
+}
