@@ -6,7 +6,7 @@ weiterentwickelt wird.
 
 ## Das Spiel
 
-[Hier](http://lets-gamedev.de/spielsklave/) kannst du das Spiel in der aktuellen Version spielen!
+[Hier](https://letsgamedev.github.io/spielsklave/) kannst du das Spiel in der aktuellen Version spielen!
 
 Viel Spaß beim spielen und schau regelmäßig bei mir vorbei!
 
