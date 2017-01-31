@@ -1,4 +1,4 @@
-# Spielsklave - Du bestimmst was ich entwickel!
+# Spielsklave - Du bestimmst was ich entwickle!
 
 ![Logo](img/md_logo.png)
 
