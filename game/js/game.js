@@ -120,8 +120,7 @@ Game.Main.prototype = {
 var Player = function(world, x, y) {
 	var player = game.add.sprite(x, y, "atlas", "player_walk_down_1", world.middleLayer);
 	game.physics.ninja.enable(player, 1);
-    player.body.bounce = 0;
-    player.body.drag = 0;
+    player.body.drag = 0.1;
     player.body.immovable = true;
 	
 	player.body.setSize(12,12);
@@ -243,8 +242,7 @@ var Player = function(world, x, y) {
 var Pig = function(world, x, y) {
 	var pig = game.add.sprite(x, y, "atlas", "pig_walk_down_1", world.middleLayer);
 	game.physics.ninja.enable(pig, 1, 0, 4);
-    pig.body.bounce = 0;
-    pig.body.drag = 0;
+    pig.body.drag = 0.1;
     pig.body.immovable = true;
 	pig.anchor.set(0.5, 0.8);
 	pig.body.setSize(8,8);
