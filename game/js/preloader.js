@@ -17,6 +17,7 @@ Game.Preloader.prototype = {
 	preload: function() {
 		this.load.path = 'assets/';
 		game.load.atlas("atlas");
+		this.load.image("tiles");
 		//game.load.bitmapFont("");
 		var loadSound = function(name, type) {
 			type = type || "mp3"
