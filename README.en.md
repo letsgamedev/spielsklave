@@ -9,7 +9,7 @@ The audience can decide how I will further develop this game by participating in
 
 ## The Game
 
-You can play the game in it's current state [here](https://letsgamedev.github.io/spielsklave/)!
+You can play the game in its current state [here](https://letsgamedev.github.io/spielsklave/)!
 
 ## You can support me!
 These are the possibilities to support me if you like this project:
