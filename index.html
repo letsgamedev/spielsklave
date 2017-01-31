@@ -3,43 +3,91 @@
   <head>
     <meta charset="UTF-8">
     <title>#Spielsklave - Tom programmiert dein Spiel!</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="description" content="Eine Videoreihe, in der du darüber abstimmen kannst, was ich als Nächstes entwickeln soll!">
+    <meta name="author" content="Tom" />
+    <meta name="copyright" content="© 2016 letsgamedev" />
+    <meta http-equiv="content-language" content="de" />
+
     <style type="text/css">
-    	body {
-    		text-align: center;
-    	}
 
-	    iframe {
-	    	position: absolute;
-    		left: calc(50% - 360px);
-    		background-color: #aaa;
-	    }
-
-	    #title {
-	    	height: 100px;
-	    }
-
-      #controlls {
-        position: absolute;
-        font-size: 30px;
-        font-family: Arial;
-        color: #333;
-        text-align: left;
-        top: 530px;
-        left: 30%;
+      * {
+        position: relative;
+        box-sizing: border-box;
       }
+
+      body {
+        min-height: 100vh;
+        padding: 2rem;
+        background: #e8e6e6;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-family: "Roboto Slab", serif;
+      }
+
+      .gamearea {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0;
+      }
+
+      .wrapper-right {
+
+        margin: auto 0;
+      }
+
+      header {
+        max-height: 20vh;
+        margin-bottom: 2rem;
+      }
+
+      header img {
+        width: auto;
+        height: 120px;
+      }
+
+      iframe {
+        border: 10px solid white;
+        box-sizing: initial;
+        box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        margin-right: 2rem;
+      }
+
+      #controls {
+        line-height: 1.5;
+        padding: 2rem;
+        background-color: white;
+        box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        min-width: 300px;
+      }
+
+      .key {
+        font-weight: bold;
+        padding-right: 1rem;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
     </style>
   </head>
   <body>
-  	<div id="head">
-  		<img id="title" src="img/spielsklave_logo.png"/>
-  	</div>
-  	<iframe src="https://letsgamedev.github.io/spielsklave/game/" frameBorder="0" width="710" height="400"></iframe>
-  	<div id="controlls">
-  		Steuerung:<br>
-  		Pfeiltasten: Bewegen<br>
-      C: Zweispielermodus Aktivieren/Deaktivieren<br>
-      V: Einspieler - Wechsel zwischen Charakteren<br>
-      Maus: Zweiter Spieler Steuerung Schwein
-  	</div>
+    <div class="gamearea">
+      <iframe src="https://letsgamedev.github.io/spielsklave/game/" frameBorder="0" width="710" height="400"></iframe>
+      <div class="wrapper-right">
+        <header><img src="img/spielsklave_logo.png" alt="Logo: Spielsklave"></header>
+      	<div id="controls">
+      		<h2>Steuerung:</h2>
+      		<span class="key">Pfeiltasten:</span> Bewegen<br>
+          <span class="key">C:</span> Zweispielermodus Aktivieren/Deaktivieren<br>
+          <span class="key">V:</span> Einspieler - Wechsel zwischen Charakteren<br>
+          <span class="key">Maus:</span> Zweiter Spieler Steuerung Schwein
+      	</div>
+      </div>
+    </div>
   </body>
 </html>
