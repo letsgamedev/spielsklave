@@ -14,9 +14,11 @@ You can play the game in its current state [here](https://letsgamedev.github.io/
 ## You can support me!
 These are the possibilities to support me if you like this project:
 
--[Patreon](https://www.patreon.com/letsgamedev): Support me with a small monthly subscription.  
--[Twitter](https://twitter.com/letsgamedev): Follow me on Twitter (does not make much sense if you can't understand German ^^) or share this project using the hashtag **#spielsklave**  
--**Github**: Follow this project!
+
+- [Patreon](https://www.patreon.com/letsgamedev): Support me with a small monthly subscription.  
+- [Twitter](https://twitter.com/letsgamedev): Follow me on Twitter (but this does not makes much sense if you are not able to reas german^^) or share this project with the hashtag **#spielsklave**  
+- **Github**: Follow this project!  
+
 
 Have fun playing the game!
 
