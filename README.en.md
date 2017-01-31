@@ -12,11 +12,11 @@ The audience can decide how I will further develop this game by participating in
 You can play the game in its current state [here](https://letsgamedev.github.io/spielsklave/)!
 
 ## You can support me!
-These are the possibilities to support me if you like this project:
+These are some ways to support me if you like this project:
 
 
 - [Patreon](https://www.patreon.com/letsgamedev): Support me with a small monthly subscription.  
-- [Twitter](https://twitter.com/letsgamedev): Follow me on Twitter (but this does not makes much sense if you are not able to reas german^^) or share this project with the hashtag **#spielsklave**  
+- [Twitter](https://twitter.com/letsgamedev): Follow me on Twitter (but this does not make much sense if you are not able to read German ^^) or share this project with the hashtag **#spielsklave**  
 - **Github**: Follow this project!  
 
 
