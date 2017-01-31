@@ -1,4 +1,4 @@
-# Spielsklave - Du bestimmst was ich entwickel!
+# Spielsklave - Du bestimmst was ich entwickle!
 
 ![Logo](img/md_logo.png)
 
@@ -20,6 +20,6 @@ Wenn dir das Spiel oder das Projekt gefällt kannst du mich in meiner Arbeit auf
 -**Github**: Folge diesem Projekt! Gib ihm einen Stern um es bekannter zu machen.
 
 
-Viel Spaß beim spielen und schau regelmäßig bei mir vorbei!
+Viel Spaß beim Spielen und schau regelmäßig bei mir vorbei!
 
 Tom
