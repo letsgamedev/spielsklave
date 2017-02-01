@@ -80,6 +80,7 @@ Game.Main.prototype = {
         this.cursor = Cursor(this);
 	
         this.game.camera.follow(this.player);
+
  
 	},	
 
