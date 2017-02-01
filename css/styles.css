@@ -1,0 +1,111 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto+Slab';
+@import 'https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/1.8.36/css/materialdesignicons.min.css';
+
+* {
+  position: relative;
+  box-sizing: border-box;
+}
+
+:focus {
+  outline:none !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+  min-height: 100%;
+  width: 100%;
+
+  background: #e8e6e6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Roboto Slab', serif;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  cursor: default;
+}
+
+a {
+  color: black;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: .5rem;
+}
+
+#wrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+iframe {
+  border: 10px solid white;
+  box-sizing: initial;
+  box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+  margin: 1rem;
+  overflow: hidden;
+  max-height: calc((100vw - 3rem - 20px) / 768 * 432);
+}
+
+aside {
+  margin: 1rem;
+}
+
+header {
+  max-height: 20vh;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+header #logo {
+  width: auto;
+  height: 120px;
+}
+
+header .badges a~a {
+  margin-left: 5px;
+}
+
+article {
+  line-height: 1.6;
+  padding: 2rem;
+  background-color: white;
+  box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+  min-width: 300px;
+  max-width: 400px;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+p:first-child { margin-top: 0 !important; margin-left: 0 !important; }
+p:last-child { margin-bottom: 0 !important; margin-right: 0 !important; }
+
+kbd {
+  padding: 1px 5px;
+  hyphens: none;
+  background: black;
+  color: white;
+  margin: 0 2px;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+kbd i {
+  margin-left: -1px;
+}
