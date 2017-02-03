@@ -22,6 +22,12 @@ var STATES = {
 };
 var TEST = null;
 
+var MAP = {
+	OBJECTS: 2,
+	GROUND_DETAIL: 1,
+	GROUND: 0
+}
+
 
 /**
 The Main state represants the "inGame" stuff.
@@ -100,19 +106,35 @@ Game.Main.prototype = {
 		this.map = this.add.tilemap("map");
        
         this.map.addTilesetImage("tiles", 'tiles'); //sets a image key to a json tileset name key
-        this.backround = this.map.createLayer(0);
-        this.layer = this.map.createLayer(1);
+        this.layer = this.map.createLayer(MAP.GROUND);
+        this.groundDetail = this.map.createLayer(MAP.GROUND_DETAIL);
 
-        var slopeMap = [0, // first is ignored
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        3, 2, 1, 1, 1, 0, 0, 0, 0, 0,
-        4, 5, 1, 1, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 0, 0, 0, 0, 0
+        var slopeMap = [0,//first is ignored
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			1, 1, 3, 1, 2, 0, 0, 0, 0, 0, 
+			1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 
+			1, 1, 4, 1, 5, 0, 0, 0, 0, 0, 
+			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
 
         this.tiles = game.physics.ninja.convertTilemap(this.map, this.layer, slopeMap);
 
-        this.backround.resizeWorld();
+        this.layer.resizeWorld();
 	},
 	
 	/**

@@ -1,94 +1,99 @@
 {
 "frames": {
 	"char": {
-		"frame": {"x":294, "y":325, "w":16, "h":24},
+		"frame": {"x":325, "y":207, "w":16, "h":24},
 		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":24},
 		"sourceSize": {"w":16,"h":24}
 	},
 	"cursor": {
-		"frame": {"x":325, "y":76, "w":16, "h":18},
+		"frame": {"x":260, "y":371, "w":16, "h":18},
 		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
 		"sourceSize": {"w":16,"h":18}
+	},
+	"pig_cursor_0": {
+		"frame": {"x":325, "y":184, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_down_0": {
-		"frame": {"x":325, "y":57, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":161, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_down_1": {
-		"frame": {"x":325, "y":38, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":138, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_down_2": {
-		"frame": {"x":325, "y":19, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":115, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_down_3": {
-		"frame": {"x":325, "y":0, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":92, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_left_0": {
-		"frame": {"x":311, "y":363, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":69, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_left_1": {
-		"frame": {"x":311, "y":344, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":46, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_left_2": {
-		"frame": {"x":311, "y":325, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":23, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_left_3": {
-		"frame": {"x":294, "y":369, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":325, "y":0, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_right_0": {
-		"frame": {"x":294, "y":350, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":323, "y":348, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_right_1": {
-		"frame": {"x":325, "y":95, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":323, "y":325, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_right_2": {
-		"frame": {"x":277, "y":363, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":302, "y":348, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_right_3": {
-		"frame": {"x":277, "y":344, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":302, "y":325, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_up_0": {
-		"frame": {"x":277, "y":325, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":281, "y":348, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_up_1": {
-		"frame": {"x":260, "y":363, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":281, "y":325, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_up_2": {
-		"frame": {"x":260, "y":344, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":260, "y":348, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"pig_walk_up_3": {
-		"frame": {"x":260, "y":325, "w":16, "h":18},
-		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":18},
-		"sourceSize": {"w":16,"h":18}
+		"frame": {"x":260, "y":325, "w":20, "h":22},
+		"spriteSourceSize": {"x":0,"y":0,"w":20,"h":22},
+		"sourceSize": {"w":20,"h":22}
 	},
 	"player_from_stone_0": {
 		"frame": {"x":260, "y":130, "w":64, "h":64},
@@ -249,7 +254,7 @@
 },
 "meta": {
 	"image": "../assets/atlas.png",
-	"size": {"w": 342, "h": 390},
+	"size": {"w": 346, "h": 390},
 	"scale": "1"
 }
 }

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript">
+	var canvas_base = null;
+	var canvas = null;
+
+	var ninja_base = null;
+	var ninja = null;
+	var ninja_img = null;
+
+	var currentId = 0;
+
+	var img = null;
+
+	var field = null;
+
+	function readSingleFile(e) {
+	  var file = e.target.files[0];
+	  if (!file) {
+	    return;
+	  }
+	  var reader = new FileReader();
+	  reader.onload = function(e) {
+	    var contents = e.target.result;
+	    displayContents(contents);
+	  };
+	  reader.readAsText(file);
+	}
+
+	function displayContents(contents) {
+	  img = new Image();
+	  var f = document.getElementById("file-input").files[0];
+	  var url = window.URL || window.webkitURL;
+	  var src = url.createObjectURL(f);
+
+	  img.src = src;
+	  img.onload = function(){
+	    prepareTileset(img)
+	  }
+	}
+
+	function prepareTileset(img) {
+		if (field == null) {
+			field = [];
+			var count = img.width / 16 * img.height / 16;
+			for (var i = 0; i < count; i++) {
+				field.push(-1);
+			};
+		}
+		console.log(img.width);
+		canvas_base.width = img.width;
+		canvas_base.height = img.height;
+		updateTileSet();
+
+	}
+
+	function updateTileSet() {
+		canvas.fillStyle="#ee44ee";
+		canvas.fillRect(0,0,img.width,img.height);
+		canvas.drawImage(img,0,0);
+
+		for (var i = 0; i < field.length; i++) {
+			var id = field[i];
+			if (id == -1) continue;
+			var y = Math.floor(i / 10);
+			var x = i - (y * 10);
+
+
+			var sy = Math.floor(id / 10);
+			var sx = id - (sy * 10);
+			console.log(sx, sy);
+
+			canvas.drawImage(ninja_img,sx * 16,sy * 16,16,16,x * 16,y * 16,16,16);
+		};
+	}
+
+	function drawNinjaField() {
+		ninja_base.width = ninja_img.width;
+		ninja_base.height = ninja_img.height;
+
+		ninja.fillStyle="#FFFFFF";
+		ninja.fillRect(0,0,ninja_img.width,ninja_img.height);
+		ninja.drawImage(ninja_img,0,0);
+
+		ninja.strokeStyle="#FF0000";
+		var y = Math.floor(currentId / 10);
+		var x = currentId - (y * 10);
+		ninja.strokeRect(x * 16,y * 16, 16, 16);
+	}
+
+	function ninjaSelectId(mouse) {
+		var scale = ninja_base.getBoundingClientRect().width / ninja_img.width;
+		var x = Math.floor((mouse.layerX / scale ) / 16);
+		var y = Math.floor((mouse.layerY / scale ) / 16);
+		currentId = y * 10 + x;
+		
+		drawNinjaField();
+
+	}
+
+	function setIdOnTileset(mouse) {
+		var scale = ninja_base.getBoundingClientRect().width / ninja_img.width;
+		var x = Math.floor((mouse.layerX / scale ) / 16);
+		var y = Math.floor((mouse.layerY / scale ) / 16);
+		filedId = y * 10 + x;
+		field[filedId] = currentId;
+
+		updateTileSet();
+	}
+
+	function printArray() {
+
+		var outPut = [];
+		var warning = false;
+		for (var i = 0; i < field.length; i++) {
+			var id = field[i];
+			if (id == -1) {
+				warning = true;
+				outPut.push(0)
+			} else {
+				outPut.push(id)
+			}
+		};
+
+		var s = "0,//first is ignored\n";
+		for (var i = 0; i < outPut.length; i++) {
+			var add = "" + outPut[i] + ", " + ((i+1) % 10 == 0 ? "\n" : "");
+			s += add;
+		};
+
+		var div = document.getElementById('output');
+		if(warning) {
+			alert("Some tiles are not explicitly set!\n" + s);
+		} else {
+			alert(s);
+		}
+		
+	}
+
+	function init() {
+		document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+		canvas_base = document.getElementById('can');
+		canvas = canvas_base.getContext('2d');
+		ninja_base = document.getElementById('ninja');
+		ninja = ninja_base.getContext('2d');
+		ninja_base.addEventListener('click', ninjaSelectId, false);
+		canvas_base.addEventListener('click', setIdOnTileset, false);
+
+		ninja_img = new Image();
+		ninja_img.src = "ninjatiles.png";
+		ninja_img.onload = drawNinjaField;
+	}
+
+	
+	</script>
+	<style type="text/css">
+	body {
+		background-color: #73BEFF;
+	}
+	canvas {
+		width: 600px;
+		image-rendering: pixelated;
+		image-rendering: -moz-crisp-edges;
+	}
+	</style>
+</head>
+<body onload="init()">
+<input type="file" id="file-input" /><button onclick="printArray()">CREATE ARRAY</button>
+<canvas id="ninja" width="200" hight="200">The canvas jo</canvas>
+<canvas id="can" width="200" hight="200">The canvas jo</canvas>
+<div id="output"></div>
+</body>
+</html>
