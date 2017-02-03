@@ -2,6 +2,10 @@
 
 ![Logo](img/md_logo.png)
 
+[![Release](https://img.shields.io/github/tag/letsgamedev/spielsklave.svg)](https://github.com/letsgamedev/spielsklave/releases)
+[![Issues](https://img.shields.io/github/issues/letsgamedev/spielsklave.svg)](https://github.com/letsgamedev/spielsklave/issues)
+[![Contributors](https://img.shields.io/github/contributors/letsgamedev/spielsklave.svg)](https://github.com/letsgamedev/spielsklave/graphs/contributors)
+
 **Klicke [HIER](README.md) für die Deutsche Version.**
 
 Spielsklave (*lit. "game slave"*) is a German [video series on YouTube](https://www.youtube.com/playlist?list=PL1td_Fr5vMGNqmdJOfnxDPKo_nO87Rs47).
