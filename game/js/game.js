@@ -46,7 +46,7 @@ Game.Main.prototype = {
 	Time to render debug objecs or apply some canvas filters!
 	*/
 	render: function() {
-        if (DEBUG) {
+        if (!DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
             //game.debug.text(this.cursor.x + "x" + this.cursor.y, 5, 10);
