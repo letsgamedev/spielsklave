@@ -49,6 +49,8 @@ var Pig = function(world, x, y) {
 	var minDis = 30;
 	var lookDirection = DOWN;
 	var walkSave = true;
+	var sameDirectionCount = 0;
+	var lastDirection = 0;
 
 	pig.humanInput = false;
 
@@ -78,11 +80,20 @@ var Pig = function(world, x, y) {
 				y: (follow.y - pig.body.y) / distance
 			}
 
-			pig.body.x += direction.x * speed * DT;
-			pig.body.y += direction.y * speed * DT;
+			var speedIntern = speed * 0.49; 
+
+			pig.body.x += direction.x * speedIntern * DT;
+			pig.body.y += direction.y * speedIntern * DT;
 
 
-			pig.animations.play("walk_" + lookDirection);
+
+			if (lastDirection == dirKey) sameDirectionCount++;
+			else sameDirectionCount = 0;
+
+			if (sameDirectionCount > 5)
+				pig.animations.play("walk_" + lookDirection);
+
+			lastDirection = dirKey;
 			walkSave = true;
 		} else {
 			if (walkSave) {
@@ -93,6 +104,8 @@ var Pig = function(world, x, y) {
 			
 			
 		}
+
+
 	}
 
 	/*

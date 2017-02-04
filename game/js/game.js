@@ -49,6 +49,10 @@ Game.Main.prototype = {
         if (DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
+            game.debug.text(
+            	this.cursor.x + "x" + this.cursor.y, 
+            5, 10);
+
 
             if (this.player.shell) game.debug.body(this.player.shell);
         }
@@ -148,6 +152,7 @@ Game.Main.prototype = {
 		this.player.input();
 		this.pig.update();
 		this.pig.input();
+		this.cursor.update();
 
 		
 		//Collision detection
@@ -183,9 +188,15 @@ this cursor with a direkt line.
 var Cursor = function(world) {
 	var cursor = game.add.sprite(0, 0, "atlas", "cursor");
 	cursor.anchor.set(0, 0);
+	cursor.change = false;
 	cursor.update = function() {
-		cursor.x = game.input.mousePointer.position.x + game.camera.x;
-		cursor.y = game.input.mousePointer.position.y  + game.camera.y;
+		var nx = Math.floor(game.input.mousePointer.position.x) + game.camera.x;
+		var ny = Math.floor(game.input.mousePointer.position.y) + game.camera.y;
+
+		cursor.change = (nx != cursor.x || ny != cursor.y);
+
+		cursor.x = nx;
+		cursor.y = ny;
 
 		var distance = game.math.distance(world.pig.x, world.pig.y, cursor.x, cursor.y);
 		cursor.alpha = distance < 16 ? 0.5 : 1;
