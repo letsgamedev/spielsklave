@@ -46,7 +46,7 @@ Game.Main.prototype = {
 	Time to render debug objecs or apply some canvas filters!
 	*/
 	render: function() {
-        if (!DEBUG) {
+        if (DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
 
@@ -154,10 +154,9 @@ Game.Main.prototype = {
 		for (var i = 0; i < this.tiles.length; i++) {
 			if(this.player.state == STATES.STONE) {
 				this.player.shell.body.aabb.collideAABBVsTile(this.tiles[i].tile);
-			} else {
-				this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 			}
-	        
+
+	        this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 	        this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 	    }
 
