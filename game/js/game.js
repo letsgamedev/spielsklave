@@ -49,9 +49,7 @@ Game.Main.prototype = {
         if (DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
-            game.debug.text(
-            	this.cursor.x + "x" + this.cursor.y, 
-            5, 10);
+            //game.debug.text(this.cursor.x + "x" + this.cursor.y, 5, 10);
 
 
             if (this.player.shell) game.debug.body(this.player.shell);
