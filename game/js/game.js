@@ -100,7 +100,7 @@ Game.Main.prototype = {
 
         this.cursor = Cursor(this);
 	
-        this.game.camera.follow(this.player);
+        //this.game.camera.follow(this.player);
 
 	},	
 
@@ -170,6 +170,30 @@ Game.Main.prototype = {
 		
 	},
 
+	moveCameraTo: function(x, y) {
+		var tween = game.add.tween(game.camera).to({
+			x: x,
+			y: y
+		}, 500, Phaser.Easing.Cubic.InOut, true);
+	},
+
+	updateCamera: function() {
+		var lookOffsetY = 0;
+		var lookOffsetX = 0;
+		var lookOffsetDistance = 0;
+		switch(this.player.lookDirection) {
+			case UP: lookOffsetY = lookOffsetDistance; break;
+			case DOWN: lookOffsetY = -lookOffsetDistance; break;
+			case LEFT: lookOffsetX = lookOffsetDistance; break;
+			case RIGHT: lookOffsetX = -lookOffsetDistance; break;
+		}
+		var xd = this.player.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
+		var yd = this.player.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
+
+		this.camera.x = Math.floor( this.camera.x + (xd * 0.5));
+		this.camera.y = Math.floor( this.camera.y + (yd * 0.5));
+	},
+
 	findTilesWithID: function(layerNr, tileId) {
         var result = [];
 
@@ -225,6 +249,7 @@ Game.Main.prototype = {
 	    };
 
 		//this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
+		this.updateCamera();
 	}
 	
 	

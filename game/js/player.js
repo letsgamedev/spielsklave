@@ -65,6 +65,7 @@ var Player = function(world, x, y) {
 					player.body[axis] += DT * speed * diagonalFactor * multi;
 					stand = false;
 					lookDirection = dirID;
+					player.lookDirection = lookDirection;
 				}
 			}
 
@@ -157,6 +158,8 @@ var Player = function(world, x, y) {
 		player.state = STATES.NORMAL;
 		shell.animations.play("from_stone");
 		player.visible = true;
+
+		//world.moveCameraTo(player.body.x, player.body.y);
 	}
 
 	return player;

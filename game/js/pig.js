@@ -117,7 +117,6 @@ var Pig = function(world, x, y) {
 	Handels the input from Pad class. Has to be called every frame.
 	*/
 	pig.input = function() {
-		console.log(world.player.state == STATES.STONE, world.cursor.visible == false);
 		if (world.player.state == STATES.STONE && world.cursor.visible == false) {
 
 			var stand = true;
