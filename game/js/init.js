@@ -73,6 +73,14 @@ function saveItem(id, value) {
 	localStorage.setItem("spielsklave_" + id, value);
 };
 
+function addAnimation(obj, name, assetsName, count, fps, loop) {
+	var animNames = [];
+	for (var i = 0; i < count; i++) {
+		animNames.push(assetsName + "_" + i);
+	};
+	obj.animations.add(name, animNames, fps, loop);
+}
+
 function getParams() {
     qs = document.location.search.split('+').join(' ');
 

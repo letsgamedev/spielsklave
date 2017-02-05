@@ -34,14 +34,15 @@ var Pig = function(world, x, y) {
 	pig.body.setSize(8,8);
 
 	//Prepare animations
-	pig.animations.add("stand_up", ["pig_walk_up_1"], 24, true, true);
-	pig.animations.add("stand_down", ["pig_walk_down_1"], 12, true, true);
-	pig.animations.add("stand_left", ["pig_walk_left_1"], 12, true, true);
-	pig.animations.add("stand_right", ["pig_walk_right_1"], 12, true, true);
-	pig.animations.add("walk_down", ["pig_walk_down_0", "pig_walk_down_1", "pig_walk_down_2", "pig_walk_down_3"], 12, true, true);
-	pig.animations.add("walk_up", ["pig_walk_up_0", "pig_walk_up_1", "pig_walk_up_2", "pig_walk_up_3"], 12, true, true);
-	pig.animations.add("walk_left", ["pig_walk_left_0", "pig_walk_left_1", "pig_walk_left_2", "pig_walk_left_3"], 12, true, true);
-	pig.animations.add("walk_right", ["pig_walk_right_0", "pig_walk_right_1", "pig_walk_right_2", "pig_walk_right_3"], 12, true, true);
+	pig.animations.add("stand_up", ["pig_walk_up_1"], 24, true);
+	pig.animations.add("stand_down", ["pig_walk_down_1"], 12, true);
+	pig.animations.add("stand_left", ["pig_walk_left_1"], 12, true);
+	pig.animations.add("stand_right", ["pig_walk_right_1"], 12, true);
+
+	addAnimation(pig, "walk_down", "pig_walk_down", 4, 12, true);
+	addAnimation(pig, "walk_up", "pig_walk_up", 4, 12, true);
+	addAnimation(pig, "walk_left", "pig_walk_left", 4, 12, true);
+	addAnimation(pig, "walk_right", "pig_walk_right", 4, 12, true);
 	pig.animations.play("stand_down");
 
 	//Private variables
@@ -107,6 +108,8 @@ var Pig = function(world, x, y) {
 
 
 	}
+
+	pig.onHit = GenPool.onHit;
 
 	/*
 	Handels the input from Pad class. Has to be called every frame.

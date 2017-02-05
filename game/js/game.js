@@ -49,6 +49,10 @@ Game.Main.prototype = {
         if (!DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
+            for (var i = 0; i < this.enemies.length; i++) {
+            	game.debug.body(this.enemies[i]);
+
+            };
             //game.debug.text(this.cursor.x + "x" + this.cursor.y, 5, 10);
 
 
@@ -74,16 +78,21 @@ Game.Main.prototype = {
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		Pad.init();
         game.time.advancedTiming = true;
-        game.stage.backgroundColor = "#4488AA";
+        game.stage.backgroundColor = "#000000";
+
+        this.enemies = [];
 
 
         this.initPhysics();
         this.initMap();
+        this.bottomLayer = game.add.group();
         this.middleLayer = game.add.group();
 
         this.player = Player(this, 16 * 25, 16 * 25);
         
         this.pig = Pig(this, 16 * 25, 16 * 23);
+
+        this.addEnemies();
 
         this.cursor = Cursor(this);
 	
@@ -138,6 +147,38 @@ Game.Main.prototype = {
 
         this.layer.resizeWorld();
 	},
+
+	addEnemies: function() {
+		var ids = [
+			{tileId: 9, className: LittleEgg}
+		];
+
+		var that = this;
+
+		for (var i = 0; i < ids.length; i++) {
+			var enemyId = ids[i];
+			var result = this.findTilesWithID(MAP.OBJECTS, enemyId.tileId);
+			result.forEach(function addEnemy(tile){
+				var enemy = enemyId.className(that, tile.x * 16, tile.y * 16);
+				that.enemies.push(enemy)
+			});
+		};
+
+		
+	},
+
+	findTilesWithID: function(layerNr, tileId) {
+        var result = [];
+
+        var data = this.map.layers[layerNr].data;
+
+        data.forEach(function(line){
+            result = result.concat(line.filter(function(tile){
+                return tile.index === tileId;
+            }));
+        });
+        return result;
+    },
 	
 	/**
 	The update method will me called every frame.
@@ -159,6 +200,10 @@ Game.Main.prototype = {
 				this.player.shell.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 			}
 
+			for (var j = 0; j < this.enemies.length; j++) {
+				this.enemies[j].body.aabb.collideAABBVsTile(this.tiles[i].tile);
+			};
+
 	        this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 	        this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 	    }
@@ -167,6 +212,14 @@ Game.Main.prototype = {
 	    if (this.player.state == STATES.STONE) {
 	    	game.physics.ninja.collide(this.player.shell, this.pig);
 	    }
+
+	    //Overlap with enemies
+
+	    for (var i = 0; i < this.enemies.length; i++) {
+	    	if (this.player.humanInput) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
+	    	if (this.pig.humanInput || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.player.onHit);
+	    	 if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
+	    };
 
 		this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
 	}

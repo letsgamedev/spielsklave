@@ -30,20 +30,23 @@ var Player = function(world, x, y) {
 	player.state = STATES.NORMAL;
 
 	//Prepare animations
-	player.animations.add("stand_up", ["player_walk_up_1"], 12, true, true);
-	player.animations.add("stand_down", ["player_walk_down_1"], 12, true, true);
-	player.animations.add("stand_left", ["player_walk_left_1"], 12, true, true);
-	player.animations.add("stand_right", ["player_walk_right_1"], 12, true, true);
-	player.animations.add("walk_down", ["player_walk_down_0", "player_walk_down_1", "player_walk_down_2", "player_walk_down_3"], 12, true, true);
-	player.animations.add("walk_up", ["player_walk_up_0", "player_walk_up_1", "player_walk_up_2", "player_walk_up_3"], 12, true, true);
-	player.animations.add("walk_left", ["player_walk_left_0", "player_walk_left_1", "player_walk_left_2", "player_walk_left_3"], 12, true, true);
-	player.animations.add("walk_right", ["player_walk_right_0", "player_walk_right_1", "player_walk_right_2", "player_walk_right_3"], 12, true, true);
+	player.animations.add("stand_up", ["player_walk_up_1"], 12, true);
+	player.animations.add("stand_down", ["player_walk_down_1"], 12, true);
+	player.animations.add("stand_left", ["player_walk_left_1"], 12, true);
+	player.animations.add("stand_right", ["player_walk_right_1"], 12, true);
+	addAnimation(player, "walk_down", "player_walk_down", 4, 12, true);
+	addAnimation(player, "walk_up", "player_walk_up", 4, 12, true);
+	addAnimation(player, "walk_left", "player_walk_left", 4, 12, true);
+	addAnimation(player, "walk_right", "player_walk_right", 4, 12, true);
 	player.animations.play("stand_down");
+
+	console.log(player.animations.add);
 	
 	//Private variables
 	var speed = 100;
 	var lookDirection = DOWN;
 	var shell = null;
+	player.damageSave = false;
 
 	player.humanInput = true;
 
@@ -99,6 +102,8 @@ var Player = function(world, x, y) {
 		}
 
 	}
+
+	player.onHit = GenPool.onHit;
 
 	//Helper for turn on/off stone swap
 	function setHumanInput(isOn) {
