@@ -38,7 +38,6 @@ var LittleEgg = function(world, x, y) {
 	//Configure physics
 	game.physics.ninja.enable(egg, 1);
     egg.body.drag = 0.1;
-    egg.body.immovable = true;
     var lookDirection = DOWN;
 	
 	//Config body size and alignment
@@ -64,8 +63,16 @@ var LittleEgg = function(world, x, y) {
 			case HATCHING:
 				if (egg.frameName == "little_egg_hatch_4" && isBushSet == false) {
 					isBushSet = true;
-					game.add.sprite(egg.x - 11, egg.y - 13, "atlas", "little_egg_shell_0", world.bottomLayer);
-	
+					var bush = game.add.sprite(egg.x - 11, egg.y - 7, "atlas", "little_egg_shell_0", world.middleLayer);
+					game.physics.ninja.enable(bush, 1);
+				    bush.body.drag = 0.1;
+				    bush.body.immovable = true;
+				    bush.harmless = true;
+				    bush.ySortOffset = -5;
+				    bush.body.setSize(18,10);
+				    bush.anchor.set(0.5,0.8);
+				    world.enemies.push(bush);
+				    egg.body.y++;
 				}
 			break;
 			case HATCHED:

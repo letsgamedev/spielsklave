@@ -20378,11 +20378,19 @@ Phaser.Group.prototype.customSort = function (sortHandler, context) {
 */
 Phaser.Group.prototype.ascendingSortHandler = function (a, b) {
 
-    if (a[this._sortProperty] < b[this._sortProperty])
+    var aValue = a[this._sortProperty];
+    var bValue = b[this._sortProperty];
+
+    if (this._sortProperty == "y") {
+        aValue += a.ySortOffset || 0;
+        bValue += b.ySortOffset || 0;
+    }
+
+    if (aValue < bValue)
     {
         return -1;
     }
-    else if (a[this._sortProperty] > b[this._sortProperty])
+    else if (aValue > bValue)
     {
         return 1;
     }
@@ -20410,11 +20418,19 @@ Phaser.Group.prototype.ascendingSortHandler = function (a, b) {
 */
 Phaser.Group.prototype.descendingSortHandler = function (a, b) {
 
-    if (a[this._sortProperty] < b[this._sortProperty])
+    var aValue = a[this._sortProperty];
+    var bValue = b[this._sortProperty];
+
+    if (this._sortProperty == "y") {
+        aValue += a.ySortOffset || 0;
+        bValue += b.ySortOffset || 0;
+    }
+
+    if (aValue < bValue)
     {
         return 1;
     }
-    else if (a[this._sortProperty] > b[this._sortProperty])
+    else if (aValue > bValue)
     {
         return -1;
     }
@@ -75895,6 +75911,11 @@ Phaser.Physics.Ninja.Body = function (system, sprite, type, id, radius, x, y, wi
         this.shape = this.tile;
     }
 
+    this.origin = {
+        x: this.x,
+        y: this.y
+    }
+
 };
 
 Phaser.Physics.Ninja.Body.prototype = {
@@ -75968,6 +75989,11 @@ Phaser.Physics.Ninja.Body.prototype = {
         else if (this.velocity.y > 0)
         {
             this.facing = Phaser.DOWN;
+        }
+
+        if (this.immovable) {
+            this.x = this.origin.x;
+            this.y = this.origin.y;
         }
 
     },

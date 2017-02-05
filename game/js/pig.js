@@ -27,7 +27,7 @@ var Pig = function(world, x, y) {
 	//Configure physics
 	game.physics.ninja.enable(pig, 1, 0, 4);
     pig.body.drag = 0.1;
-    pig.body.immovable = true;
+    pig.damageSave = true;
 	
     //Config body size and alignment
 	pig.anchor.set(0.5, 0.8);
@@ -53,14 +53,16 @@ var Pig = function(world, x, y) {
 	var sameDirectionCount = 0;
 	var lastDirection = 0;
 
-	pig.humanInput = false;
-
 	/**
 	The pig will follow the player if its not controlled by a human.
 	May be some pathfinding will be added later.
 	*/
 	pig.update = function() {
-		if (pig.humanInput) return;
+		//Yes, this function is a bit messi
+		pig.damageSave = world.player.state != STATES.STONE;
+
+		if (world.player.state == STATES.STONE && world.cursor.visible == false) return;
+
 		var follow = world.cursor.visible ? world.cursor : world.player.body;
 		minDis = world.cursor.visible ? 2 : 30;
 		var distance = game.math.distance(follow.x, follow.y, pig.body.x, pig.body.y);
@@ -115,42 +117,46 @@ var Pig = function(world, x, y) {
 	Handels the input from Pad class. Has to be called every frame.
 	*/
 	pig.input = function() {
-		if (pig.humanInput == false) return;
-		var stand = true;
-		var newAnimation = "stand";
+		console.log(world.player.state == STATES.STONE, world.cursor.visible == false);
+		if (world.player.state == STATES.STONE && world.cursor.visible == false) {
 
-		var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1; 
+			var stand = true;
+			var newAnimation = "stand";
 
-		//Process movement and animation
-		if (pig.humanInput && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
-			function setMove(padKey,axis, multi,dirID) {
-				if (Pad.isDown(padKey)) {
-					pig.body[axis] += DT * speed * diagonalFactor * multi;
-					stand = false;
-					lookDirection = dirID;
+			var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1; 
+
+			//Process movement and animation
+			if (!(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
+				function setMove(padKey,axis, multi,dirID) {
+					if (Pad.isDown(padKey)) {
+						pig.body[axis] += DT * speed * diagonalFactor * multi;
+						stand = false;
+						lookDirection = dirID;
+					}
+				}
+				setMove(Pad.LEFT, "x", -1, LEFT);
+				setMove(Pad.RIGHT, "x", 1, RIGHT);
+				setMove(Pad.UP, "y", -1, UP);
+				setMove(Pad.DOWN, "y", 1, DOWN);
+
+				if (pig.animations.currentAnim.name.includes("stand") || diagonalFactor == 1) {
+					pig.animations.play("walk_" + lookDirection);
 				}
 			}
-			setMove(Pad.LEFT, "x", -1, LEFT);
-			setMove(Pad.RIGHT, "x", 1, RIGHT);
-			setMove(Pad.UP, "y", -1, UP);
-			setMove(Pad.DOWN, "y", 1, DOWN);
+		
+			if (stand) {
+				pig.animations.play("stand_" + lookDirection);
+			}
 
-			if (pig.animations.currentAnim.name.includes("stand") || diagonalFactor == 1) {
-				pig.animations.play("walk_" + lookDirection);
+
+			if (Pad.justDown(Pad.JUMP)) {
+				
+			}
+			if (Pad.justDown(Pad.SHOOT)) {
+				
 			}
 		}
-	
-		if (stand) {
-			pig.animations.play("stand_" + lookDirection);
-		}
-
-
-		if (Pad.justDown(Pad.JUMP)) {
-			
-		}
-		if (Pad.justDown(Pad.SHOOT)) {
-			
-		}
+		
 
 	}
 

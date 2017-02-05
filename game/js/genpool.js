@@ -11,6 +11,7 @@ The 'self' will be thrown back a bit to show the collision with 'other'
 @param {object} other - The Object (e.g. enemy) which collies with 'self'
 */
 GenPool.onHit = function(self, other) {
+	if (other.harmless) return;
 	if (self.damageSave) return;
 	var hitDistance = 20;
 

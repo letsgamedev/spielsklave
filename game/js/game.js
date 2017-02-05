@@ -60,6 +60,10 @@ Game.Main.prototype = {
         }
 
     },
+
+    preRender: function() {
+    	this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
+    },
 	
 	/**
 	Load all the additional assets we need to use.
@@ -98,7 +102,6 @@ Game.Main.prototype = {
 	
         this.game.camera.follow(this.player);
 
- 
 	},	
 
 	/**
@@ -217,11 +220,11 @@ Game.Main.prototype = {
 
 	    for (var i = 0; i < this.enemies.length; i++) {
 	    	if (this.player.humanInput) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
-	    	if (this.pig.humanInput || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.player.onHit);
+	    	game.physics.ninja.overlap(this.pig, this.enemies[i], this.player.onHit);
 	    	 if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
 	    };
 
-		this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
+		//this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
 	}
 	
 	

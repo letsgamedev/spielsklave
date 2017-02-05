@@ -21,7 +21,6 @@ var Player = function(world, x, y) {
 	//Configure physics
 	game.physics.ninja.enable(player, 1);
     player.body.drag = 0.1;
-    player.body.immovable = true;
 	
 	//Config body size and alignment
 	player.body.setSize(12,12);
@@ -39,8 +38,6 @@ var Player = function(world, x, y) {
 	addAnimation(player, "walk_left", "player_walk_left", 4, 12, true);
 	addAnimation(player, "walk_right", "player_walk_right", 4, 12, true);
 	player.animations.play("stand_down");
-
-	console.log(player.animations.add);
 	
 	//Private variables
 	var speed = 100;
@@ -62,7 +59,7 @@ var Player = function(world, x, y) {
 		
 
 		//Process movement and animation
-		if (player.humanInput && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
+		if (player.state !== STATES.STONE && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
 			function setMove(padKey,axis, multi,dirID) {
 				if (Pad.isDown(padKey)) {
 					player.body[axis] += DT * speed * diagonalFactor * multi;
@@ -91,14 +88,14 @@ var Player = function(world, x, y) {
 		//Turn on/off multiplayer, will detroy stone at the moment
 		if (Pad.justDown(Pad.JUMP)) {
 			world.cursor.visible = !world.cursor.visible;
-			if (player.humanInput == false && world.cursor.visible) {
+			/*if (player.humanInput == false && world.cursor.visible) {
 				setHumanInput(true);
-			}
+			}*/
 		}
 
-		//Swap between demon and pig
-		if (Pad.justDown(Pad.SHOOT) && world.cursor.visible == false) {
-			setHumanInput(!player.humanInput);
+		//Swap between stone and flesh
+		if (Pad.justDown(Pad.SHOOT)) {
+			swapStone();
 		}
 
 	}
@@ -113,7 +110,14 @@ var Player = function(world, x, y) {
 		} else {
 			toStone();
 		}
-		world.pig.humanInput = !isOn;
+	}
+
+	function swapStone() {
+		if (player.state == STATES.STONE) {
+			fromStone();
+		} else {
+			toStone();
+		}
 	}
 
 	//Creates a stone statue an replaces the demon char
@@ -124,7 +128,6 @@ var Player = function(world, x, y) {
 		game.physics.ninja.enable(shell);
 		shell.body.bounce = 0;
 	    shell.body.drag = 0;
-	    shell.body.immovable = true;
 		shell.body.setSize(12,12);
 		shell.anchor.set(0.5,0.6);
 
@@ -151,6 +154,7 @@ var Player = function(world, x, y) {
 		player.body.x = shell.body.x;
 		player.body.y = shell.body.y;
 		shell.body.y+=1;
+		player.state = STATES.NORMAL;
 		shell.animations.play("from_stone");
 		player.visible = true;
 	}
