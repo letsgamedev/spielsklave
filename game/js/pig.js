@@ -32,6 +32,7 @@ var Pig = function(world, x, y) {
     //Config body size and alignment
 	pig.anchor.set(0.5, 0.8);
 	pig.body.setSize(8,8);
+	pig.ySortOffset = -5;
 
 	//Prepare animations
 	pig.animations.add("stand_up", ["pig_walk_up_1"], 24, true);

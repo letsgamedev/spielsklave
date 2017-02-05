@@ -69,7 +69,7 @@ var LittleEgg = function(world, x, y) {
 				    bush.body.immovable = true;
 				    bush.harmless = true;
 				    bush.ySortOffset = -5;
-				    bush.body.setSize(18,10);
+				    bush.body.setSize(14,10);
 				    bush.anchor.set(0.5,0.8);
 				    world.enemies.push(bush);
 				    egg.body.y++;

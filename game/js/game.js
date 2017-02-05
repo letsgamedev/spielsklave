@@ -99,8 +99,6 @@ Game.Main.prototype = {
         this.addEnemies();
 
         this.cursor = Cursor(this);
-	
-        //this.game.camera.follow(this.player);
 
 	},	
 
@@ -231,8 +229,16 @@ Game.Main.prototype = {
 				this.enemies[j].body.aabb.collideAABBVsTile(this.tiles[i].tile);
 			};
 
-	        this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);
-	        this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
+	        var r = this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);
+	        if (r && this.player.hitTween) {
+	        	this.player.hitTween.stop();
+	        	this.player.hitTween = undefined;
+	        }
+	        r = this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
+	        if (r && this.pig.hitTween) {
+	        	this.pig.hitTween.stop();
+	        	this.pig.hitTween = undefined;
+	        }
 	    }
 
 	    //Dont do this in the for loop cause this would be super dumb!
@@ -243,12 +249,11 @@ Game.Main.prototype = {
 	    //Overlap with enemies
 
 	    for (var i = 0; i < this.enemies.length; i++) {
-	    	if (this.player.humanInput) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
-	    	game.physics.ninja.overlap(this.pig, this.enemies[i], this.player.onHit);
-	    	 if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
+	    	if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
+	    	game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit);
+	    	if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
 	    };
 
-		//this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
 		this.updateCamera();
 	}
 	
