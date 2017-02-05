@@ -51,6 +51,10 @@ var LittleEgg = function(world, x, y) {
 	var speed = 40;
 	var isBushSet = false;
 
+	/**
+	if the player is near the egg, it will hatch and 
+	walk in random directions
+	*/
 	egg.update = function() {
 		moveTime -= DT;
 		switch(egg.status) {
@@ -72,6 +76,9 @@ var LittleEgg = function(world, x, y) {
 		}		
 	}
 
+	/**
+	checks if the player is near enough and inits the hatching if so. 
+	*/
 	function hatchCheck() {
 		var distancePlayer = game.math.distance(world.player.x, world.player.y, egg.body.x, egg.body.y);
 		var distancePig = game.math.distance(world.pig.x, world.pig.y, egg.body.x, egg.body.y);
@@ -86,6 +93,10 @@ var LittleEgg = function(world, x, y) {
 		}
 	}
 
+	/**
+	chooses a random direktion to walk. There is a 50% chance the
+	egg will stand in place.
+	*/
 	function setNewMove() {
 		switch (game.rnd.between(0,7)) {
 			case 0: xDir = 1; yDir = 0; lookDirection = RIGHT; break;

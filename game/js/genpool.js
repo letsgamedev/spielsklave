@@ -1,4 +1,15 @@
 var GenPool = {}
+
+/**
+This function should be attached to a player/enemy object
+So this function will be called when the object ist hit by
+an enemy by collision.
+
+The 'self' will be thrown back a bit to show the collision with 'other'
+
+@param {object} self - The object which this function is attached to
+@param {object} other - The Object (e.g. enemy) which collies with 'self'
+*/
 GenPool.onHit = function(self, other) {
 	if (self.damageSave) return;
 	var hitDistance = 20;
