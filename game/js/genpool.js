@@ -23,7 +23,7 @@ GenPool.onHit = function(self, other) {
 
 	self.damageSave = true;
 
-	console.log("hit");
+	sound("player_hit");
 
 	var tween = game.add.tween(self.body).to({
 		x: self.body.x + dx * hitDistance,

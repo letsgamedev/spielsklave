@@ -73,6 +73,7 @@ var LittleEgg = function(world, x, y) {
 				    bush.anchor.set(0.5,0.8);
 				    world.enemies.push(bush);
 				    egg.body.y++;
+				    sound("little_egg_hatch");
 				}
 			break;
 			case HATCHED:

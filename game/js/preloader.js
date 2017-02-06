@@ -22,9 +22,13 @@ Game.Preloader.prototype = {
 		//game.load.bitmapFont("");
 		var loadSound = function(name, type) {
 			type = type || "mp3"
-			game.load.audio(name, "sound/" + name + "." + type);
+			game.load.audio(name, "sounds/" + name + "." + type);
 		}
-		//loadSound("", "");
+		loadSound("player_hit", "wav");
+		loadSound("player_to_stone", "wav");
+		loadSound("player_from_stone", "wav");
+		loadSound("little_egg_hatch", "wav");
+		loadSound("stone_push", "wav");
 	},
 	
 	create: function() {

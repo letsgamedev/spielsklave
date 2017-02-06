@@ -129,11 +129,36 @@ var Player = function(world, x, y) {
 		game.physics.ninja.enable(shell);
 		shell.body.bounce = 0;
 	    shell.body.drag = 0;
+	    shell.body.oldPos = {x: shell.body.x, y: shell.body.y}
 		shell.body.setSize(12,12);
 		shell.anchor.set(0.5,0.6);
 
+		sound("player_to_stone");
+
+		TEST = shell.body;
+		shell.sound = null
+
+
+		shell.update = function() {
+			var dx = shell.body.x - shell.body.oldPos.x;
+			var dy = shell.body.y - shell.body.oldPos.y;
+
+			if (dx != 0 || dy != 0) {
+				if (shell.sound == null) shell.sound = sound("stone_push", 1, true);
+			} else {
+				if (shell.sound != null) {
+					shell.sound.stop();
+					shell.sound.destroy();
+					shell.sound = null;
+				}
+			}
+
+			shell.body.oldPos.x = shell.body.x;
+			shell.body.oldPos.y = shell.body.y;
+		}
+
 		
-		shell.animations.add("from_stone", [
+		shell.fromStone = shell.animations.add("from_stone", [
 			"player_from_stone_0",
 			"player_from_stone_1",
 			"player_from_stone_2",
@@ -145,9 +170,18 @@ var Player = function(world, x, y) {
 			"player_from_stone_8",
 			"player_from_stone_9",
 			], 24, false, true);
+		shell.fromStone.onComplete.add(function(){
+			setTimeout(function(){
+				if (shell.sound) shell.sound.destroy();
+				shell.destroy();
+			},10)
+			
+		});
 		shell.animations.add("to_stone", ["player_to_stone_0", "player_to_stone_1", "player_to_stone_2", "player_to_stone_3", "player_to_stone_4"], 24, false, true);
 		shell.animations.play("to_stone");
 		player.shell = shell;
+
+		
 	}
 
 	//shatters the stone statue and get back the demon char
@@ -158,6 +192,8 @@ var Player = function(world, x, y) {
 		player.state = STATES.NORMAL;
 		shell.animations.play("from_stone");
 		player.visible = true;
+
+		sound("player_from_stone");
 
 		//world.moveCameraTo(player.body.x, player.body.y);
 	}
