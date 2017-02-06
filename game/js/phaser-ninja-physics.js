@@ -15214,6 +15214,10 @@ Phaser.Camera.prototype = {
             this.view.floor();
             this._shake.x = Math.floor(this._shake.x);
             this._shake.y = Math.floor(this._shake.y);
+            this._shake.xx = this._shake.x;
+            this._shake.yy = this._shake.y;
+            this._shake.x = 0;
+            this._shake.y = 0;
         }
 
         this.displayObject.position.x = -this.view.x;

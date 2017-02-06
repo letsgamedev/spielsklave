@@ -82,6 +82,13 @@ function addAnimation(obj, name, assetsName, count, fps, loop) {
 	obj.animations.add(name, animNames, fps, loop);
 }
 
+function sleep(millisec) {
+	game.paused = true;
+	setTimeout(function(){
+		game.paused = false;
+	}, millisec);
+}
+
 function getParams() {
     qs = document.location.search.split('+').join(' ');
 

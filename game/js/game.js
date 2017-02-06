@@ -100,6 +100,8 @@ Game.Main.prototype = {
 
         this.cursor = Cursor(this);
 
+        
+
 	},	
 
 	/**
@@ -119,6 +121,7 @@ Game.Main.prototype = {
        
         this.map.addTilesetImage("tiles", 'tiles'); //sets a image key to a json tileset name key
         this.layer = this.map.createLayer(MAP.GROUND);
+        console.log(this.layer);
         this.groundDetail = this.map.createLayer(MAP.GROUND_DETAIL);
 
         var slopeMap = [0,//first is ignored
@@ -190,6 +193,9 @@ Game.Main.prototype = {
 
 		this.camera.x = Math.floor( this.camera.x + (xd * 0.5));
 		this.camera.y = Math.floor( this.camera.y + (yd * 0.5));
+
+		game.camera.x += game.camera._shake.xx;
+    	game.camera.y += game.camera._shake.yy;
 	},
 
 	findTilesWithID: function(layerNr, tileId) {
@@ -255,6 +261,7 @@ Game.Main.prototype = {
 	    };
 
 		this.updateCamera();
+	
 	}
 	
 	

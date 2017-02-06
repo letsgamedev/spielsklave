@@ -36,7 +36,9 @@ GenPool.onHit = function(self, other) {
 	});
 
 	self.hitTween = tween;
+
+	sleep(20);
 	
-	game.camera.shake(0.01, 50, true,Phaser.Camera.SHAKE_BOTH, false);
+	game.camera.shake(0.02, 70, true,Phaser.Camera.SHAKE_BOTH, false);
 	timeEvent(0.15, function(){self.damageSave = false});				
 }
