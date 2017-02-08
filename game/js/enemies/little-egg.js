@@ -102,7 +102,7 @@ var LittleEgg = function(world, x, y) {
 	}
 
 	/**
-	chooses a random direktion to walk. There is a 50% chance the
+	chooses a random direction to walk. There is a 50% chance the
 	egg will stand in place.
 	*/
 	function setNewMove() {
