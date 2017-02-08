@@ -8,10 +8,10 @@
 
 var Config = {
     controlls: {
-        up: {k: Phaser.Keyboard.UP, p: null},
-        down: {k: Phaser.Keyboard.DOWN, p: null},
-        left: {k: Phaser.Keyboard.LEFT, p: null},
-        right: {k: Phaser.Keyboard.RIGHT, p: null},
+        up: {k: Phaser.Keyboard.UP, ka: Phaser.Keyboard.W, p: null},
+        down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S, p: null},
+        left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A, p: null},
+        right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D, p: null},
         jump: {k: Phaser.Keyboard.C, p: null},
         run: {k: Phaser.Keyboard.V, p: null},
         start: {k: Phaser.Keyboard.ENTER, p: null}
@@ -34,6 +34,7 @@ var Pad = {
     refJUMP: {just:false,hold:false, count:0, timeOnDown:0},
     refSTART: {just:false,hold:false, count:0, timeOnDown:0},
     refESC: {just:false,hold:false, count:0, timeOnDown:0},
+    refBTNs: [],
 
     btnUP: null,
     btnDOWN: null,
@@ -43,6 +44,7 @@ var Pad = {
     btnSHOOT: null,
     btnSTART: null,
     btnESC: null,
+    btnALL:[],
 
     pad: null,
     dPadLeft: null,
@@ -52,12 +54,16 @@ var Pad = {
     dPadJump: null,
     dPadShoot: null,
     dPadStart: null,
+    dPadAll: [],
     
     init: function(){
         console.log("pad init");
 
         this.setKeyboardKeys();
 
+        this.refBTNs = [this.refUP, this.refDOWN, this.refLEFT, this.refRIGHT, this.refJUMP, this.refSHOOT, this.refSTART,this.refESC];
+        this.btnALL = [this.btnUP, this.btnDOWN, this.btnLEFT, this.btnRIGHT, this.btnJUMP, this.btnSHOOT, this.btnSTART,this.btnESC];
+        this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadJump, this.dPadShoot, this.dPadStart];
 
         game.input.gamepad.start();
 
@@ -73,9 +79,16 @@ var Pad = {
     setKeyboardKeys: function() {
 
         this.btnUP = game.input.keyboard.addKey(Config.controlls.up.k);
+        this.btnUP.alternateKey = game.input.keyboard.addKey(Config.controlls.up.ka);
+        
         this.btnDOWN = game.input.keyboard.addKey(Config.controlls.down.k);
+        this.btnDOWN.alternateKey = game.input.keyboard.addKey(Config.controlls.down.ka);
+        
         this.btnLEFT = game.input.keyboard.addKey(Config.controlls.left.k);
+        this.btnLEFT.alternateKey = game.input.keyboard.addKey(Config.controlls.left.ka);
+        
         this.btnRIGHT = game.input.keyboard.addKey(Config.controlls.right.k);
+        this.btnRIGHT.alternateKey = game.input.keyboard.addKey(Config.controlls.right.ka);
 
         this.btnJUMP = game.input.keyboard.addKey(Config.controlls.jump.k);
         this.btnSTART = game.input.keyboard.addKey(Config.controlls.start.k);
@@ -96,14 +109,9 @@ var Pad = {
     },
 
     removeKeys: function() {
-        game.input.keyboard.removeKey(this.btnUP.keyCode);
-        game.input.keyboard.removeKey(this.btnLEFT.keyCode);
-        game.input.keyboard.removeKey(this.btnRIGHT.keyCode);
-        game.input.keyboard.removeKey(this.btnDOWN.keyCode);
-        game.input.keyboard.removeKey(this.btnJUMP.keyCode);
-        game.input.keyboard.removeKey(this.btnSHOOT.keyCode);
-        game.input.keyboard.removeKey(this.btnSTART.keyCode);
-        game.input.keyboard.removeKey(this.btnESC.keyCode);
+        for (var i = 0; i < this.btnALL.length; i++) {
+            game.input.keyboard.removeKey(this.btnALL[i].keyCode);
+        };
     },
 
     resetGamePadKeys: function() {
@@ -138,34 +146,13 @@ var Pad = {
     },
 
     isDown: function(key) {
-        switch (key) {
-            case this.LEFT: 
-                return this.refLEFT.just || this.refLEFT.hold;
-                break;
-            case this.RIGHT: 
-                return this.refRIGHT.just || this.refRIGHT.hold;
-                break;
-            case this.UP: 
-                return this.refUP.just || this.refUP.hold;
-                break;
-            case this.DOWN: 
-                return this.refDOWN.just || this.refDOWN.hold;
-                break;
-            case this.JUMP: 
-                return this.refJUMP.just || this.refJUMP.hold;
-                break;
-            case this.SHOOT: 
-                return this.refSHOOT.just || this.refSHOOT.hold;
-                break;
-            case this.ESC: 
-                return this.refESC.just || this.refESC.hold;
-                break;
-        }
+        return this.refBTNs[key].just || this.refBTNs[key].hold;
     },
 
     checkJustDown: function() {
         var set = function(ref, key, padKey) {
             var kDown = key.isDown;
+            if (key.alternateKey) kDown = key.isDown || key.alternateKey.isDown;
             var pDown = false;
             if (padKey != null) {
                 if (typeof padKey == "string") {
@@ -177,7 +164,7 @@ var Pad = {
             
             var isDown = kDown || pDown;
             if (!ref.just && !ref.hold && !isDown) {ref.just = false; ref.hold = false; return;}
-            if (!ref.just && !ref.hold && isDown)  {ref.just = true; ref.timeOnDown = game.time.time; ref.hold = false; key.count++; return;}
+            if (!ref.just && !ref.hold && isDown)  {ref.just = true; ref.timeOnDown = game.time.time; ref.hold = false; key.count++; if(key.alternateKey)key.alternateKey.count++ ; return;}
             if (!ref.just && ref.hold && !isDown)  {ref.just = false; ref.hold = false; return;}
             if (!ref.just && ref.hold && isDown)   {ref.just = false; ref.hold = true ; return;}
             if (ref.just && !ref.hold && !isDown)  {ref.just = false; ref.hold = false; return;}
@@ -185,74 +172,19 @@ var Pad = {
             if (ref.just && ref.hold && !isDown)   {ref.just = false; ref.hold = false; return;}
             if (ref.just && ref.hold && isDown)    {ref.just = false; ref.hold = true; return;}
         }
-        set(this.refJUMP, this.btnJUMP, this.dPadJump);
-        set(this.refSTART, this.btnSTART, this.dPadStart);
-        set(this.refSHOOT, this.btnSHOOT, this.dPadShoot);
-        set(this.refUP, this.btnUP, this.dPadUp);
-        set(this.refRIGHT, this.btnRIGHT, this.dPadRight);
-        set(this.refDOWN, this.btnDOWN, this.dPadDown);
-        set(this.refLEFT, this.btnLEFT, this.dPadLeft);
-        set(this.refESC, this.btnESC);
+
+        for (var i = 0; i < this.dPadAll.length; i++) {
+            set(this.refBTNs[i], this.btnALL[i], this.dPadAll[i]);
+        };
     },
 
     pressedInTime: function(key, timeInMillisec) {
-        //timeInMillisec *= 1000;
-        switch (key) {
-            case this.LEFT: 
-                return (game.time.time - timeInMillisec) < this.refLEFT.timeOnDown;
-                break;
-            case this.RIGHT: 
-                return (game.time.time - timeInMillisec) < this.refRIGHT.timeOnDown;
-                break;
-            case this.DOWN: 
-                return (game.time.time - timeInMillisec) < this.refDOWN.timeOnDown;
-                break;
-            case this.UP: 
-                return (game.time.time - timeInMillisec) < this.refUP.timeOnDown;
-                break;
-            case this.JUMP: 
-                return (game.time.time - timeInMillisec) < this.refJUMP.timeOnDown;
-                break;
-            case this.SHOOT: 
-                return (game.time.time - timeInMillisec) < this.refSHOOT.timeOnDown;
-                break;
-            case this.START: 
-                return (game.time.time - timeInMillisec) < this.refSTART.timeOnDown;
-                break;
-            case this.ESC: 
-                return (game.time.time - timeInMillisec) < this.refESC.timeOnDown;
-                break;
-        }
+        return (game.time.time - timeInMillisec) < this.refBTNs[key].timeOnDown;
     },
 
     justDown: function(key, time) {
         if (time && this.pressedInTime(key, time) == false) return false;
-        switch (key) {
-            case this.LEFT: 
-                return this.refLEFT.just;
-                break;
-            case this.RIGHT: 
-                return this.refRIGHT.just;
-                break;
-            case this.DOWN: 
-                return this.refDOWN.just;
-                break;
-            case this.UP: 
-                return this.refUP.just;
-                break;
-            case this.JUMP: 
-                return this.refJUMP.just;
-                break;
-            case this.SHOOT: 
-                return this.refSHOOT.just;
-                break;
-            case this.START: 
-                return this.refSTART.just;
-                break;
-            case this.ESC: 
-                return this.refESC.just;
-                break;
-        }
+        return this.refBTNs[key].just;
     },
 
     setDPadListeners: function(key) {
