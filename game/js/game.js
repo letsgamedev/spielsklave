@@ -53,7 +53,13 @@ Game.Main.prototype = {
             	game.debug.body(this.enemies[i]);
 
             };
-            //game.debug.text(this.cursor.x + "x" + this.cursor.y, 5, 10);
+            var pu = Pad.isDown(Pad.UP) ? "U" : "-";
+            var pd = Pad.isDown(Pad.DOWN) ? "D" : "-";
+            var pl = Pad.isDown(Pad.LEFT) ? "L" : "-";
+            var pr = Pad.isDown(Pad.RIGHT) ? "R" : "-";
+            var pj = Pad.isDown(Pad.JUMP) ? "J" : "-";
+            var ps = Pad.isDown(Pad.SHOOT) ? "S" : "-";
+            game.debug.text(pu+pd+pl+pr+pj+ps, 5, 10);
 
 
             if (this.player.shell) game.debug.body(this.player.shell);

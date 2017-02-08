@@ -22,9 +22,9 @@ function init() {
 	logInfo("init init");
 
 	var Size = {
-		normal: {w: 256, h: 144}, //Zelda NES,GB
-		big: {w: 384, h: 216},	//Lufia, Zelda SNES, Alwa
-		max: {w: 512, h: 288},		
+		normal: {w: 256, h: 144}, //Zelda NES,GB (9 Zeilen)
+		big: {w: 384, h: 216},	//Lufia, Zelda SNES, Alwa (13.5 Zeilen)
+		max: {w: 512, h: 288},	// (18 Zeilen)	
 	};
 
 	var s = Size.normal;
@@ -87,6 +87,12 @@ function sleep(millisec) {
 	setTimeout(function(){
 		game.paused = false;
 	}, millisec);
+
+	/*
+	var end = new Date().getTime() + millisec;
+
+	while(new Date().getTime() < end){
+	*/
 }
 
 function getParams() {

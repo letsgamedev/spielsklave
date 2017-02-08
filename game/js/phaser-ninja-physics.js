@@ -23024,7 +23024,7 @@ Object.defineProperty(Phaser.Game.prototype, "paused", {
             if (this._paused)
             {
                 this._paused = false;
-                this.input.reset();
+                //this.input.reset();
                 this.sound.unsetMute();
                 this.time.gameResumed();
                 this.onResume.dispatch(this);
