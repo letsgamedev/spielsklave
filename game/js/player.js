@@ -43,6 +43,7 @@ var Player = function(world, x, y) {
 	var speed = 100;
 	var lookDirection = DOWN;
 	var shell = null;
+	var inChange = false;
 	player.damageSave = false;
 
 	player.humanInput = true;
@@ -114,6 +115,7 @@ var Player = function(world, x, y) {
 	}
 
 	function swapStone() {
+		if (inChange) return;
 		if (player.state == STATES.STONE) {
 			fromStone();
 		} else {
@@ -137,6 +139,8 @@ var Player = function(world, x, y) {
 
 		TEST = shell.body;
 		shell.sound = null
+
+		inChange = true;
 
 
 		shell.update = function() {
@@ -173,11 +177,16 @@ var Player = function(world, x, y) {
 		shell.fromStone.onComplete.add(function(){
 			setTimeout(function(){
 				if (shell.sound) shell.sound.destroy();
+				inChange = false;
 				shell.destroy();
 			},10)
 			
 		});
-		shell.animations.add("to_stone", ["player_to_stone_0", "player_to_stone_1", "player_to_stone_2", "player_to_stone_3", "player_to_stone_4"], 24, false, true);
+		shell.toStone = shell.animations.add("to_stone", ["player_to_stone_0", "player_to_stone_1", "player_to_stone_2", "player_to_stone_3", "player_to_stone_4"], 24, false, true);
+		shell.toStone.onComplete.add(function(){
+			inChange = false;
+			
+		});
 		shell.animations.play("to_stone");
 		player.shell = shell;
 
@@ -190,6 +199,7 @@ var Player = function(world, x, y) {
 		player.body.y = shell.body.y;
 		shell.body.y+=1;
 		player.state = STATES.NORMAL;
+		inChange = true;
 		shell.animations.play("from_stone");
 		player.visible = true;
 
