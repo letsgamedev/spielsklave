@@ -106,6 +106,7 @@ Game.Main.prototype = {
 
         this.cursor = Cursor(this);
 
+        sound("world", 0.75, true);
         
 
 	},	
