@@ -27,17 +27,15 @@ function init() {
 		max: {w: 512, h: 288},	// (18 Zeilen)	
 	};
 
-	var s = Size.normal;
+	var s = Size.big;
 
 	var params = getParams();
-	if (params.size) {
+	/*if (params.size) {
 		switch(params.size) {
 			case "big": s = Size.big; break;
 			case "max": s = Size.max; break;
 		}
-	}
-
-	
+	}*/
 	Game.width = s.w;
 	Game.height = s.h;
 

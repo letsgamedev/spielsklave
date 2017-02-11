@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<script type="text/javascript">
+	var tileSize = 8;
 	var canvas_base = null;
 	var canvas = null;
 
@@ -44,7 +45,7 @@
 	function prepareTileset(img) {
 		if (field == null) {
 			field = [];
-			var count = img.width / 16 * img.height / 16;
+			var count = img.width / tileSize * img.height / tileSize;
 			for (var i = 0; i < count; i++) {
 				field.push(-1);
 			};
@@ -61,18 +62,37 @@
 		canvas.fillRect(0,0,img.width,img.height);
 		canvas.drawImage(img,0,0);
 
+		var tilesCountWidth = img.width / tileSize;
+		var tilesCountHeight = img.height / tileSize;
+
+		//draw grid
+		canvas.lineWidth=1;
+		canvas.strokeStyle ="rgba(0, 0, 0, 0.5)"
+		for (var i = 0; i < tilesCountWidth; i++) {
+			canvas.beginPath();
+			canvas.moveTo(i * tileSize + 0.5, 0);
+			canvas.lineTo(i * tileSize + 0.5,img.height);
+			canvas.stroke();
+		};
+
+		for (var i = 0; i < tilesCountHeight; i++) {
+			canvas.beginPath();
+			canvas.moveTo(0, i * tileSize + 0.5);
+			canvas.lineTo(img.width,  i * tileSize + 0.5);
+			canvas.stroke();
+		};
+
 		for (var i = 0; i < field.length; i++) {
 			var id = field[i];
 			if (id == -1) continue;
-			var y = Math.floor(i / 10);
-			var x = i - (y * 10);
+			var y = Math.floor(i / tilesCountWidth);
+			var x = i - (y * tilesCountWidth);
 
 
 			var sy = Math.floor(id / 10);
 			var sx = id - (sy * 10);
-			console.log(sx, sy);
 
-			canvas.drawImage(ninja_img,sx * 16,sy * 16,16,16,x * 16,y * 16,16,16);
+			canvas.drawImage(ninja_img,sx * 16,sy * 16,16,16,x * tileSize,y * tileSize,tileSize,tileSize);
 		};
 	}
 
@@ -102,9 +122,10 @@
 
 	function setIdOnTileset(mouse) {
 		var scale = ninja_base.getBoundingClientRect().width / ninja_img.width;
-		var x = Math.floor((mouse.layerX / scale ) / 16);
-		var y = Math.floor((mouse.layerY / scale ) / 16);
-		filedId = y * 10 + x;
+		var tilesCountWidth = img.width / tileSize;
+		var x = Math.floor((mouse.layerX / scale ) / tileSize);
+		var y = Math.floor((mouse.layerY / scale ) / tileSize);
+		filedId = y * tilesCountWidth + x;
 		field[filedId] = currentId;
 
 		updateTileSet();
@@ -123,18 +144,18 @@
 				outPut.push(id)
 			}
 		};
-
+		var tilesCountWidth = img.width / tileSize;
 		var s = "0,//first is ignored\n";
 		for (var i = 0; i < outPut.length; i++) {
-			var add = "" + outPut[i] + ", " + ((i+1) % 10 == 0 ? "\n" : "");
+			var add = "" + outPut[i] + ", " + ((i+1) % tilesCountWidth == 0 ? "\n" : "");
 			s += add;
 		};
 
 		var div = document.getElementById('output');
 		if(warning) {
-			alert("Some tiles are not explicitly set!\n" + s);
+			console.log("Some tiles are not explicitly set!\n" + s);
 		} else {
-			alert(s);
+			console.log(s);
 		}
 		
 	}
