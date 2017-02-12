@@ -171,7 +171,7 @@ var Pad = {
             this.btnLEFT.virtualBtn = {isDown: false};
             this.btnRIGHT.virtualBtn = {isDown: false};
 
-            this.game.input.maxPointers = 2;
+            game.input.maxPointers = 2;
             game.input.addPointer();
 
         
