@@ -18,6 +18,7 @@ Game.Preloader.prototype = {
 		this.load.path = 'assets/';
 		
 		game.load.atlas("atlas");
+		game.load.atlas("atlas_pad");
 		this.load.image("tiles");
 		//game.load.bitmapFont("");
 		var loadSound = function(name, type, dir) {

@@ -20,5 +20,5 @@ body {
 canvas {
 	image-rendering: pixelated;
 	image-rendering: -moz-crisp-edges;
-	cursor: none;
+	//cursor: none;
 }

@@ -40,7 +40,7 @@ var Player = function(world, x, y) {
 	player.animations.play("stand_down");
 	
 	//Private variables
-	var speed = 100;
+	var speed = 110;
 	var lookDirection = DOWN;
 	var shell = null;
 	var inChange = false;

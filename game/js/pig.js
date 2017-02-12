@@ -47,10 +47,10 @@ var Pig = function(world, x, y) {
 	pig.animations.play("stand_down");
 
 	//Private variables
-	var speed = 100;
+	var speed = 110;
 	var minDis = 30;
 	var lookDirection = DOWN;
-	var walkSave = true;
+	var walkSave = 0;
 	var sameDirectionCount = 0;
 	var lastDirection = 0;
 
@@ -98,10 +98,10 @@ var Pig = function(world, x, y) {
 				pig.animations.play("walk_" + lookDirection);
 
 			lastDirection = dirKey;
-			walkSave = true;
+			walkSave = 0;
 		} else {
-			if (walkSave) {
-				walkSave = false;
+			if (walkSave < 6) {
+				walkSave++;
 			} else {
 				pig.animations.play("stand_" + lookDirection);
 			}

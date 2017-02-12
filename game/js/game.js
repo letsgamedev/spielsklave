@@ -84,7 +84,7 @@ Game.Main.prototype = {
 	create: function() {
 		//General setup
 		game.renderer.renderSession.roundPixels = true;
-		this.game.canvas.style.cursor = "none";
+		//this.game.canvas.style.cursor = "none";
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		Pad.init();
         game.time.advancedTiming = true;
@@ -108,7 +108,7 @@ Game.Main.prototype = {
 
         sound("world", 0.75, true);
         
-
+        if (game.device.desktop == false) Pad.addVirtualButtons(game);
 	},	
 
 	/**
@@ -209,14 +209,15 @@ Game.Main.prototype = {
 		var lookOffsetY = 0;
 		var lookOffsetX = 0;
 		var lookOffsetDistance = 0;
-		switch(this.player.lookDirection) {
+		var follower = this.player.state == STATES.STONE ? this.pig : this.player;
+		switch(follower.lookDirection) {
 			case UP: lookOffsetY = lookOffsetDistance; break;
 			case DOWN: lookOffsetY = -lookOffsetDistance; break;
 			case LEFT: lookOffsetX = lookOffsetDistance; break;
 			case RIGHT: lookOffsetX = -lookOffsetDistance; break;
 		}
-		var xd = this.player.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
-		var yd = this.player.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
+		var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
+		var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
 
 		this.camera.x = Math.floor( this.camera.x + (xd * 0.5));
 		this.camera.y = Math.floor( this.camera.y + (yd * 0.5));
@@ -267,11 +268,14 @@ Game.Main.prototype = {
 	        	this.player.hitTween.stop();
 	        	this.player.hitTween = undefined;
 	        }
-	        r = this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
-	        if (r && this.pig.hitTween) {
-	        	this.pig.hitTween.stop();
-	        	this.pig.hitTween = undefined;
-	        }
+	        if (this.player.state == STATES.STONE || this.cursor.visible) {
+	        	r = this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
+		        if (r && this.pig.hitTween) {
+		        	this.pig.hitTween.stop();
+		        	this.pig.hitTween = undefined;
+		        }
+	        } 
+	        
 	    }
 
 	    //Dont do this in the for loop cause this would be super dumb!

@@ -9,11 +9,11 @@
 var Config = {
     controlls: {
         up: {k: Phaser.Keyboard.UP, ka: Phaser.Keyboard.W, p: null},
-        down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S, p: null},
-        left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A, p: null},
-        right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D, p: null},
-        jump: {k: Phaser.Keyboard.C, p: null},
-        run: {k: Phaser.Keyboard.V, p: null},
+        down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S,  p: null},
+        left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A,  p: null},
+        right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D,  p: null},
+        jump: {k: Phaser.Keyboard.C,  p: null},
+        run: {k: Phaser.Keyboard.V,  p: null},
         start: {k: Phaser.Keyboard.ENTER, p: null}
     }};
 var Pad = {
@@ -72,6 +72,107 @@ var Pad = {
         this.setButtons();
         this.pad.onConnectCallback = this.setButtons.bind(this);
         this.pad.onDisconnectCallback = function(){console.log("Controller DICONNECTED")};
+
+        
+    },
+
+    addVirtualButtons: function(game) {
+        var alpha = 0.5;
+        var group = game.add.group();
+        function add(x, y, name, ref) {
+            var btn = game.add.sprite(x, y, "atlas_pad", name, group);
+            btn.oriPos = {x: x, y: y};
+            btn.inputEnabled = true;
+            btn.alpha = alpha;
+            btn.events.onInputDown.add(function(){
+                btn.isDown = true;
+                btn.y = btn.oriPos.y + 1;
+            }, this);
+            btn.events.onInputUp.add(function(){
+                btn.isDown = false;
+                btn.x = btn.oriPos.x;
+                btn.y = btn.oriPos.y;
+            }, this);
+
+            ref.virtualBtn = btn;
+        }
+
+        group.fixedToCamera = true;
+
+        add(game.width - 50 - 25, game.height - 50 - 25, "btn", this.btnSHOOT);
+
+        var back = game.add.sprite(75, game.height - 75, "atlas_pad", "back", group);
+        back.anchor.set(0.5);
+        back.alpha = alpha;
+
+        var circle = game.add.sprite(back.x, back.y, "atlas_pad", "btn");
+            circle.oriPos = {x: circle.x, y: circle.y};
+            circle.anchor.set(0.5);
+            circle.alpha = alpha;
+            circle.inputEnabled = true;
+            circle.fixedToCamera = true;
+            circle.input.enableDrag(true);
+
+            circle.events.onDragUpdate.add(function(sprite, pointer){
+                var angle = Math.PI * 0.2 - game.math.angleBetweenPoints(circle.oriPos, {x: sprite.cameraOffset.x, y: sprite.cameraOffset.y});
+                this.btnRIGHT.virtualBtn.isDown = false; 
+                this.btnLEFT.virtualBtn.isDown = false; 
+                this.btnUP.virtualBtn.isDown = false; 
+                this.btnDOWN.virtualBtn.isDown = false; 
+
+                switch (Math.round(angle / Math.PI * 4)) {
+                    case 1: console.log("right");
+                        this.btnRIGHT.virtualBtn.isDown = true; 
+                        break;
+                    case 2: 
+                        this.btnRIGHT.virtualBtn.isDown = true; 
+                        this.btnUP.virtualBtn.isDown = true; 
+                        break;
+                    case 3: 
+                        this.btnUP.virtualBtn.isDown = true;
+                        break;
+                    case 4: 
+                        this.btnLEFT.virtualBtn.isDown = true; 
+                        this.btnUP.virtualBtn.isDown = true; 
+                        break;
+                    case 5: 
+                    case -3: 
+                        this.btnLEFT.virtualBtn.isDown = true;
+                        break;
+                    case -2: 
+                        this.btnLEFT.virtualBtn.isDown = true; 
+                        this.btnDOWN.virtualBtn.isDown = true; 
+                        break;
+                    case -1: 
+                        this.btnDOWN.virtualBtn.isDown = true; 
+                        break;
+                    case 0: 
+                        this.btnRIGHT.virtualBtn.isDown = true; 
+                        this.btnDOWN.virtualBtn.isDown = true; 
+                        break;
+                }
+            }, this);
+            circle.events.onDragStop.add(function(sprite, pointer){
+                this.btnRIGHT.virtualBtn.isDown = false; 
+                this.btnLEFT.virtualBtn.isDown = false; 
+                this.btnUP.virtualBtn.isDown = false; 
+                this.btnDOWN.virtualBtn.isDown = false; 
+                circle.x = circle.oriPos.x;
+                circle.y = circle.oriPos.y;
+            }, this);
+            circle.events.onInputUp.add(function(){
+                circle.isDown = false;
+                circle.cameraOffset.x = circle.oriPos.x;
+                circle.cameraOffset.y = circle.oriPos.y;
+            }, this);
+
+            this.btnUP.virtualBtn = {isDown: false};
+            this.btnDOWN.virtualBtn = {isDown: false};
+            this.btnLEFT.virtualBtn = {isDown: false};
+            this.btnRIGHT.virtualBtn = {isDown: false};
+
+            this.game.input.maxPointers = 2;
+            game.input.addPointer();
 
         
     },
@@ -152,7 +253,8 @@ var Pad = {
     checkJustDown: function() {
         var set = function(ref, key, padKey) {
             var kDown = key.isDown;
-            if (key.alternateKey) kDown = key.isDown || key.alternateKey.isDown;
+            if (key.alternateKey) kDown = kDown || key.alternateKey.isDown;
+            if (key.virtualBtn) kDown = kDown || key.virtualBtn.isDown;
             var pDown = false;
             if (padKey != null) {
                 if (typeof padKey == "string") {
