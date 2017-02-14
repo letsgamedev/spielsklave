@@ -75,7 +75,7 @@ var Player = function(world, x, y) {
 			setMove(Pad.UP, "y", -1, UP);
 			setMove(Pad.DOWN, "y", 1, DOWN);
 
-			if (player.animations.currentAnim.name.includes("stand") || diagonalFactor == 1) {
+			if (player.animations.currentAnim.name.indexOf("stand") !== -1 || diagonalFactor == 1) {
 				player.animations.play("walk_" + lookDirection);
 				player.state = STATES.WALK;
 			}
