@@ -67,6 +67,7 @@ var LittleEgg = function(world, x, y) {
 					game.physics.ninja.enable(bush, 1);
 				    bush.body.drag = 0.1;
 				    bush.body.immovable = true;
+				    bush.isFix = true;
 				    bush.harmless = true;
 				    bush.ySortOffset = -5;
 				    bush.body.setSize(14,10);

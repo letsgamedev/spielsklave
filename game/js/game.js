@@ -28,6 +28,8 @@ var MAP = {
 	GROUND: 0
 }
 
+var flip = true;
+
 
 /**
 The Main state represants the "inGame" stuff.
@@ -64,6 +66,8 @@ Game.Main.prototype = {
 
             if (this.player.shell) game.debug.body(this.player.shell);
         }
+
+        game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");   
 
     },
 
@@ -252,14 +256,17 @@ Game.Main.prototype = {
 		this.pig.input();
 		this.cursor.update();
 
-		
+		flip = !flip;
+
 		//Collision detection
+		
 		for (var i = 0; i < this.tiles.length; i++) {
 			if(this.player.state == STATES.STONE) {
 				this.player.shell.body.aabb.collideAABBVsTile(this.tiles[i].tile);
 			}
 
-			for (var j = 0; j < this.enemies.length; j++) {
+			for (var j = flip ? 0 : 1; j < this.enemies.length; j+=2) {
+				if (this.enemies[j].isFix) continue;
 				this.enemies[j].body.aabb.collideAABBVsTile(this.tiles[i].tile);
 			};
 
@@ -287,7 +294,7 @@ Game.Main.prototype = {
 
 	    for (var i = 0; i < this.enemies.length; i++) {
 	    	if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
-	    	game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit);
+	    	if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit);
 	    	if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
 	    };
 
