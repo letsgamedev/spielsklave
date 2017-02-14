@@ -222,7 +222,7 @@ var Pad = {
     setButtons: function() {
         console.log("GAME PAD CONNECTED");
 
-        var set = (keyCode) => {
+         var set = function (keyCode) {
             if (keyCode == null) return null;
             if (keyCode[0] == "P") {
                 var code = parseInt(keyCode.substr(2));
