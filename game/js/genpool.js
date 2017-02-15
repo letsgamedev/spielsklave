@@ -15,6 +15,7 @@ GenPool.onHit = function(self, other) {
 	if (self.damageSave) return;
 	if (self.hitTween) return;
 	var hitDistance = 20;
+	self.hp -= other.strength;
 
 	var dist = game.math.distance(self.body.x, self.body.y, other.body.x, other.body.y);
 	var dx = (self.body.x - other.body.x) / dist;

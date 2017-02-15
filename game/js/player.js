@@ -27,6 +27,8 @@ var Player = function(world, x, y) {
 	player.anchor.set(0.5,0.6);
 
 	player.state = STATES.NORMAL;
+	player.maxHP = 8;
+	player.hp = 8;
 
 	//Prepare animations
 	player.animations.add("stand_up", ["dengel_stand_up_0"], 12, true);

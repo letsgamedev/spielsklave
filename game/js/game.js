@@ -28,6 +28,8 @@ var MAP = {
 	GROUND: 0
 }
 
+var backgroundMusic = null;
+
 var flip = true;
 
 
@@ -67,7 +69,7 @@ Game.Main.prototype = {
             if (this.player.shell) game.debug.body(this.player.shell);
         }
 
-        game.debug.text(game.time.fps || '--', 2, 14, "#00ff00", "14px Arial");   
+        game.debug.text(game.time.fps || '--', game.width - 30, game.height - 20, "#00ff00", "14px Arial");   
         game.debug.text("v0.7.1", game.width - 23, 9, "#ffffff", "7px Arial");   
 
     },
@@ -111,9 +113,19 @@ Game.Main.prototype = {
 
         this.cursor = Cursor(this);
 
-        sound("world", 0.75, true);
+        if (backgroundMusic == null) {
+        	backgroundMusic = sound("world", 0.75, true);
+        } else if (backgroundMusic.name != "world") {
+        	backgroundMusic.fadeOut(1);
+        	backgroundMusic = sound("world", 0.75, true);
+        }
         
         if (game.device.desktop == false) Pad.addVirtualButtons(game);
+
+        this.ui = UI(this);
+
+        game.camera.x = this.player.x;
+    	game.camera.y = this.player.x;
 	},	
 
 	/**
@@ -256,7 +268,22 @@ Game.Main.prototype = {
 		this.pig.update();
 		this.pig.input();
 		this.cursor.update();
+		this.collision();
+		
 
+	    this.ui.updateHealth();
+	    this.checkForDeath();
+		this.updateCamera();
+	
+	},
+
+	checkForDeath: function() {
+		if (this.player.hp <= 0) {
+			game.state.start("Preloader")
+		}
+	},
+
+	collision: function() {
 		flip = !flip;
 
 		//Collision detection
@@ -298,13 +325,12 @@ Game.Main.prototype = {
 	    	if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit);
 	    	if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
 	    };
-
-		this.updateCamera();
-	
 	}
 	
 	
 };
+
+
 
 /**
 This is the mouse pointer substitue for

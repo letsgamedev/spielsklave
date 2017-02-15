@@ -32856,7 +32856,7 @@ Phaser.Component.Destroy.prototype = {
 
         if (this.input)
         {
-            this.input.destroy();
+            try{this.input.destroy()} catch(e) {console.log(e, "ignored")}
         }
 
         if (this.animations)
