@@ -11,7 +11,7 @@ var UI = function(world) {
 	var x = 0;
 	var y = 0;
 	for (var i = 0; i < 10; i++) {
-		var h = game.add.sprite(20 + x * 15, y * 14, "atlas", "health_full", ui);
+		var h = game.add.sprite(17 + x * 14, y * 14, "atlas", "health_full", ui);
 		x++;
 		if (x >= 5) {
 			y++;
@@ -38,7 +38,7 @@ var UI = function(world) {
 			
 		};
 
-		head.y = visible > health.length / 2 ? 3 : -3;
+		head.y = visible > health.length / 2 ? 3 : -2;
 
 	}
 	return ui;

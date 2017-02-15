@@ -161,6 +161,9 @@ var Player = function(world, x, y) {
 
 			shell.body.oldPos.x = shell.body.x;
 			shell.body.oldPos.y = shell.body.y;
+
+			player.body.x = shell.x;
+			player.body.y = shell.y;
 		}
 
 		
@@ -197,8 +200,6 @@ var Player = function(world, x, y) {
 
 	//shatters the stone statue and get back the demon char
 	function fromStone() {
-		player.body.x = shell.body.x;
-		player.body.y = shell.body.y;
 		shell.body.y+=1;
 		player.state = STATES.NORMAL;
 		inChange = true;
