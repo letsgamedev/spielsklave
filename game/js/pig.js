@@ -149,10 +149,10 @@ var Pig = function(world, x, y) {
 			}
 
 
-			if (Pad.justDown(Pad.JUMP)) {
+			if (Pad.justDown(Pad.A)) {
 				
 			}
-			if (Pad.justDown(Pad.SHOOT)) {
+			if (Pad.justDown(Pad.X)) {
 				
 			}
 		}

@@ -12,27 +12,42 @@ var Config = {
         down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S,  p: null},
         left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A,  p: null},
         right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D,  p: null},
-        jump: {k: Phaser.Keyboard.C,  p: null},
-        run: {k: Phaser.Keyboard.V,  p: null},
-        start: {k: Phaser.Keyboard.ENTER, p: null}
+        a: {k: Phaser.Keyboard.N,  p: null},
+        b: {k: Phaser.Keyboard.B,  p: null},
+        x: {k: Phaser.Keyboard.H,  p: null},
+        y: {k: Phaser.Keyboard.G,  p: null},
+        l: {k: Phaser.Keyboard.Q,  p: null},
+        r: {k: Phaser.Keyboard.E,  p: null},
+        start: {k: Phaser.Keyboard.ENTER, p: null},
+        select: {k: Phaser.Keyboard.C, p: null}
     }};
 var Pad = {
     UP: 0,
     DOWN: 1,
     LEFT: 2,
     RIGHT: 3,
-    JUMP: 4,
-    SHOOT: 5,
-    START: 6,
-    ESC: 7,
+    A: 4,
+    B: 5,
+    X: 6,
+    Y: 7,
+    L: 8,
+    R: 9,
+    START: 10,
+    SELECT: 11,
+    ESC: 12,
 
     refUP: {just:false,hold:false, count:0, timeOnDown:0},
     refLEFT: {just:false,hold:false, count:0, timeOnDown:0},
     refRIGHT: {just:false,hold:false, count:0, timeOnDown:0},
     refDOWN: {just:false,hold:false, count:0, timeOnDown:0},
-    refSHOOT: {just:false,hold:false, count:0, timeOnDown:0},
-    refJUMP: {just:false,hold:false, count:0, timeOnDown:0},
+    refA: {just:false,hold:false, count:0, timeOnDown:0},
+    refB: {just:false,hold:false, count:0, timeOnDown:0},
+    refX: {just:false,hold:false, count:0, timeOnDown:0},
+    refY: {just:false,hold:false, count:0, timeOnDown:0},
+    refL: {just:false,hold:false, count:0, timeOnDown:0},
+    refR: {just:false,hold:false, count:0, timeOnDown:0},
     refSTART: {just:false,hold:false, count:0, timeOnDown:0},
+    refSELECT: {just:false,hold:false, count:0, timeOnDown:0},
     refESC: {just:false,hold:false, count:0, timeOnDown:0},
     refBTNs: [],
 
@@ -40,9 +55,14 @@ var Pad = {
     btnDOWN: null,
     btnLEFT: null,
     btnRIGHT: null,
-    btnJUMP: null,
-    btnSHOOT: null,
+    btnA: null,
+    btnB: null,
+    btnX: null,
+    btnY: null,
+    btnL: null,
+    btnR: null,
     btnSTART: null,
+    btnSELECT: null,
     btnESC: null,
     btnALL:[],
 
@@ -51,9 +71,14 @@ var Pad = {
     dPadRight: null,
     dPadUp: null,
     dPadDown: null,
-    dPadJump: null,
-    dPadShoot: null,
+    dPadA: null,
+    dPadB: null,
+    dPadX: null,
+    dPadY: null,
+    dPadL: null,
+    dPadR: null,
     dPadStart: null,
+    dPadSelect: null,
     dPadAll: [],
     
     init: function(){
@@ -61,9 +86,9 @@ var Pad = {
 
         this.setKeyboardKeys();
 
-        this.refBTNs = [this.refUP, this.refDOWN, this.refLEFT, this.refRIGHT, this.refJUMP, this.refSHOOT, this.refSTART,this.refESC];
-        this.btnALL = [this.btnUP, this.btnDOWN, this.btnLEFT, this.btnRIGHT, this.btnJUMP, this.btnSHOOT, this.btnSTART,this.btnESC];
-        this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadJump, this.dPadShoot, this.dPadStart];
+        this.refBTNs = [this.refUP, this.refDOWN, this.refLEFT, this.refRIGHT, this.refA, this.refB, this.refX, this.refY, this.refL, this.refR, this.refSTART, this.refSELECT,this.refESC];
+        this.btnALL = [this.btnUP, this.btnDOWN, this.btnLEFT, this.btnRIGHT, this.btnA, this.btnB, this.btnX, this.btnY, this.btnL, this.btnR, this.btnSTART, this.btnSELECT,this.btnESC];
+        this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadA, this.dPadB, this.dPadX, this.dPadY, this.dPadL, this.dPadR, this.dPadStart, this.dPadSelect];
 
         game.input.gamepad.start();
 
@@ -79,6 +104,7 @@ var Pad = {
     addVirtualButtons: function(game) {
         var alpha = 0.5;
         var group = game.add.group();
+
         function add(x, y, name, ref) {
             var btn = game.add.sprite(x, y, "atlas_pad", name, group);
             btn.oriPos = {x: x, y: y};
@@ -191,9 +217,14 @@ var Pad = {
         this.btnRIGHT = game.input.keyboard.addKey(Config.controlls.right.k);
         this.btnRIGHT.alternateKey = game.input.keyboard.addKey(Config.controlls.right.ka);
 
-        this.btnJUMP = game.input.keyboard.addKey(Config.controlls.jump.k);
+        this.btnA = game.input.keyboard.addKey(Config.controlls.a.k);
+        this.btnB = game.input.keyboard.addKey(Config.controlls.b.k);
+        this.btnX = game.input.keyboard.addKey(Config.controlls.x.k);
+        this.btnY = game.input.keyboard.addKey(Config.controlls.y.k);
+        this.btnL = game.input.keyboard.addKey(Config.controlls.l.k);
+        this.btnR = game.input.keyboard.addKey(Config.controlls.r.k);
         this.btnSTART = game.input.keyboard.addKey(Config.controlls.start.k);
-        this.btnSHOOT = game.input.keyboard.addKey(Config.controlls.run.k);
+        this.btnSELECT = game.input.keyboard.addKey(Config.controlls.select.k);
         
         this.btnESC = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
@@ -222,7 +253,7 @@ var Pad = {
     setButtons: function() {
         console.log("GAME PAD CONNECTED");
 
-         var set = function (keyCode) {
+        var set = (keyCode) => {
             if (keyCode == null) return null;
             if (keyCode[0] == "P") {
                 var code = parseInt(keyCode.substr(2));
@@ -237,13 +268,18 @@ var Pad = {
         this.dPadUp = set(Config.controlls.up.p);
         this.dPadDown = set(Config.controlls.down.p);
 
-        this.dPadJump = set(Config.controlls.jump.p);
-        this.dPadShoot = set(Config.controlls.run.p);
+        this.dPadA = set(Config.controlls.a.p);
+        this.dPadB = set(Config.controlls.b.p);
+        this.dPadX = set(Config.controlls.x.p);
+        this.dPadY = set(Config.controlls.y.p);
+        this.dPadL = set(Config.controlls.l.p);
+        this.dPadR = set(Config.controlls.r.p);
         this.dPadStart = set(Config.controlls.start.p);
+        this.dPadSelect = set(Config.controlls.select.p);
     },
 
     debugDPad: function() {
-        console.log(this.dPadLeft.value, this.dPadRight.value, this.dPadUp.value, this.dPadDown.value, this.dPadJump.value, this.dPadShoot.value);
+        console.log(this.dPadLeft.value, this.dPadRight.value, this.dPadUp.value, this.dPadDown.value, this.dPadA.value, this.dPadB.value, this.dPadX.value, this.dPadY.value, this.dPadL.value, this.dPadR.value, this.dPadStart.value, this.dPadSelect.value);
     },
 
     isDown: function(key) {

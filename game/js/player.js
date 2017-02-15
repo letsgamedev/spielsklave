@@ -88,7 +88,7 @@ var Player = function(world, x, y) {
 
 
 		//Turn on/off multiplayer, will detroy stone at the moment
-		if (Pad.justDown(Pad.JUMP)) {
+		if (Pad.justDown(Pad.SELECT)) {
 			world.cursor.visible = !world.cursor.visible;
 			/*if (player.humanInput == false && world.cursor.visible) {
 				setHumanInput(true);
@@ -96,7 +96,7 @@ var Player = function(world, x, y) {
 		}
 
 		//Swap between stone and flesh
-		if (Pad.justDown(Pad.SHOOT)) {
+		if (Pad.justDown(Pad.X)) {
 			swapStone();
 		}
 
