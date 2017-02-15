@@ -67,7 +67,8 @@ Game.Main.prototype = {
             if (this.player.shell) game.debug.body(this.player.shell);
         }
 
-        game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");   
+        game.debug.text(game.time.fps || '--', 2, 14, "#00ff00", "14px Arial");   
+        game.debug.text("v0.7.1", game.width - 23, 9, "#ffffff", "7px Arial");   
 
     },
 
