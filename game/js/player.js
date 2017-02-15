@@ -16,7 +16,7 @@ This is the Player aka the demon contructor.
 @return {Phaser.Sprite} - The player object
 */
 var Player = function(world, x, y) {
-	var player = game.add.sprite(x, y, "atlas", "player_walk_down_1", world.middleLayer);
+	var player = game.add.sprite(x, y, "atlas", "dengel_walk_down_1", world.middleLayer);
 	
 	//Configure physics
 	game.physics.ninja.enable(player, 1);
@@ -29,14 +29,14 @@ var Player = function(world, x, y) {
 	player.state = STATES.NORMAL;
 
 	//Prepare animations
-	player.animations.add("stand_up", ["player_walk_up_1"], 12, true);
-	player.animations.add("stand_down", ["player_walk_down_1"], 12, true);
-	player.animations.add("stand_left", ["player_walk_left_1"], 12, true);
-	player.animations.add("stand_right", ["player_walk_right_1"], 12, true);
-	addAnimation(player, "walk_down", "player_walk_down", 4, 12, true);
-	addAnimation(player, "walk_up", "player_walk_up", 4, 12, true);
-	addAnimation(player, "walk_left", "player_walk_left", 4, 12, true);
-	addAnimation(player, "walk_right", "player_walk_right", 4, 12, true);
+	player.animations.add("stand_up", ["dengel_stand_up_0"], 12, true);
+	player.animations.add("stand_down", ["dengel_stand_down_0"], 12, true);
+	player.animations.add("stand_left", ["dengel_stand_left_0"], 12, true);
+	player.animations.add("stand_right", ["dengel_stand_right_0"], 12, true);
+	addAnimation(player, "walk_down", "dengel_walk_down", 8, 20, true);
+	addAnimation(player, "walk_up", "dengel_walk_up", 8, 20, true);
+	addAnimation(player, "walk_left", "dengel_walk_left", 8, 20, true);
+	addAnimation(player, "walk_right", "dengel_walk_right", 8, 20, true);
 	player.animations.play("stand_down");
 	
 	//Private variables
@@ -163,16 +163,16 @@ var Player = function(world, x, y) {
 
 		
 		shell.fromStone = shell.animations.add("from_stone", [
-			"player_from_stone_0",
-			"player_from_stone_1",
-			"player_from_stone_2",
-			"player_from_stone_3",
-			"player_from_stone_4",
-			"player_from_stone_5",
-			"player_from_stone_6",
-			"player_from_stone_7",
-			"player_from_stone_8",
-			"player_from_stone_9",
+			"dengel_from_stone_0",
+			"dengel_from_stone_1",
+			"dengel_from_stone_2",
+			"dengel_from_stone_3",
+			"dengel_from_stone_4",
+			"dengel_from_stone_5",
+			"dengel_from_stone_6",
+			"dengel_from_stone_7",
+			"dengel_from_stone_8",
+			"dengel_from_stone_9",
 			], 24, false, true);
 		shell.fromStone.onComplete.add(function(){
 			setTimeout(function(){
@@ -182,7 +182,7 @@ var Player = function(world, x, y) {
 			},10)
 			
 		});
-		shell.toStone = shell.animations.add("to_stone", ["player_to_stone_0", "player_to_stone_1", "player_to_stone_2", "player_to_stone_3", "player_to_stone_4"], 24, false, true);
+		shell.toStone = shell.animations.add("to_stone", ["dengel_to_stone_0", "dengel_to_stone_1", "dengel_to_stone_2", "dengel_to_stone_3", "dengel_to_stone_4"], 24, false, true);
 		shell.toStone.onComplete.add(function(){
 			inChange = false;
 			
