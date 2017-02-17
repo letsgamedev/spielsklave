@@ -125,7 +125,8 @@ var Pad = {
 
         group.fixedToCamera = true;
 
-        add(game.width - 50 - 25, game.height - 50 - 25, "btn", this.btnSHOOT);
+        add(game.width - 50 - 25, game.height - 50 - 25, "btn", this.btnX);
+        add(game.width - 50 - 85, game.height - 50 - 25, "btn", this.btnY);
 
         var back = game.add.sprite(75, game.height - 75, "atlas_pad", "back", group);
         back.anchor.set(0.5);

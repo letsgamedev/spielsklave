@@ -61,17 +61,32 @@ var Scythe = function(player, world) {
 		]
 	}
 
-
+	var diagonalFactor = 0;
+	function setMove(padKey,axis, multi,dirID) {
+		if (Pad.isDown(padKey)) {
+			player.body[axis] += DT * 20 * diagonalFactor * multi;
+		}
+	}
 
 	var currentHitBox = null;
 	scythe.update = function() {
 		TEST = null;
 		if (isPlaying) {
+			
+			diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1; 
+
+			setMove(Pad.LEFT, "x", -1, LEFT);
+			setMove(Pad.RIGHT, "x", 1, RIGHT);
+			setMove(Pad.UP, "y", -1, UP);
+			setMove(Pad.DOWN, "y", 1, DOWN);
+
+
 			var hb = hitbox[player.lookDirection][player.frameName.slice(-1)];
 			currentHitBox = new Phaser.Rectangle(player.body.x + hb.x, player.body.y + hb.y, hb.w, hb.h);
 			TEST = currentHitBox;
 
 			hitTest();
+
 		}
 	}
 
