@@ -77,7 +77,7 @@ function addAnimation(obj, name, assetsName, count, fps, loop) {
 	for (var i = 0; i < count; i++) {
 		animNames.push(assetsName + "_" + i);
 	};
-	obj.animations.add(name, animNames, fps, loop);
+	return obj.animations.add(name, animNames, fps, loop);
 }
 
 function sleep(millisec) {

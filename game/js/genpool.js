@@ -14,22 +14,29 @@ GenPool.onHit = function(self, other) {
 	if (other.harmless) return;
 	if (self.damageSave) return;
 	if (self.hitTween) return;
-	var hitDistance = 20;
 	self.hp -= other.strength;
+	
+	GenPool.throwBack(self, other, 20);
 
+	self.damageSave = true;
+	sound("player_hit");
+
+	sleep(20);
+	
+	game.camera.shake(0.02, 70, true,Phaser.Camera.SHAKE_BOTH, false);
+	timeEvent(0.15, function(){self.damageSave = false});				
+}
+
+GenPool.throwBack = function(self, other, hitDistance, speed) {
+	speed = speed || 150
 	var dist = game.math.distance(self.body.x, self.body.y, other.body.x, other.body.y);
 	var dx = (self.body.x - other.body.x) / dist;
 	var dy = (self.body.y - other.body.y) / dist;
 
-
-	self.damageSave = true;
-
-	sound("player_hit");
-
 	var tween = game.add.tween(self.body).to({
 		x: self.body.x + dx * hitDistance,
 		y: self.body.y + dy * hitDistance
-	}, 150, null, true);
+	}, speed, null, true);
 
 	tween.onComplete.add(function(){
 		self.hitTween = undefined;
@@ -37,9 +44,8 @@ GenPool.onHit = function(self, other) {
 	});
 
 	self.hitTween = tween;
+}
 
-	sleep(20);
-	
-	game.camera.shake(0.02, 70, true,Phaser.Camera.SHAKE_BOTH, false);
-	timeEvent(0.15, function(){self.damageSave = false});				
+GenPool.getHitBox = function() {
+	return new Phaser.Rectangle(this.body.x + this.hitBox.x, this.body.y + this.hitBox.y, this.hitBox.width, this.hitBox.height);
 }

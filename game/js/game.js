@@ -18,9 +18,12 @@ var STATES = {
 	NORMAL: 0,
 	STONE: 1,
 	WALK: 2,
-	STAND: 3
+	STAND: 3,
+	INUSE: 4
 };
 var TEST = null;
+var TEST2 = null;
+var TEST3 = null;
 
 var MAP = {
 	OBJECTS: 2,
@@ -68,6 +71,9 @@ Game.Main.prototype = {
 
             if (this.player.shell) game.debug.body(this.player.shell);
         }
+
+        //if (TEST) game.debug.rectangle(TEST);
+        //if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
         game.debug.text(game.time.fps || '--', game.width - 30, game.height - 20, "#00ff00", "14px Arial");   
         game.debug.text("v0.7.1", game.width - 23, 9, "#ffffff", "7px Arial");   
@@ -295,7 +301,11 @@ Game.Main.prototype = {
 
 			for (var j = flip ? 0 : 1; j < this.enemies.length; j+=2) {
 				if (this.enemies[j].isFix) continue;
-				this.enemies[j].body.aabb.collideAABBVsTile(this.tiles[i].tile);
+				r = this.enemies[j].body.aabb.collideAABBVsTile(this.tiles[i].tile);
+				if (r && this.enemies[j].hitTween) {
+		        	this.enemies[j].hitTween.stop();
+		        	this.enemies[j].hitTween = undefined;
+		        }
 			};
 
 	        var r = this.player.body.aabb.collideAABBVsTile(this.tiles[i].tile);

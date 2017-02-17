@@ -18,6 +18,7 @@ LittleEgg is one of the first enemies in game
 var LittleEgg = function(world, x, y) {
 	var egg = game.add.sprite(x, y, "atlas", "little_egg_hatch_0", world.middleLayer);
 	egg.strength = 1;
+	egg.hp = 3;
 	addAnimation(egg, "stand_down", "little_egg_stand_down", 2, 3, true);
 	addAnimation(egg, "stand_up", "little_egg_stand_up", 2, 3, true);
 	addAnimation(egg, "stand_left", "little_egg_stand_left", 2, 3, true);
@@ -34,6 +35,8 @@ var LittleEgg = function(world, x, y) {
 
 	egg.status = EGG;
 
+
+
 	
 	//Configure physics
 	game.physics.ninja.enable(egg, 1);
@@ -44,11 +47,29 @@ var LittleEgg = function(world, x, y) {
 	egg.body.setSize(12,12);
 	egg.anchor.set(0.5,0.6);
 
+	egg.hitBox = new Phaser.Rectangle(-10, -10, 20, 20);
+
 	var xDir = 0;
 	var yDir = 0;
 	var moveTime = 0;
 	var speed = 40;
 	var isBushSet = false;
+
+	var hitSaveTime = 0.15;
+
+	egg.getHitBox = GenPool.getHitBox;
+	egg.onHit = function(self, other) {
+		if (hitSaveTime > 0) return;
+		hitSaveTime = 0.15;
+		egg.tint = 0x62B3F5;
+		sound("hit2", 0.25);
+		GenPool.throwBack(egg, world.player, 20, 100);
+		egg.hp--;
+		if (egg.hp <= 0) {
+			egg.kill();
+		}
+	}
+	
 
 	/**
 	if the player is near the egg, it will hatch and 
@@ -56,6 +77,8 @@ var LittleEgg = function(world, x, y) {
 	*/
 	egg.update = function() {
 		moveTime -= DT;
+		hitSaveTime -= DT;
+		if (hitSaveTime <= 0) egg.tint = 0xffffff;
 		switch(egg.status) {
 			case EGG:
 				hatchCheck();
@@ -67,6 +90,13 @@ var LittleEgg = function(world, x, y) {
 					game.physics.ninja.enable(bush, 1);
 				    bush.body.drag = 0.1;
 				    bush.body.immovable = true;
+
+				    bush.hitBox = new Phaser.Rectangle(-10, -10, 20, 20);
+				    bush.getHitBox = GenPool.getHitBox;
+				    bush.onHit = function() {
+				    	console.log(bush.kill)
+				    	bush.kill();
+				    }
 				    bush.isFix = true;
 				    bush.harmless = true;
 				    bush.ySortOffset = -5;

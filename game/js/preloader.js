@@ -28,10 +28,12 @@ Game.Preloader.prototype = {
 			game.load.audio(name, dir + name + "." + type);
 		}
 		loadSound("player_hit", "wav");
+		loadSound("hit2", "wav");
 		loadSound("player_to_stone", "wav");
 		loadSound("player_from_stone", "wav");
 		loadSound("little_egg_hatch", "wav");
 		loadSound("stone_push", "wav");
+		loadSound("scythe", "wav");
 		loadSound("world", "ogg", "music/");
 	},
 	

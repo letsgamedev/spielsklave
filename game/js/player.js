@@ -30,6 +30,11 @@ var Player = function(world, x, y) {
 	player.maxHP = 8;
 	player.hp = 8;
 
+	player.item1 = null;
+	player.item2 = null;
+
+	player.item1 = Scythe(player, world);
+
 	//Prepare animations
 	player.animations.add("stand_up", ["dengel_stand_up_0"], 12, true);
 	player.animations.add("stand_down", ["dengel_stand_down_0"], 12, true);
@@ -39,16 +44,26 @@ var Player = function(world, x, y) {
 	addAnimation(player, "walk_up", "dengel_walk_up", 8, 20, true);
 	addAnimation(player, "walk_left", "dengel_walk_left", 8, 20, true);
 	addAnimation(player, "walk_right", "dengel_walk_right", 8, 20, true);
+	
+	
 	player.animations.play("stand_down");
 	
 	//Private variables
 	var speed = 110;
 	var lookDirection = DOWN;
+	player.lookDirection = lookDirection;
 	var shell = null;
 	var inChange = false;
 	player.damageSave = false;
 
 	player.humanInput = true;
+
+	player.update = function() {
+		if (player.item1) player.item1.update();
+		if (player.item2) player.item2.update();
+	}
+
+	console.log(player.body);
 
 	/*
 	Handels the input from Pad class. Has to be called every frame.
@@ -62,7 +77,7 @@ var Player = function(world, x, y) {
 		
 
 		//Process movement and animation
-		if (player.state !== STATES.STONE && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
+		if (player.state !== STATES.STONE && player.state !== STATES.INUSE && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
 			function setMove(padKey,axis, multi,dirID) {
 				if (Pad.isDown(padKey)) {
 					player.body[axis] += DT * speed * diagonalFactor * multi;
@@ -83,7 +98,7 @@ var Player = function(world, x, y) {
 			}
 		}
 		
-		if (stand && player.state != STATES.STONE) {
+		if (stand && player.state != STATES.STONE && player.state !== STATES.INUSE) {
 			player.animations.play("stand_" + lookDirection);
 			player.state = STATES.STAND;
 		}
@@ -101,6 +116,18 @@ var Player = function(world, x, y) {
 		if (Pad.justDown(Pad.X)) {
 			swapStone();
 		}
+
+		//Item slot 1
+		if (player.state != STATES.INUSE && player.state != STATES.STONE) {
+			if (Pad.justDown(Pad.Y) && player.item1) {
+				player.item1.action();
+			}
+
+			if (Pad.justDown(Pad.B) && player.item2) {
+				player.item2.action();
+			}
+		}
+		
 
 	}
 
