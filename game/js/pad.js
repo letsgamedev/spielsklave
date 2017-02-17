@@ -8,18 +8,18 @@
 
 var Config = {
     controlls: {
-        up: {k: Phaser.Keyboard.UP, ka: Phaser.Keyboard.W, p: null},
-        down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S,  p: null},
-        left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A,  p: null},
-        right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D,  p: null},
-        a: {k: Phaser.Keyboard.N,  p: null},
-        b: {k: Phaser.Keyboard.B,  p: null},
-        x: {k: Phaser.Keyboard.H,  p: null},
-        y: {k: Phaser.Keyboard.G,  p: null},
-        l: {k: Phaser.Keyboard.Q,  p: null},
-        r: {k: Phaser.Keyboard.E,  p: null},
-        start: {k: Phaser.Keyboard.ENTER, p: null},
-        select: {k: Phaser.Keyboard.C, p: null}
+        up: {k: Phaser.Keyboard.UP, ka: Phaser.Keyboard.W, p: "A1-"},
+        down: {k: Phaser.Keyboard.DOWN, ka: Phaser.Keyboard.S,  p: "A1+"},
+        left: {k: Phaser.Keyboard.LEFT, ka: Phaser.Keyboard.A,  p: "A0-"},
+        right: {k: Phaser.Keyboard.RIGHT, ka: Phaser.Keyboard.D,  p: "A0+"},
+        a: {k: Phaser.Keyboard.N,  p: "P-1"},
+        b: {k: Phaser.Keyboard.B,  p: "P-2"},
+        x: {k: Phaser.Keyboard.H,  p: "P-0"},
+        y: {k: Phaser.Keyboard.G,  p: "P-3"},
+        l: {k: Phaser.Keyboard.Q,  p: "P-4"},
+        r: {k: Phaser.Keyboard.E,  p: "P-5"},
+        start: {k: Phaser.Keyboard.ENTER, p: 9},
+        select: {k: Phaser.Keyboard.C, p: 8}
     }};
 var Pad = {
     UP: 0,
@@ -96,7 +96,7 @@ var Pad = {
         this.pad = game.input.gamepad.pad1;
         this.setButtons();
         this.pad.onConnectCallback = this.setButtons.bind(this);
-        this.pad.onDisconnectCallback = function(){console.log("Controller DICONNECTED")};
+        this.pad.onDisconnectCallback = function(){console.log("Controller DISCONNECTED")};
 
         
     },
@@ -254,11 +254,12 @@ var Pad = {
     setButtons: function() {
         console.log("GAME PAD CONNECTED");
 
-        var set = (keyCode) => {
+        var set = function(keyCode) {
             if (keyCode == null) return null;
             if (keyCode[0] == "P") {
                 var code = parseInt(keyCode.substr(2));
-                return this.setDPadListeners(code); 
+                console.log(keyCode, code)
+                return Pad.setDPadListeners(code); 
             } else {
                 return keyCode;
             }
@@ -277,6 +278,15 @@ var Pad = {
         this.dPadR = set(Config.controlls.r.p);
         this.dPadStart = set(Config.controlls.start.p);
         this.dPadSelect = set(Config.controlls.select.p);
+        this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadA, this.dPadB, this.dPadX, this.dPadY, this.dPadL, this.dPadR, this.dPadStart, this.dPadSelect];
+
+        //game.input.gamepad.onDownCallback = function(btnCode) {
+        //    console.log(btnCode)
+        //}
+
+        //game.input.gamepad.onAxisCallback = function(btnCode, axis, direction) {
+        //    console.log(btnCode,b,c)
+        //}
     },
 
     debugDPad: function() {

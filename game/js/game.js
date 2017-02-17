@@ -76,7 +76,7 @@ Game.Main.prototype = {
         //if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
         game.debug.text(game.time.fps || '--', game.width - 30, game.height - 20, "#00ff00", "14px Arial");   
-        game.debug.text("v0.7.3", game.width - 23, 9, "#ffffff", "7px Arial");   
+        game.debug.text("v0.7.4", game.width - 23, 9, "#ffffff", "7px Arial");   
 
     },
 
