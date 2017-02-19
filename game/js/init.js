@@ -5,12 +5,6 @@
 @patreon https://www.patreon.com/letsgamedev
 @mail letsgamedev@gmx.de
 */
-var game = null;
-
-var Game = {
-	height: 144,
-	width: 256
-};
 
 //Lufia 13 Zeilen -> 208px
 //Zelda nes 10 - 11 Zeilen -> 160px
@@ -78,7 +72,7 @@ function addAnimation(obj, name, assetsName, count, fps, loop) {
 		animNames.push(assetsName + "_" + i);
 	};
 	return obj.animations.add(name, animNames, fps, loop);
-}
+};
 
 function sleep(millisec) {
 	game.paused = true;
@@ -91,7 +85,7 @@ function sleep(millisec) {
 
 	while(new Date().getTime() < end){
 	*/
-}
+};
 
 function getParams() {
     qs = document.location.search.split('+').join(' ');
@@ -105,4 +99,4 @@ function getParams() {
     }
 
     return params;
-}
+};

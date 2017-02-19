@@ -25,7 +25,7 @@ GenPool.onHit = function(self, other) {
 	
 	game.camera.shake(0.02, 70, true,Phaser.Camera.SHAKE_BOTH, false);
 	timeEvent(0.15, function(){self.damageSave = false});				
-}
+};
 
 GenPool.throwBack = function(self, other, hitDistance, speed) {
 	speed = speed || 150
@@ -44,8 +44,8 @@ GenPool.throwBack = function(self, other, hitDistance, speed) {
 	});
 
 	self.hitTween = tween;
-}
+};
 
 GenPool.getHitBox = function() {
 	return new Phaser.Rectangle(this.body.x + this.hitBox.x, this.body.y + this.hitBox.y, this.hitBox.width, this.hitBox.height);
-}
+};

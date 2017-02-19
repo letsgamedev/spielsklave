@@ -46,4 +46,4 @@ var UI = function(world) {
 	ui.item1 = game.add.sprite(game.width - 100, -7, "atlas", "icon_id_0", ui);
 	ui.item1 = game.add.sprite(game.width - 70, -7, "atlas", "icon_id_1", ui);
 	return ui;
-}
+};

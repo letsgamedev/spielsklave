@@ -239,4 +239,4 @@ var Player = function(world, x, y) {
 	}
 
 	return player;
-}
+};

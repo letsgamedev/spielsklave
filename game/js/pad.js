@@ -347,4 +347,4 @@ var Pad = {
         }
         return btn;
     }
-}
+};

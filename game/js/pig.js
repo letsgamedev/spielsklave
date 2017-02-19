@@ -161,4 +161,4 @@ var Pig = function(world, x, y) {
 	}
 
 	return pig;
-}
+};

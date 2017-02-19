@@ -156,4 +156,4 @@ var LittleEgg = function(world, x, y) {
 	}
 
 	return egg;
-}
+};
