@@ -79,12 +79,6 @@ function sleep(millisec) {
 	setTimeout(function(){
 		game.paused = false;
 	}, millisec);
-
-	/*
-	var end = new Date().getTime() + millisec;
-
-	while(new Date().getTime() < end){
-	*/
 };
 
 function getParams() {
