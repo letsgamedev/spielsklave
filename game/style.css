@@ -22,3 +22,7 @@ canvas {
 	image-rendering: -moz-crisp-edges;
 	//cursor: none;
 }
+
+canvas:hover {
+	//cursor: none !important;
+}
