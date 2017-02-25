@@ -70,7 +70,6 @@ var Scythe = function(player, world) {
 
 	var currentHitBox = null;
 	scythe.update = function() {
-		TEST = null;
 		if (isPlaying) {
 			
 			diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1; 
@@ -83,7 +82,6 @@ var Scythe = function(player, world) {
 
 			var hb = hitbox[player.lookDirection][player.frameName.slice(-1)];
 			currentHitBox = new Phaser.Rectangle(player.body.x + hb.x, player.body.y + hb.y, hb.w, hb.h);
-			TEST = currentHitBox;
 
 			hitTest();
 

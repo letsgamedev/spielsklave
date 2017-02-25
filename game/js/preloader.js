@@ -32,12 +32,14 @@ Game.Preloader.prototype = {
 		loadSound("player_to_stone", "wav");
 		loadSound("player_from_stone", "wav");
 		loadSound("little_egg_hatch", "wav");
+		loadSound("explosion1", "wav");
 		loadSound("stone_push", "wav");
 		loadSound("scythe", "wav");
 		loadSound("world", "ogg", "music/");
 	},
 	
 	create: function() {
+		//game.state.start("BlendModeTest");
 		game.state.start("Main");
 	}
 };

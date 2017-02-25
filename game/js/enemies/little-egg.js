@@ -66,7 +66,12 @@ var LittleEgg = function(world, x, y) {
 		GenPool.throwBack(egg, world.player, 20, 100);
 		egg.hp--;
 		if (egg.hp <= 0) {
-			egg.kill();
+			timeEvent(0.1, function(){
+				PigSmoke(egg, world);
+				sound("explosion1");
+				egg.kill();
+			})
+			
 		}
 	}
 	

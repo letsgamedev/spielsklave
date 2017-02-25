@@ -20,7 +20,7 @@ var Player = function(world, x, y) {
 	
 	//Configure physics
 	game.physics.ninja.enable(player, 1);
-    player.body.drag = 0.1;
+    player.body.drag = 0.001;
 	
 	//Config body size and alignment
 	player.body.setSize(12,12);
@@ -147,6 +147,7 @@ var Player = function(world, x, y) {
 		if (inChange) return;
 		if (player.state == STATES.STONE) {
 			fromStone();
+			world.pig.teleport();
 		} else {
 			toStone();
 		}
@@ -166,7 +167,6 @@ var Player = function(world, x, y) {
 
 		sound("player_to_stone");
 
-		TEST = shell.body;
 		shell.sound = null
 
 		inChange = true;
@@ -238,5 +238,34 @@ var Player = function(world, x, y) {
 		//world.moveCameraTo(player.body.x, player.body.y);
 	}
 
+	player.fromStone = fromStone;
+
 	return player;
 };
+
+var ReflectionPlayer = function(world) {
+	var player = world.player;
+	console.log(player)
+
+	var reflection = game.add.sprite(0, 0, "atlas", "player_walk_down_1", world.reflectionLayer);
+	reflection.scale.y = -1;
+
+	reflection.animations.add("stand_up", ["player_walk_up_1"], 12, true);
+	reflection.animations.add("stand_down", ["player_walk_down_1"], 12, true);
+	reflection.animations.add("stand_left", ["player_walk_left_1"], 12, true);
+	reflection.animations.add("stand_right", ["player_walk_right_1"], 12, true);
+	addAnimation(reflection, "walk_down", "player_walk_down", 4, 10, true);
+	addAnimation(reflection, "walk_up", "player_walk_up", 4, 10, true);
+	addAnimation(reflection, "walk_left", "player_walk_left", 4, 10, true);
+	addAnimation(reflection, "walk_right", "player_walk_right", 4, 10, true);
+	reflection.alpha = 0.75;
+
+	reflection.update = function() {
+		reflection.x = player.x - 32;
+		reflection.y = player.y + 54;
+
+		reflection.animations.play(player.animations.currentAnim.name);
+	}
+
+	return reflection;
+}

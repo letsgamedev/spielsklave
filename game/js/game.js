@@ -26,7 +26,8 @@ var TEST2 = null;
 var TEST3 = null;
 
 var MAP = {
-	OBJECTS: 2,
+	OBJECTS: 3,
+	TOP: 2,
 	GROUND_DETAIL: 1,
 	GROUND: 0
 }
@@ -76,11 +77,12 @@ Game.Main.prototype = {
         //if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
         game.debug.text(game.time.fps || '--', game.width - 30, game.height - 20, "#00ff00", "14px Arial");   
-        game.debug.text("v0.8.0", game.width - 23, 9, "#ffffff", "7px Arial");   
+        game.debug.text("v0.9.0", game.width - 23, 9, "#ffffff", "7px Arial");   
 
     },
 
     preRender: function() {
+    	this.updateCamera();
     	this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
     },
 	
@@ -88,7 +90,7 @@ Game.Main.prototype = {
 	Load all the additional assets we need to use.
 	*/
 	preload: function() {
-		this.load.tilemap("map", 'map2.json', null, Phaser.Tilemap.TILED_JSON);
+		this.load.tilemap("map", 'map.json', null, Phaser.Tilemap.TILED_JSON);
 	},
 	
 	/**
@@ -101,7 +103,10 @@ Game.Main.prototype = {
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		Pad.init();
         game.time.advancedTiming = true;
-        game.stage.backgroundColor = "#000000";
+        game.stage.backgroundColor = 0x279cf9;
+
+        this.reflectionLayer = game.add.group();
+
 
         this.enemies = [];
 
@@ -110,6 +115,7 @@ Game.Main.prototype = {
         this.initMap();
         this.bottomLayer = game.add.group();
         this.middleLayer = game.add.group();
+        this.topLayerTiles = this.map.createLayer(MAP.TOP);
 
         this.player = Player(this, 16 * 25, 16 * 35);
         
@@ -128,7 +134,28 @@ Game.Main.prototype = {
         
         if (game.device.desktop == false) Pad.addVirtualButtons(game);
 
-        this.ui = UI(this);
+        
+
+    	this.addClouds();
+
+    	this.reflectionLayer.add(ReflectionPlayer(this));
+    	this.reflectionLayer.add(ReflectionPig(this));
+
+    	this.overlay = game.add.graphics(0, 0);
+    	this.overlay.fixedToCamera = true;
+    	this.overlay.blendMode = 4;//2
+    	var night = 0x0000a0;
+    	var dawn = 0xe04040;
+    	this.overlay.tint = night;
+    	this.overlay.update = function() {
+    		var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
+    		this.alpha = 0//proc;
+    	}
+    	TEST = this.overlay;
+	    this.overlay.beginFill(0xffffff);
+	    this.overlay.drawRect(0, 0, game.width, game.height);
+
+	    this.ui = UI(this);
 
         game.camera.x = this.player.x;
     	game.camera.y = this.player.x;
@@ -155,7 +182,7 @@ Game.Main.prototype = {
         this.groundDetail = this.map.createLayer(MAP.GROUND_DETAIL);
 
         var slopeMap = [0,//first is ignored
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 0, 3, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 3, 1, 1, 1, 1, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 
@@ -167,14 +194,14 @@ Game.Main.prototype = {
 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 0, 0, 30, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 0, 0, 15, 14, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 
-1, 0, 0, 1, 18, 14, 15, 19, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0, 
-5, 0, 0, 4, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+1, 0, 0, 1, 18, 14, 15, 19, 3, 2, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0, 
+5, 0, 0, 4, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 0, 3, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 3, 1, 1, 5, 0, 0, 4, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-1, 1, 1, 2, 0, 0, 3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 2, 0, 0, 0, 0, 
+1, 1, 1, 2, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 5, 0, 0, 0, 0, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 0, 0, 4, 1, 1, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -219,6 +246,26 @@ Game.Main.prototype = {
 		};
 
 		
+	},
+
+	addClouds: function() {
+		for (var i = 0; i < 4; i++) {
+			var x = game.rnd.between(0, game.world.width);
+			var y = game.rnd.between(0, game.world.height);
+			let c = game.add.sprite(x, y, "atlas", "cloud0");
+			c.blendMode = 8;
+			c.tint = 0x999999;
+			c.alpha = 0.5;
+			c.scale.set(2);
+			c.xSpeed = game.rnd.between(3, 15);
+			c.ySpeed = game.rnd.between(3, 15);
+			c.update = function() {
+				c.x += DT * c.xSpeed;
+				c.y += DT * c.xSpeed;
+				if (c.y > game.world.height) c.y = -c.height;
+				if (c.x > game.world.width) c.x = -c.width;
+			}
+		};
 	},
 
 	moveCameraTo: function(x, y) {
@@ -269,6 +316,7 @@ Game.Main.prototype = {
 	update: function() {
 		DT = this.time.physicsElapsedMS * 0.001;
 		Pad.checkJustDown();
+
 		
 		this.player.input();
 		this.pig.update();
@@ -279,7 +327,7 @@ Game.Main.prototype = {
 
 	    this.ui.updateHealth();
 	    this.checkForDeath();
-		this.updateCamera();
+		
 	
 	},
 
@@ -312,6 +360,12 @@ Game.Main.prototype = {
 	        if (r && this.player.hitTween) {
 	        	this.player.hitTween.stop();
 	        	this.player.hitTween = undefined;
+	        }
+
+	        r = this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);
+	        if (r && this.pig.hitTween) {
+	        	this.pig.hitTween.stop();
+	        	this.pig.hitTween = undefined;
 	        }
 	        if (this.player.state == STATES.STONE || this.cursor.visible) {
 	        	r = this.pig.body.aabb.collideAABBVsTile(this.tiles[i].tile);

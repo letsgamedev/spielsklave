@@ -26,7 +26,7 @@ var Pig = function(world, x, y) {
 	
 	//Configure physics
 	game.physics.ninja.enable(pig, 1, 0, 4);
-    pig.body.drag = 0.1;
+    pig.body.drag = 0.001;
     pig.damageSave = true;
 	
     //Config body size and alignment
@@ -49,6 +49,7 @@ var Pig = function(world, x, y) {
 	//Private variables
 	var speed = 110;
 	var minDis = 30;
+	var teleportDistance = 90;
 	var lookDirection = DOWN;
 	var walkSave = 0;
 	var sameDirectionCount = 0;
@@ -76,6 +77,10 @@ var Pig = function(world, x, y) {
 			case -2:
 			case 2: lookDirection = LEFT; break;
 			case -1: lookDirection = UP; break;
+		}
+
+		if (distance > teleportDistance) {
+			pig.teleport();
 		}
 
 		if (distance > minDis){
@@ -112,7 +117,10 @@ var Pig = function(world, x, y) {
 
 	}
 
-	pig.onHit = GenPool.onHit;
+	pig.onHit = function() {
+		//GenPool.onHit;
+		world.player.fromStone();
+	}
 
 	/*
 	Handels the input from Pad class. Has to be called every frame.
@@ -160,5 +168,63 @@ var Pig = function(world, x, y) {
 
 	}
 
+	pig.teleport = function() {
+		//puff!
+		var dis = 16;
+		var xOff = 0;
+		var yOff = 0;
+		switch (world.player.lookDirection) {
+			case UP: 	yOff = dis; break;
+			case DOWN:  yOff = -dis; break;
+			case LEFT:  xOff = dis; break;
+			case RIGHT: xOff = -dis; break;
+		}
+
+		PigSmoke(pig, world);
+		
+		
+
+		pig.body.x = world.player.body.x + xOff;
+		pig.body.y = world.player.body.y + yOff;
+
+		PigSmoke(pig.body, world);
+	}
+
 	return pig;
 };
+
+var ReflectionPig = function(world) {
+	var pig = world.pig;
+	console.log(pig)
+
+	var reflection = game.add.sprite(0, 0, "atlas", "pig_walk_down_1", world.reflectionLayer);
+	reflection.scale.y = -1;
+
+	reflection.animations.add("stand_up", ["pig_walk_up_1"], 12, true);
+	reflection.animations.add("stand_down", ["pig_walk_down_1"], 12, true);
+	reflection.animations.add("stand_left", ["pig_walk_left_1"], 12, true);
+	reflection.animations.add("stand_right", ["pig_walk_right_1"], 12, true);
+	addAnimation(reflection, "walk_down", "pig_walk_down", 4, 10, true);
+	addAnimation(reflection, "walk_up", "pig_walk_up", 4, 10, true);
+	addAnimation(reflection, "walk_left", "pig_walk_left", 4, 10, true);
+	addAnimation(reflection, "walk_right", "pig_walk_right", 4, 10, true);
+	reflection.alpha = 0.75;
+
+	reflection.update = function() {
+		reflection.x = pig.x - 10;
+		reflection.y = pig.y + 24;
+
+		reflection.animations.play(pig.animations.currentAnim.name);
+	}
+
+	return reflection;
+}
+
+var PigSmoke = function(xy, world) {
+	var smoke = game.add.sprite(xy.x, xy.y, "atlas", "pig_smoke_0", world.middleLayer);
+		smoke.anchor.set(0.6);
+		smoke.ySortOffset = 5;
+		smoke.anim = addAnimation(smoke, "play", "pig_smoke", 5, 12, false);
+		smoke.anim.onComplete.add(destroyWrap(smoke));
+		smoke.animations.play("play");
+}
