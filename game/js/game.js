@@ -85,6 +85,16 @@ Game.Main.prototype = {
     	this.updateCamera();
     	this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
     },
+
+    swapLight: function() {
+    	var finAlpha = this.overlay.alpha == 0 ? 1 : 0;
+
+    	var tween = game.add.tween(this.overlay).to({
+			alpha: finAlpha
+		}, 3000, Phaser.Easing.Cubic.InOut, true);
+		timeEvent(60, this.swapLight, this);
+
+    },
 	
 	/**
 	Load all the additional assets we need to use.
@@ -146,12 +156,14 @@ Game.Main.prototype = {
     	this.overlay.blendMode = 4;//2
     	var night = 0x0000a0;
     	var dawn = 0xe04040;
+    	this.overlay.alpha = 0;
     	this.overlay.tint = night;
-    	this.overlay.update = function() {
+    	/*this.overlay.update = function() {
     		var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
     		this.alpha = 0//proc;
-    	}
+    	}*/
     	TEST = this.overlay;
+    	timeEvent(30, this.swapLight, this);
 	    this.overlay.beginFill(0xffffff);
 	    this.overlay.drawRect(0, 0, game.width, game.height);
 

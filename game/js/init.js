@@ -48,7 +48,7 @@ function timeEvent(seconds, func, scope) {
 };
 
 function sound(name, volume, loop, pitch) {
-	console.log("sound", name)
+	//console.log("sound", name)
 	var sound = game.add.audio(name, volume || 1, loop);
     sound.play();
     if (sound._sound) sound._sound.playbackRate.value = pitch || 1;
