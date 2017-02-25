@@ -79,7 +79,7 @@ var Pig = function(world, x, y) {
 			case -1: lookDirection = UP; break;
 		}
 
-		if (distance > teleportDistance) {
+		if (distance > teleportDistance && world.cursor.visible == false) {
 			pig.teleport();
 		}
 

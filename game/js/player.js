@@ -227,15 +227,15 @@ var Player = function(world, x, y) {
 
 	//shatters the stone statue and get back the demon char
 	function fromStone() {
-		shell.body.y+=1;
-		player.state = STATES.NORMAL;
-		inChange = true;
-		shell.animations.play("from_stone");
-		player.visible = true;
+		if (player.state == STATES.STONE) {
+			shell.body.y+=1;
+			player.state = STATES.NORMAL;
+			inChange = true;
+			shell.animations.play("from_stone");
+			player.visible = true;
 
-		sound("player_from_stone");
-
-		//world.moveCameraTo(player.body.x, player.body.y);
+			sound("player_from_stone");
+		}
 	}
 
 	player.fromStone = fromStone;
