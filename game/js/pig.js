@@ -195,7 +195,6 @@ var Pig = function(world, x, y) {
 
 var ReflectionPig = function(world) {
 	var pig = world.pig;
-	console.log(pig)
 
 	var reflection = game.add.sprite(0, 0, "atlas", "pig_walk_down_1", world.reflectionLayer);
 	reflection.scale.y = -1;

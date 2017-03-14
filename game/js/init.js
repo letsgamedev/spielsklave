@@ -12,6 +12,10 @@
 //zelda gb 8 -> 128px
 //alwa pc 14 -> 224px
 
+
+//8, 12, 24
+//8, 12, 24
+
 function init() {
 	logInfo("init init");
 

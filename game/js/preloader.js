@@ -40,6 +40,7 @@ Game.Preloader.prototype = {
 	
 	create: function() {
 		//game.state.start("BlendModeTest");
+		nextMapId = "01";
 		game.state.start("Main");
 	}
 };

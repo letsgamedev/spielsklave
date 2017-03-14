@@ -21,7 +21,8 @@ var Player = function(world, x, y) {
 	//Configure physics
 	game.physics.ninja.enable(player, 1);
     player.body.drag = 0.001;
-	
+
+
 	//Config body size and alignment
 	player.body.setSize(12,12);
 	player.anchor.set(0.5,0.6);
@@ -58,12 +59,13 @@ var Player = function(world, x, y) {
 
 	player.humanInput = true;
 
+	player.body.collideWorldBounds = false;
+	
+
 	player.update = function() {
 		if (player.item1) player.item1.update();
 		if (player.item2) player.item2.update();
 	}
-
-	console.log(player.body);
 
 	/*
 	Handels the input from Pad class. Has to be called every frame.
@@ -238,14 +240,36 @@ var Player = function(world, x, y) {
 		}
 	}
 
-	player.fromStone = fromStone;
+	/*usefull vor event stuff also used vor map transitions*/
+	function walkAuto(dir, tiles) {
+		tiles = tiles || 1;
+		var x = 0;
+		var y = 0;
 
+		switch (dir) {
+			case UP: y = -16 * tiles; break;
+			case DOWN: y = 16 * tiles; break;
+			case LEFT: x = -16 * tiles; break;
+			case RIGHT: x = 16 * tiles; break;
+		}
+
+		var tween = game.add.tween(this.body).to({
+			x: this.x + x,
+			y: this.y + y
+		},  200 * tiles, Phaser.Easing.Default, true);
+
+		player.animations.play("walk_" + dir);
+		player.lookDirection = dir;
+		lookDirection = dir;
+	}
+
+	player.fromStone = fromStone;
+	player.walkAuto = walkAuto;
 	return player;
 };
 
 var ReflectionPlayer = function(world) {
 	var player = world.player;
-	console.log(player)
 
 	var reflection = game.add.sprite(0, 0, "atlas", "player_walk_down_1", world.reflectionLayer);
 	reflection.scale.y = -1;
@@ -262,7 +286,7 @@ var ReflectionPlayer = function(world) {
 
 	reflection.update = function() {
 		reflection.x = player.x - 32;
-		reflection.y = player.y + 54;
+		reflection.y = player.y + 50;
 
 		reflection.animations.play(player.animations.currentAnim.name);
 	}

@@ -75402,7 +75402,7 @@ Phaser.Physics.Ninja.prototype = {
             {
                 var tile = map.layers[layer].data[y][x];
 
-                if (tile && slopeMap.hasOwnProperty(tile.index))
+                if (tile && slopeMap.hasOwnProperty(tile.index) && slopeMap[tile.index] != 0)
                 {
                     var body = new Phaser.Physics.Ninja.Body(this, null, 3, slopeMap[tile.index], 0, tile.worldX + tile.centerX, tile.worldY + tile.centerY, tile.width, tile.height);
 
