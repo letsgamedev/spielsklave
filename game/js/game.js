@@ -25,7 +25,7 @@ var TEST = null;
 var TEST2 = null;
 var TEST3 = null;
 
-var globalMusicVolume = 0;
+var globalMusicVolume = 0.5;
 var globalSoundVolume = 1;
 
 var MAP = {
@@ -575,7 +575,7 @@ Game.Main.prototype = {
 		        	e.hitTween = undefined;
 		        }
 			};
-			
+
 	        var r = this.player.body.aabb.collideAABBVsTile(tile);
 	        if (r) count++;
 	        if (r && this.player.hitTween) {
