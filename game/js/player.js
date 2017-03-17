@@ -167,7 +167,7 @@ var Player = function(world, x, y) {
 		shell.body.setSize(12,12);
 		shell.anchor.set(0.5,0.6);
 
-		sound("player_to_stone");
+		playSound("player_to_stone");
 
 		shell.sound = null
 
@@ -179,7 +179,7 @@ var Player = function(world, x, y) {
 			var dy = shell.body.y - shell.body.oldPos.y;
 
 			if (dx != 0 || dy != 0) {
-				if (shell.sound == null) shell.sound = sound("stone_push", 1, true);
+				if (shell.sound == null) shell.sound = playSound("stone_push", 1, true);
 			} else {
 				if (shell.sound != null) {
 					shell.sound.stop();
@@ -236,7 +236,7 @@ var Player = function(world, x, y) {
 			shell.animations.play("from_stone");
 			player.visible = true;
 
-			sound("player_from_stone");
+			playSound("player_from_stone");
 		}
 	}
 

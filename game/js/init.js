@@ -51,9 +51,21 @@ function timeEvent(seconds, func, scope) {
 	game.time.events.add(Phaser.Timer.SECOND * seconds, func, scope);
 };
 
+function playMusic(name, volume, loop, pitch) {
+	volume = (volume === null || volume === undefined)? 1 : volume;
+	sound(name, volume * globalMusicVolume, loop, pitch)
+}
+
+function playSound(name, volume, loop, pitch) {
+	console.log(volume);
+	volume = (volume === null || volume === undefined)? 1 : volume;
+	console.log(volume);
+	sound(name, volume * globalSoundVolume, loop, pitch)
+}
+
 function sound(name, volume, loop, pitch) {
-	//console.log("sound", name)
-	var sound = game.add.audio(name, volume || 1, loop);
+	console.log("sound", name, volume)
+	var sound = game.add.audio(name, volume, loop);
     sound.play();
     if (sound._sound) sound._sound.playbackRate.value = pitch || 1;
     return sound;

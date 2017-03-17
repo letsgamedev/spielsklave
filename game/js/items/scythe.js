@@ -24,7 +24,7 @@ var Scythe = function(player, world) {
 
 	scythe.action = function() {
 		player.state = STATES.INUSE;
-		sound("scythe");
+		playSound("scythe");
 		isPlaying = true;
 
 		player.animations.play("scythe_" + player.lookDirection);

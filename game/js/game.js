@@ -25,6 +25,9 @@ var TEST = null;
 var TEST2 = null;
 var TEST3 = null;
 
+var globalMusicVolume = 0;
+var globalSoundVolume = 1;
+
 var MAP = {
 	OBJECTS: 3,
 	TOP: 2,
@@ -212,10 +215,10 @@ Game.Main.prototype = {
 
     	//Set Music
         if (backgroundMusic == null) {
-        	backgroundMusic = sound("world", 0.75, true);
+        	backgroundMusic = playMusic("world", 0.75, true);
         } else if (backgroundMusic.name != "world") {
         	backgroundMusic.fadeOut(1);
-        	backgroundMusic = sound("world", 0.75, true);
+        	backgroundMusic = playMusic("world", 0.75, true);
         }
 	},	
 

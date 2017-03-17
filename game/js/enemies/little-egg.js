@@ -62,13 +62,13 @@ var LittleEgg = function(world, x, y) {
 		if (hitSaveTime > 0) return;
 		hitSaveTime = 0.15;
 		egg.tint = 0x62B3F5;
-		sound("hit2", 0.25);
+		playSound("hit2", 0.25);
 		GenPool.throwBack(egg, world.player, 20, 100);
 		egg.hp--;
 		if (egg.hp <= 0) {
 			timeEvent(0.1, function(){
 				PigSmoke(egg, world);
-				sound("explosion1");
+				playSound("explosion1");
 				egg.kill();
 			})
 			
@@ -109,7 +109,7 @@ var LittleEgg = function(world, x, y) {
 				    bush.anchor.set(0.5,0.8);
 				    world.enemies.push(bush);
 				    egg.body.y++;
-				    sound("little_egg_hatch");
+				    playSound("little_egg_hatch");
 				}
 			break;
 			case HATCHED:

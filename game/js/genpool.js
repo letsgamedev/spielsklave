@@ -19,7 +19,7 @@ GenPool.onHit = function(self, other) {
 	GenPool.throwBack(self, other, 20);
 
 	self.damageSave = true;
-	sound("player_hit");
+	playSound("player_hit");
 
 	sleep(20);
 	
