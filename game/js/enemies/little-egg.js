@@ -18,7 +18,9 @@ LittleEgg is one of the first enemies in game
 var LittleEgg = function(world, x, y) {
 	var egg = game.add.sprite(x, y, "atlas", "little_egg_hatch_0", world.middleLayer);
 	egg.strength = 1;
+	egg.MaxHp = 3;
 	egg.hp = 3;
+	egg.originPos = {x:x, y:y}
 	addAnimation(egg, "stand_down", "little_egg_stand_down", 2, 3, true);
 	addAnimation(egg, "stand_up", "little_egg_stand_up", 2, 3, true);
 	addAnimation(egg, "stand_left", "little_egg_stand_left", 2, 3, true);
@@ -89,9 +91,9 @@ var LittleEgg = function(world, x, y) {
 				hatchCheck();
 			break;
 			case HATCHING:
-				if (egg.frameName == "little_egg_hatch_4" && isBushSet == false) {
+				if (egg.frameName == "little_egg_hatch_4" && isBushSet == false && egg.hp == egg.MaxHp) {
 					isBushSet = true;
-					var bush = game.add.sprite(egg.x - 11, egg.y - 7, "atlas", "little_egg_shell_0", world.middleLayer);
+					var bush = game.add.sprite(egg.originPos.x - 11, egg.originPos.y - 7, "atlas", "little_egg_shell_0", world.middleLayer);
 					game.physics.ninja.enable(bush, 1);
 				    bush.body.drag = 0.1;
 				    bush.body.immovable = true;
