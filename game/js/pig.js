@@ -117,9 +117,13 @@ var Pig = function(world, x, y) {
 
 	}
 
-	pig.onHit = function() {
+	pig.onHit = function(self, enemy) {
 		//GenPool.onHit;
-		world.player.fromStone();
+		console.log(enemy.harmless)
+		if (!enemy.harmless) {
+			world.player.fromStone();
+		}
+		
 	}
 
 	/*
