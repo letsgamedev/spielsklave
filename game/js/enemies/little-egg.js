@@ -93,7 +93,7 @@ var LittleEgg = function(world, x, y) {
 			case HATCHING:
 				if (egg.frameName == "little_egg_hatch_4" && isBushSet == false && egg.hp == egg.MaxHp) {
 					isBushSet = true;
-					var bush = game.add.sprite(egg.originPos.x - 11, egg.originPos.y - 7, "atlas", "little_egg_shell_0", world.middleLayer);
+					var bush = game.add.sprite(egg.originPos.x - 0, egg.originPos.y + 4 , "atlas", "little_egg_shell_0", world.middleLayer);
 					game.physics.ninja.enable(bush, 1);
 				    bush.body.drag = 0.1;
 				    bush.body.immovable = true;
