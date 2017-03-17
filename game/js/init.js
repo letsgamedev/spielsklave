@@ -53,14 +53,12 @@ function timeEvent(seconds, func, scope) {
 
 function playMusic(name, volume, loop, pitch) {
 	volume = (volume === null || volume === undefined)? 1 : volume;
-	sound(name, volume * globalMusicVolume, loop, pitch)
+	return sound(name, volume * globalMusicVolume, loop, pitch)
 }
 
 function playSound(name, volume, loop, pitch) {
-	console.log(volume);
 	volume = (volume === null || volume === undefined)? 1 : volume;
-	console.log(volume);
-	sound(name, volume * globalSoundVolume, loop, pitch)
+	return sound(name, volume * globalSoundVolume, loop, pitch)
 }
 
 function sound(name, volume, loop, pitch) {

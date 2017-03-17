@@ -161,6 +161,7 @@ var Player = function(world, x, y) {
 		player.state = STATES.STONE;
 		shell = game.add.sprite(player.body.x - 32, player.body.y - 32, "atlas", "player_to_stone_0", world.middleLayer);
 		game.physics.ninja.enable(shell);
+		shell.isBroked = false;
 		shell.body.bounce = 0;
 	    shell.body.drag = 0;
 	    shell.body.oldPos = {x: shell.body.x, y: shell.body.y}
@@ -168,31 +169,45 @@ var Player = function(world, x, y) {
 		shell.anchor.set(0.5,0.6);
 
 		playSound("player_to_stone");
+		player.animations.play("stand_" + lookDirection);
 
 		shell.sound = null
+
 
 		inChange = true;
 
 
+		var shellPuffer = false;
+		var shellSoundPuffer = true;
 		shell.update = function() {
-			var dx = shell.body.x - shell.body.oldPos.x;
-			var dy = shell.body.y - shell.body.oldPos.y;
+			var dx = Math.round(shell.body.x - shell.body.oldPos.x);
+			var dy = Math.round(shell.body.y - shell.body.oldPos.y);
 
 			if (dx != 0 || dy != 0) {
-				if (shell.sound == null) shell.sound = playSound("stone_push", 1, true);
-			} else {
+				if (shell.sound == null && shellSoundPuffer == false) {
+					shell.sound = playSound("stone_push", 1, true);
+				} else {
+					shellSoundPuffer = false;
+				}
+			} else if (dx == 0 && dy == 0) {
 				if (shell.sound != null) {
+					shellSoundPuffer = true;
 					shell.sound.stop();
 					shell.sound.destroy();
 					shell.sound = null;
 				}
-			}
+			} 
 
 			shell.body.oldPos.x = shell.body.x;
 			shell.body.oldPos.y = shell.body.y;
 
-			player.body.x = shell.x;
-			player.body.y = shell.y;
+			if (shellPuffer) {
+				player.body.x = shell.x;
+				player.body.y = shell.y;
+			} else {
+				shellPuffer = true;
+			} 
+			
 		}
 
 		
@@ -231,6 +246,7 @@ var Player = function(world, x, y) {
 	function fromStone() {
 		if (player.state == STATES.STONE) {
 			shell.body.y+=1;
+			shell.update = function(){};
 			player.state = STATES.NORMAL;
 			inChange = true;
 			shell.animations.play("from_stone");

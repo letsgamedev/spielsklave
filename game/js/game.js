@@ -55,6 +55,17 @@ Game.Main = function(){
 Game.Main.prototype = {
 	init: function() {	
 		logInfo("init Main");
+		game.renderer.renderSession.roundPixels = true;
+		//this.game.canvas.style.cursor = "none";
+		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		game.time.advancedTiming = true;
+
+        this.oldChunkDirection = null;
+		this.currentChunk = null;
+		this.oldChunk = null;
+		this.enemies = [];
+
+		game.stage.backgroundColor = 0x000000;
 	},
 
 	/**
@@ -115,43 +126,36 @@ Game.Main.prototype = {
 	*/
 	create: function() {
 		//General setup
-		game.renderer.renderSession.roundPixels = true;
-		//this.game.canvas.style.cursor = "none";
-		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		Pad.init();
-        game.time.advancedTiming = true;
-
-        this.oldChunkDirection = null;
-
-        game.stage.backgroundColor = 0x000000;
+        this.initPhysics();
 
         this.reflectionLayer = game.add.group();
-
-
-        this.enemies = [];
-
-
-        this.initPhysics();
         this.initMap();
         this.bottomLayer = game.add.group();
         this.middleLayer = game.add.group();
         this.topLayerTiles = this.map.createLayer(MAP.TOP);
 
+
         if (LastMapInfo) {
         	switch (LastMapInfo.mapEntryDirection) {
         		case LEFT: 
-        			this.player = Player(this, 0,LastMapInfo.player.y - 32); 
+        			this.player = Player(this, 0, LastMapInfo.player.y); 
         			this.pig = Pig(this, this.player.x, this.player.y);
+        			timeY = LastMapInfo.player.y;
         		break;
         		case RIGHT: 
-        			this.player = Player(this, 400, LastMapInfo.player.y - 32); 
+        			this.player = Player(this, 400, LastMapInfo.player.y); 
         			this.pig = Pig(this, this.player.x, this.player.y);
+        			timeY = LastMapInfo.player.y;
         		break;
         	} 
         } else {
         	this.player = Player(this, 16 * 16, 16 * 50);
         	this.pig = Pig(this, this.player.x, this.player.y);
         }
+
+        this.reflectionLayer.add(ReflectionPlayer(this));
+    	this.reflectionLayer.add(ReflectionPig(this));
         
         this.cursor = Cursor(this);
 
@@ -160,36 +164,16 @@ Game.Main.prototype = {
 
     	this.addClouds();
 
-    	this.reflectionLayer.add(ReflectionPlayer(this));
-    	this.reflectionLayer.add(ReflectionPig(this));
-
-    	
-
     	//Day/Night Overlay
-    	this.overlay = game.add.graphics(0, 0);
-    	this.overlay.fixedToCamera = true;
-    	this.overlay.blendMode = 4;//2
-    	var night = 0x0000a0;
-    	var dawn = 0xe04040;
-    	this.overlay.alpha = LastMapInfo ? LastMapInfo.timeOverlay.alpha : 0;
-    	this.overlay.tint = night;
-    	/*this.overlay.update = function() {
-    		var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
-    		this.alpha = 0//proc;
-    	}*/
-    	timeEvent(30, this.swapLight, this); //TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
-	    this.overlay.beginFill(0xffffff);
-	    this.overlay.drawRect(0, 0, game.width, game.height);
-
+    	this.addTimeOverlay();
+    	
 	    //Add UI
 	    this.ui = UI(this);
 	    this.ui.updateHealth();
 
+
 	    
     	this.prepareChunks();
-    	this.currentChunk = null;
-
-    	this.oldChunk = null;
 
     	this.updateCamera(true);
     	this.setCurrentChunk();
@@ -199,8 +183,14 @@ Game.Main.prototype = {
     	//Prepare the Fadein Effect
     	if (LastMapInfo) {
     		switch (LastMapInfo.mapEntryDirection) {
-    			case LEFT: this.player.body.x = - 16 * 3; break;
-    			case RIGHT: this.player.body.x = 512 + 16 * 3; break;
+    			case LEFT: 
+    				this.player.body.y -= 32;
+    				this.player.body.x = - 16 * 3; 
+    			break;
+    			case RIGHT: 
+    				this.player.body.y -= 32;
+    				this.player.body.x = 512 + 16 * 3; 
+    			break;
     		}
     		var that = this;
     		setTimeout(function(){
@@ -211,6 +201,7 @@ Game.Main.prototype = {
     		game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor;
     	}
 
+    	this.updateCamera(true);
     	
 
     	//Set Music
@@ -228,6 +219,23 @@ Game.Main.prototype = {
 	initPhysics: function() {
 		 this.game.physics.startSystem(Phaser.Physics.NINJA);
 		 this.game.physics.ninja.gravity = 0;
+	},
+
+	addTimeOverlay: function() {
+		this.overlay = game.add.graphics(0, 0);
+    	this.overlay.fixedToCamera = true;
+    	this.overlay.blendMode = 4;//2
+    	var night = 0x0000a0;
+    	var dawn = 0xe04040;
+    	this.overlay.alpha = LastMapInfo ? LastMapInfo.timeOverlay.alpha : 0;
+    	this.overlay.tint = night;
+    	/*this.overlay.update = function() {
+    		var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
+    		this.alpha = 0//proc;
+    	}*/
+    	timeEvent(30, this.swapLight, this); //TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
+	    this.overlay.beginFill(0xffffff);
+	    this.overlay.drawRect(0, 0, game.width, game.height);
 	},
 
 	prepareChunks: function() {
@@ -602,6 +610,7 @@ Game.Main.prototype = {
 	},
 
 	checkPlayerOutOfBounds: function() {
+		if (this.player.state == STATES.STONE) return;
 		if (game.world.bounds.contains(this.player.x, this.player.y) == false) {
 			if (this.player.x < game.world.bounds.left) this.onLeaveChunk(RIGHT);
 			if (this.player.x > game.world.bounds.right) this.onLeaveChunk(LEFT);
