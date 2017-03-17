@@ -100,7 +100,7 @@ Game.Main.prototype = {
     },
 
     preRender: function() {
-    	this.updateCamera();
+		
     	this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING);
     },
 
@@ -490,15 +490,19 @@ Game.Main.prototype = {
 		var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
 		var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
 
+		var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
+		var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
+
 		if (isInstant) {
 			this.camera.x = Math.floor( this.camera.x + xd);
 			this.camera.y = Math.floor( this.camera.y + yd);
 		} else {
-			
-
-			this.camera.x = Math.floor( this.camera.x + (xd * 0.5));
-			this.camera.y = Math.floor( this.camera.y + (yd * 0.5));
+			this.camera.x = Math.floor( this.camera.x + (xd * 1.0));
+			this.camera.y = Math.floor( this.camera.y + (yd * 1.0));
 		}
+
+		this.camera.x = follower.body.x - Game.width / 2;
+		this.camera.y = follower.body.y - Game.height / 2;
 
 		game.camera.x += game.camera._shake.xx;
     	game.camera.y += game.camera._shake.yy;
@@ -540,7 +544,7 @@ Game.Main.prototype = {
 
 	    this.checkPlayerOutOfBounds();
 		
-	
+		this.updateCamera();
 	},
 
 	checkForDeath: function() {
@@ -551,7 +555,7 @@ Game.Main.prototype = {
 
 	collision: function() {
 		flip = !flip;
-
+		count = 0;
 		//Collision detection
 		for (var i = 0; i < this.currentChunk.collisitionTiles.length; i++) {
 			var tile = this.currentChunk.collisitionTiles[i].tile;
@@ -571,8 +575,9 @@ Game.Main.prototype = {
 		        	e.hitTween = undefined;
 		        }
 			};
-
+			
 	        var r = this.player.body.aabb.collideAABBVsTile(tile);
+	        if (r) count++;
 	        if (r && this.player.hitTween) {
 	        	this.player.hitTween.stop();
 	        	this.player.hitTween = undefined;
@@ -593,7 +598,6 @@ Game.Main.prototype = {
 		    
 	        
 	    }
-	
 		//Dont do this in the for loop cause this would be super dumb!
 	    if (this.player.state == STATES.STONE) {
 	    	game.physics.ninja.collide(this.player.shell, this.pig);

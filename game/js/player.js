@@ -17,10 +17,13 @@ This is the Player aka the demon contructor.
 */
 var Player = function(world, x, y) {
 	var player = game.add.sprite(x, y, "atlas", "dengel_walk_down_1", world.middleLayer);
-	
+	//var Graphic = game.add.sprite(x, y, "atlas", "dengel_walk_down_1", world.middleLayer);
 	//Configure physics
 	game.physics.ninja.enable(player, 1);
-    player.body.drag = 0.001;
+    player.body.drag = 0.000;
+    player.body.bounce = 0.000;
+    player.body.friction = 0.000;
+    console.log(player)
 
 
 	//Config body size and alignment
@@ -50,7 +53,7 @@ var Player = function(world, x, y) {
 	player.animations.play("stand_down");
 	
 	//Private variables
-	var speed = 110;
+	var speed = 80;
 	var lookDirection = DOWN;
 	player.lookDirection = lookDirection;
 	var shell = null;
@@ -74,15 +77,13 @@ var Player = function(world, x, y) {
 		var stand = true;
 		var newAnimation = "stand";
 
-		var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1; 
-
-		
+		var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.80 : 1; 
 
 		//Process movement and animation
 		if (player.state !== STATES.STONE && player.state !== STATES.INUSE && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
 			function setMove(padKey,axis, multi,dirID) {
 				if (Pad.isDown(padKey)) {
-					player.body[axis] += DT * speed * diagonalFactor * multi;
+					player.body[axis] += DT * speed * 1 * multi;
 					stand = false;
 					lookDirection = dirID;
 					player.lookDirection = lookDirection;
@@ -129,7 +130,6 @@ var Player = function(world, x, y) {
 				player.item2.action();
 			}
 		}
-		
 
 	}
 

@@ -75257,7 +75257,6 @@ Phaser.Physics.Ninja.prototype = {
     * @param {boolean} [children=true] - Should a body be created on all children of this object? If true it will recurse down the display list as far as it can go.
     */
     enable: function (object, type, id, radius, children) {
-
         if (type === undefined) { type = 1; }
         if (id === undefined) { id = 1; }
         if (radius === undefined) { radius = 0; }
@@ -75316,6 +75315,7 @@ Phaser.Physics.Ninja.prototype = {
 
         if (object.hasOwnProperty('body') && object.body === null)
         {
+            
             object.body = new Phaser.Physics.Ninja.Body(this, object, type, id, radius);
             object.anchor.set(0.5);
         }
@@ -75763,7 +75763,6 @@ Phaser.Physics.Ninja.Body = function (system, sprite, type, id, radius, x, y, wi
     if (type === undefined) { type = 1; }
     if (id === undefined) { id = 1; }
     if (radius === undefined) { radius = 16; }
-
     /**
     * @property {Phaser.Sprite} sprite - Reference to the parent Sprite.
     */
@@ -76528,8 +76527,8 @@ Phaser.Physics.Ninja.AABB.prototype = {
         }
 
         //  Project object out of collision
-        p.x += px;
-        p.y += py;
+        p.x += px - 0.001;
+        p.y += py - 0.001;
 
         //  Apply bounce+friction impulses which alter velocity
         o.x += px + bx + fx;
