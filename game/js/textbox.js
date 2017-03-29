@@ -53,7 +53,7 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 		//BigText
 		bmpText = game.add.bitmapText(-115, -69, 'font', "", 12);
 		tb.addChild(bmpText)
-		bmpText.maxWidth = 235;
+		bmpText.maxWidth = 225;
 		var hold = false;
 		tb.timer = 0.03;
 		tb.myUpdate = function() {

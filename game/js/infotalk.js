@@ -9,16 +9,17 @@ var InfoTalk = function(world, eventData) {
 	it.myUpdate = function() {
 		var dist = distance(world.player, it);
 
-		if (dist < 16 && world.player.attachedEvent == null) {
-			world.player.attachedEvent = it;
-			world.player.setIcon("icon_eye");
-			world.player.headIcon.visible = true;
-
+		if (dist < 14 && world.player.attachedEvent == null) {
+			if (world.player.lookDirection == UP && world.player.y > it.y) {
+				world.player.attachedEvent = it;
+				world.player.setIcon("icon_eye");
+				world.player.headIcon.visible = true;
+			}
 		}
 	}
 
 	it.interact = function() {
-		TextBoxBig(L("TEXT02"));
+		TextBoxBig(eventData.text);
 	}
 
 	return it;

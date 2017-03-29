@@ -78,7 +78,7 @@ Game.Main.prototype = {
 	Time to render debug objecs or apply some canvas filters!
 	*/
 	render: function() {
-        if (DEBUG) {
+        if (!DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
             for (var i = 0; i < this.enemies.length; i++) {
@@ -590,10 +590,10 @@ Game.Main.prototype = {
 			this.player.attachedEvent = null;
 			this.pig.update();
 			this.pig.input();
+			this.myUpdateOn(this.enemies);
+			this.myUpdateOn(this.events);
 		}
 
-		this.myUpdateOn(this.enemies);
-		this.myUpdateOn(this.events);
 		
 		this.cursor.update();
 		this.collision();

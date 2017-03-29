@@ -32,8 +32,9 @@ var LangKeys = {
 		NAME_NPC01: "Homunkulus",
 
 		TEXT01: "Hallo! Drücke 'N' und es geht weiter! So kannst du auch Grabinschriften lesen!",
-		TEXT02: "Hier liegt ein Junge mit grüner Zipelmütze.",
-		TEXT03: "",
+		TEXT02: "Hier liegt ein Junge mit grüner Zipfelmütze.",
+		TEXT03: "Letzte Worte:\nDie Schriftart der Textbox ist scheiße!",
+		TEXT04: "Alles muss, nichts kann.",
 		
 	},
 

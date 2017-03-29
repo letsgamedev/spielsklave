@@ -11,11 +11,19 @@ var MAPDATA = {
 				text: L("TEXT02")
 			},
 			{
-				tileX: 23,
-				tileY: 55,
+				tileX: 24,
+				tileY: 26,
 				obj: InfoTalk,
 				img: "tomb",
-				text: L("TEXT02")
+				text: L("TEXT03")
+			},
+
+			{
+				tileX: 28,
+				tileY: 26,
+				obj: InfoTalk,
+				img: "tomb",
+				text: L("TEXT04")
 			}
 		]
 	}
