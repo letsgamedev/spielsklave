@@ -82,7 +82,7 @@ var LittleEgg = function(world, x, y) {
 	if the player is near the egg, it will hatch and 
 	walk in random directions
 	*/
-	egg.update = function() {
+	egg.myUpdate = function() {
 		moveTime -= DT;
 		hitSaveTime -= DT;
 		if (hitSaveTime <= 0) egg.tint = 0xffffff;
@@ -104,6 +104,7 @@ var LittleEgg = function(world, x, y) {
 				    	console.log(bush.kill)
 				    	bush.kill();
 				    }
+				    bush.myUpdate = nothing;
 				    bush.isFix = true;
 				    bush.harmless = true;
 				    bush.ySortOffset = -5;

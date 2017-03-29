@@ -25,7 +25,9 @@ var TEST = null;
 var TEST2 = null;
 var TEST3 = null;
 
-var globalMusicVolume = 0.5;
+var firstStart = false;
+
+var globalMusicVolume = 0;//0.5;
 var globalSoundVolume = 1;
 
 var MAP = {
@@ -42,6 +44,9 @@ var backgroundMusic = null;
 
 
 var flip = true;
+
+var isEvent = false;
+var currentEvent = null;
 
 
 /**
@@ -64,6 +69,7 @@ Game.Main.prototype = {
 		this.currentChunk = null;
 		this.oldChunk = null;
 		this.enemies = [];
+		this.events = [];
 
 		game.stage.backgroundColor = 0x000000;
 	},
@@ -72,19 +78,22 @@ Game.Main.prototype = {
 	Time to render debug objecs or apply some canvas filters!
 	*/
 	render: function() {
-        if (!DEBUG) {
+        if (DEBUG) {
             game.debug.body(this.pig);
             game.debug.body(this.player);
             for (var i = 0; i < this.enemies.length; i++) {
             	game.debug.body(this.enemies[i]);
+            };
 
+            for (var i = 0; i < this.events.length; i++) {
+            	game.debug.body(this.events[i]);
             };
             var pu = Pad.isDown(Pad.UP) ? "U" : "-";
             var pd = Pad.isDown(Pad.DOWN) ? "D" : "-";
             var pl = Pad.isDown(Pad.LEFT) ? "L" : "-";
             var pr = Pad.isDown(Pad.RIGHT) ? "R" : "-";
-            var pj = Pad.isDown(Pad.JUMP) ? "J" : "-";
-            var ps = Pad.isDown(Pad.SHOOT) ? "S" : "-";
+            var pj = Pad.isDown(Pad.X) ? "X" : "-";
+            var ps = Pad.isDown(Pad.A) ? "A" : "-";
             game.debug.text(pu+pd+pl+pr+pj+ps, 5, 10);
 
 
@@ -95,7 +104,7 @@ Game.Main.prototype = {
         //if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
         game.debug.text(game.time.fps || '--', game.width - 30, game.height - 20, "#00ff00", "14px Arial");   
-        game.debug.text("v0.10.2", game.width - 23, 9, "#ffffff", "7px Arial");   
+        game.debug.text(L("VERSION"), game.width - 23, 9, "#ffffff", "7px Arial");   
 
     },
 
@@ -126,7 +135,7 @@ Game.Main.prototype = {
 	*/
 	create: function() {
 		//General setup
-		Pad.init();
+		//Pad.init();
         this.initPhysics();
 
         this.reflectionLayer = game.add.group();
@@ -211,6 +220,12 @@ Game.Main.prototype = {
         	backgroundMusic.fadeOut(1);
         	backgroundMusic = playMusic("world", 0.75, true);
         }
+
+        if (firstStart == false) {
+        	firstStart = true;
+        	TextBoxBig(L("TEXT01"));
+        }
+        
 	},	
 
 	/**
@@ -252,7 +267,6 @@ Game.Main.prototype = {
 				var x = i * 512;
 				var y = j * 512;
 				this.chunks[i][j] = {
-					enemies: [],
 					events: [],
 					startXTile: i * 8,
 					startYTile: j * 8,
@@ -268,8 +282,11 @@ Game.Main.prototype = {
 				};
 
 				this.chunks[i][j].collisitionTiles = this.getCollisitionTiles(this.chunks[i][j])
+				this.chunks[i][j].events = this.getEvents(this.chunks[i][j]);
 			}
 		}
+
+
 		console.log("chunks count", this.chunks);
 	},
 
@@ -288,6 +305,20 @@ Game.Main.prototype = {
 		return tilesForChunk;
 	},
 
+	getEvents: function(bounds) {
+		var result = [];
+		var events = MAPDATA[nextMapId].events;
+		for (var i = 0; i < events.length; i++) {
+			var e = events[i];
+			if (bounds.left <= e.tileX * 8 && e.tileX * 8 < bounds.right) {
+				if (bounds.top <= e.tileY * 8 && e.tileY * 8 < bounds.bottom) {
+					result.push(e);
+				}
+			}
+		};
+		return result;
+	},
+
 	position2Chunk: function(x, y) {
 		return this.chunks[Math.floor(x / 512)][Math.floor(y / 512)]
 	},
@@ -304,7 +335,8 @@ Game.Main.prototype = {
 
 		if (isValidChunkCoord) {
 			if (this.currentChunk) {
-				this.cleanOldChunk();
+				this.currentChunk.enemies = this.enemies;
+				this.currentChunk.events = this.events;
 				this.prepareNextChunk();
 				
 				this.isInTransition = true;
@@ -321,6 +353,7 @@ Game.Main.prototype = {
 	},
 
 	tweenToCurrentChunk: function() {
+		this.pig.tweenToPlayer();
 		var x = Math.min(this.oldChunk.left, this.currentChunk.left); 
 		var y = Math.min(this.oldChunk.top, this.currentChunk.top); 
 		var w = Math.max(this.oldChunk.left, this.currentChunk.left) + 512; 
@@ -346,6 +379,7 @@ Game.Main.prototype = {
 		tween.onComplete.add(function(){
 			this.setWorldBoundsForCurrentChunk();
 			this.isInTransition = false;
+			this.cleanOldChunk();
 		}, this)
 
 	},
@@ -354,6 +388,7 @@ Game.Main.prototype = {
 		this.oldChunk = this.currentChunk;
 		this.currentChunk = this.position2Chunk(this.player.x, this.player.y);
 		this.addEnemies();
+		this.addEvents();
 	},
 
 	setWorldBoundsForCurrentChunk: function() {
@@ -361,11 +396,15 @@ Game.Main.prototype = {
 	},
 
 	cleanOldChunk: function() {
-		for (var i = 0; i < this.enemies.length; i++) {
-			this.enemies[i].destroy();
+		for (var i = 0; i < this.oldChunk.enemies.length; i++) {
+			this.oldChunk.enemies[i].destroy();
 		}
+		this.oldChunk.enemies = [];
 
-		this.enemies = [];
+		for (var i = 0; i < this.oldChunk.events.length; i++) {
+			this.oldChunk.events[i].destroy();
+		}
+		this.oldChunk.events = [];
 	},
 
 	/**
@@ -428,6 +467,7 @@ Game.Main.prototype = {
 	},
 
 	addEnemies: function() {
+		this.enemies = [];
 		var ids = [
 			{tileId: 17, className: LittleEgg}
 		];
@@ -445,6 +485,17 @@ Game.Main.prototype = {
 
 		console.log("enemies", this.enemies.length)
 		
+	},
+
+	addEvents: function() {
+		this.events = [];
+		var events = this.currentChunk.events;
+		for (var i = 0; i < events.length; i++) {
+			var e = events[i];
+			var obj = e.obj(this, e);
+		 	this.events.push(obj);
+		};
+		console.log("event count: " + this.events.length)
 	},
 
 	addClouds: function() {
@@ -531,10 +582,19 @@ Game.Main.prototype = {
 		if (this.isInTransition) return;
 		Pad.checkJustDown();
 
+		if (isEvent) {
+			currentEvent.myUpdate();
+		} else {
+			
+			this.player.input();
+			this.player.attachedEvent = null;
+			this.pig.update();
+			this.pig.input();
+		}
+
+		this.myUpdateOn(this.enemies);
+		this.myUpdateOn(this.events);
 		
-		this.player.input();
-		this.pig.update();
-		this.pig.input();
 		this.cursor.update();
 		this.collision();
 		
@@ -543,8 +603,16 @@ Game.Main.prototype = {
 	    this.checkForDeath();
 
 	    this.checkPlayerOutOfBounds();
+
+	    this.player.myPostUpdate();
 		
 		this.updateCamera();
+	},
+
+	myUpdateOn: function(array) {
+		for (var i = 0; i < array.length; i++) {
+			array[i].myUpdate();
+		};
 	},
 
 	checkForDeath: function() {
@@ -554,8 +622,7 @@ Game.Main.prototype = {
 	},
 
 	collision: function() {
-		flip = !flip;
-		count = 0;
+		var r;
 		//Collision detection
 		for (var i = 0; i < this.currentChunk.collisitionTiles.length; i++) {
 			var tile = this.currentChunk.collisitionTiles[i].tile;
@@ -564,40 +631,27 @@ Game.Main.prototype = {
 				this.player.shell.body.aabb.collideAABBVsTile(tile);
 			}
 
-			//this is the hardest part for the cpu due to the count of enemies * tile count?
-			var enemiesLength = this.enemies.length;
-			for (var j = flip ? 0 : 1; j < enemiesLength; j+=2) {
-				var e = this.enemies[j];
-				if (e.isFix) continue;
+			function check(e) {
+				if (e.isFix) return;
 				r = e.body.aabb.collideAABBVsTile(tile);
 				if (r && e.hitTween) {
 		        	e.hitTween.stop();
 		        	e.hitTween = undefined;
 		        }
-			};
-
-	        var r = this.player.body.aabb.collideAABBVsTile(tile);
-	        if (r) count++;
-	        if (r && this.player.hitTween) {
-	        	this.player.hitTween.stop();
-	        	this.player.hitTween = undefined;
-	        }
-
-	        r = this.pig.body.aabb.collideAABBVsTile(tile);
-	        if (r && this.pig.hitTween) {
-	        	this.pig.hitTween.stop();
-	        	this.pig.hitTween = undefined;
-	        }
-	        if (this.player.state == STATES.STONE || this.cursor.visible) {
-	        	r = this.pig.body.aabb.collideAABBVsTile(tile);
-		        if (r && this.pig.hitTween) {
-		        	this.pig.hitTween.stop();
-		        	this.pig.hitTween = undefined;
-		        }
-	        } 
-		    
+			}
+			function checkArray(array) {
+				var arrayLength = array.length;
+				for (var j = 0; j < arrayLength; j++) {
+					check(array[j]);
+				};
+			}
+			checkArray(this.enemies);
+			checkArray(this.events);
+			check(this.player);
+			check(this.pig);
 	        
 	    }
+
 		//Dont do this in the for loop cause this would be super dumb!
 	    if (this.player.state == STATES.STONE) {
 	    	game.physics.ninja.collide(this.player.shell, this.pig);
@@ -608,7 +662,16 @@ Game.Main.prototype = {
 	    	if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit);
 	    	if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit);
 	    	if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i]);
+	    	for (var j = 0; j < this.events.length; j++) {
+	    		game.physics.ninja.collide(this.events[j], this.enemies[i]);
+	    	};
+	    	
 	    };
+
+	    for (var j = 0; j < this.events.length; j++) {
+    		game.physics.ninja.collide(this.events[j], this.player);
+    		game.physics.ninja.collide(this.events[j], this.pig);
+    	};
 
 	    
 	},

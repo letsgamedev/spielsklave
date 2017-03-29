@@ -129,6 +129,11 @@ var Player = function(world, x, y) {
 			if (Pad.justDown(Pad.B) && player.item2) {
 				player.item2.action();
 			}
+
+			if (Pad.justDown(Pad.A) && player.attachedEvent) {
+				player.animations.play("stand_" + lookDirection);
+				player.attachedEvent.interact();
+			}
 		}
 
 	}
@@ -279,8 +284,17 @@ var Player = function(world, x, y) {
 		lookDirection = dir;
 	}
 
+	function myPostUpdate() {
+		if (player.attachedEvent == null) {
+			player.headIcon.visible = false;
+		}
+	}
+	HeadIcon(player, 8, -25);
+
 	player.fromStone = fromStone;
 	player.walkAuto = walkAuto;
+	player.myPostUpdate = myPostUpdate;
+
 	return player;
 };
 

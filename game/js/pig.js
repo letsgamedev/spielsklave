@@ -194,6 +194,13 @@ var Pig = function(world, x, y) {
 		PigSmoke(pig.body, world);
 	}
 
+	pig.tweenToPlayer = function() {
+		var tween = game.add.tween(pig.body).to({
+			x: world.player.x,
+			y: world.player.y
+		}, 500, Phaser.Easing.Default, true);
+	}
+
 	return pig;
 };
 

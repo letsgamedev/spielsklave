@@ -100,8 +100,13 @@ function destroyWrap(obj) {
 	return function(){
 		setTimeout(obj.destroy.bind(obj), 0);
 	}
-	
 }
+
+function distance(a,b) {
+	return game.math.distance(a.x, a.y, b.x, b.y);
+}
+
+function nothing() {}
 
 function getParams() {
     qs = document.location.search.split('+').join(' ');

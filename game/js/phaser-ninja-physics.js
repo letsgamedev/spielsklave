@@ -76013,6 +76013,7 @@ Phaser.Physics.Ninja.Body.prototype = {
 
     },
 
+    //Added by Tom
     setSize: function(width, height, id) {
         switch (this.collisionType) {
             case 1:
