@@ -81,8 +81,11 @@ var Scythe = function(player, world) {
 
 
 			var hb = hitbox[player.lookDirection][player.frameName.slice(-1)];
-			currentHitBox = new Phaser.Rectangle(player.body.x + hb.x, player.body.y + hb.y, hb.w, hb.h);
-
+			try {
+				currentHitBox = new Phaser.Rectangle(player.body.x + hb.x, player.body.y + hb.y, hb.w, hb.h);
+			} catch (e) {
+				scythe.update = nothing;
+			}
 			hitTest();
 
 		}
