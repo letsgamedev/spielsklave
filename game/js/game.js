@@ -234,7 +234,9 @@ Game.Main.prototype = {
 
         if (firstStart == false) {
         	firstStart = true;
-        	TextBoxBig(L("TEXT01"));
+        	timeEvent(0.1,function(){
+        		TextBoxBig(L("TEXT01"));
+        	});
         }
         
 	},	
@@ -684,7 +686,8 @@ Game.Main.prototype = {
 	    };
 
 	    for (var j = 0; j < this.events.length; j++) {
-    		game.physics.ninja.collide(this.events[j], this.player);
+    		if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player);
+    		if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j]);
     		game.physics.ninja.collide(this.events[j], this.pig);
     	};
 
