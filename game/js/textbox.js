@@ -88,6 +88,7 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 
 		var buttonNext = game.add.sprite(117, 20, 'atlas', "textboxbutton0");
 		buttonNext.swapTime = 0.5;
+		buttonNext.visible = false;
 		buttonNext.update = function() {
 			buttonNext.swapTime -= DT;
 			buttonNext.visible = hold;
