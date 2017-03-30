@@ -4,7 +4,7 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 	var buttonNext = null;
 
 	//Char TextBox
-	var charName = game.add.nineSlice(62, 150, 'textBoxBig', null, 84, 50);
+	var charName = game.add.nineSlice(62, 150, 'textBoxBig', null, 84, 50, WORLD.topLayer);
 	charName.fixedToCamera = true;
 	charName.visible = false;
 	var tweenCN = game.add.tween(charName.cameraOffset).to({
@@ -15,7 +15,7 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 	
 
 	//Main TextBox
-	var tb = game.add.nineSlice(game.width / 2, game.height - 20, 'textBoxBig', null, 20, 20);
+	var tb = game.add.nineSlice(game.width / 2, game.height - 20, 'textBoxBig', null, 20, 20, WORLD.topLayer);
 	tb.fixedToCamera = true;
 	tb.anchor.set(0.5);
 
@@ -48,10 +48,10 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 
 	function addText() {
 		//Char name text
-		bmpTextName = game.add.bitmapText(10, -35, 'font', name, 10);
+		bmpTextName = game.add.bitmapText(10, -35, 'font', name, 10, WORLD.topLayer);
 		charName.addChild(bmpTextName);
 		//BigText
-		bmpText = game.add.bitmapText(-115, -69, 'font', "", 12);
+		bmpText = game.add.bitmapText(-115, -69, 'font', "", 12, WORLD.topLayer);
 		tb.addChild(bmpText)
 		bmpText.maxWidth = 225;
 		var hold = false;
@@ -86,7 +86,7 @@ var TextBoxBig = function(text, name) {//x, y, key, frame, width, height, group
 			}
 		}
 
-		var buttonNext = game.add.sprite(117, 20, 'atlas', "textboxbutton0");
+		var buttonNext = game.add.sprite(117, 20, 'atlas', "textboxbutton0", WORLD.topLayer);
 		buttonNext.swapTime = 0.5;
 		buttonNext.visible = false;
 		buttonNext.update = function() {

@@ -26,6 +26,8 @@ var TEST = null;
 var TEST2 = null;
 var TEST3 = null;
 
+var WORLD = null
+
 var firstStart = false;
 
 var globalMusicVolume = 0.5;
@@ -138,6 +140,7 @@ Game.Main.prototype = {
 		//General setup
 		//Pad.init();
         this.initPhysics();
+        WORLD = this;
 
         this.inputController = InputController(this);
 
@@ -146,6 +149,8 @@ Game.Main.prototype = {
         this.bottomLayer = game.add.group();
         this.middleLayer = game.add.group();
         this.topLayerTiles = this.map.createLayer(MAP.TOP);
+        this.topLayer = game.add.group();
+        this.uiLayer = game.add.group();
 
 
         if (LastMapInfo) {
@@ -172,7 +177,7 @@ Game.Main.prototype = {
         this.cursor = Cursor(this);
 
         
-        if (game.device.desktop == false) Pad.addVirtualButtons(game);
+        
 
     	this.addClouds();
 
@@ -181,6 +186,7 @@ Game.Main.prototype = {
     	
 	    //Add UI
 	    this.ui = UI(this);
+	    this.uiLayer.add(this.ui);
 	    this.ui.updateHealth();
 
 
@@ -223,6 +229,8 @@ Game.Main.prototype = {
         	backgroundMusic.fadeOut(1);
         	backgroundMusic = playMusic("world", 0.75, true);
         }
+
+        if (game.device.desktop == false) this.uiLayer.add(Pad.addVirtualButtons(game));
 
         if (firstStart == false) {
         	firstStart = true;

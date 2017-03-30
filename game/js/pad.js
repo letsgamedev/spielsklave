@@ -125,8 +125,14 @@ var Pad = {
 
         group.fixedToCamera = true;
 
-        add(game.width - 50 - 25, game.height - 50 - 25, "btn", this.btnX);
-        add(game.width - 50 - 85, game.height - 50 - 25, "btn", this.btnY);
+        var mx = game.width - 100;
+        var my = game.height - 100;
+        var off = 35;
+
+        add(mx, my - off, "btn", this.btnX);
+        add(mx - off, my, "btn", this.btnY);
+        add(mx + off, my, "btn", this.btnA);
+        add(mx, my + off, "btn", this.btnB);
 
         var back = game.add.sprite(75, game.height - 75, "atlas_pad", "back", group);
         back.anchor.set(0.5);
@@ -200,6 +206,8 @@ var Pad = {
 
             game.input.maxPointers = 2;
             game.input.addPointer();
+
+            return group;
 
         
     },
