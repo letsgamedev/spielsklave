@@ -502,9 +502,10 @@ Game.Main.prototype = {
 	},
 
 	addClouds: function() {
+		var world = this;
 		for (var i = 0; i < 4; i++) {
-			var x = game.rnd.between(0, game.world.width);
-			var y = game.rnd.between(0, game.world.height);
+			var x = game.rnd.between(0, this.map.width * 8);
+			var y = game.rnd.between(0, this.map.height * 8);
 			let c = game.add.sprite(x, y, "atlas", "cloud0");
 			c.blendMode = 8;
 			c.tint = 0x999999;
@@ -512,11 +513,12 @@ Game.Main.prototype = {
 			c.scale.set(2);
 			c.xSpeed = game.rnd.between(3, 15);
 			c.ySpeed = game.rnd.between(3, 15);
+			console.log(c);
 			c.update = function() {
 				c.x += DT * c.xSpeed;
 				c.y += DT * c.xSpeed;
-				if (c.y > game.world.height) c.y = -c.height;
-				if (c.x > game.world.width) c.x = -c.width;
+				if (c.top > world.map.height * 8) c.y = -c.height;
+				if (c.left > world.map.width * 8) c.x = -c.width;
 			}
 		};
 	},
