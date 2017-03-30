@@ -123,11 +123,13 @@ var Pig = function(world, x, y) {
 
 	pig.sitDown = function() {
 		pig.state = STATES.SIT;
+		pig.setUI();
 		pig.animations.play("sit");
 	}
 
 	pig.standUp = function() {
 		pig.state = STATES.NORMAL;
+		pig.setUI();
 		pig.animations.play("stand_" + lookDirection);
 	}
 
@@ -177,6 +179,16 @@ var Pig = function(world, x, y) {
 		}
 		
 
+	}
+
+	pig.setUI = function() {
+		world.ui.setIconY(6);
+		switch (pig.state) {
+			case STATES.NORMAL: world.ui.setIconB(3); break;
+			case STATES.SIT: world.ui.setIconB(4); break;
+		}
+		
+		world.ui.setIconX(2);
 	}
 
 	pig.teleport = function() {

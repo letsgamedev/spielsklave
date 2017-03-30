@@ -43,7 +43,24 @@ var UI = function(world) {
 	}
 
 	//items
-	ui.item1 = game.add.sprite(game.width - 100, -7, "atlas", "icon_id_0", ui);
-	ui.item1 = game.add.sprite(game.width - 70, -7, "atlas", "icon_id_1", ui);
+	ui.btnY = game.add.sprite(game.width - 130, -7, "atlas", "icon_id_0", ui);
+	ui.btnB = game.add.sprite(game.width - 100, -7, "atlas", "icon_id_7", ui);
+	ui.btnX = game.add.sprite(game.width - 70, -7, "atlas", "icon_id_1", ui);
+
+	ui.setIconY = function(id) {
+		setIcon(ui.btnY, id);
+	}
+
+	ui.setIconB = function(id) {
+		setIcon(ui.btnB, id);
+	}
+
+	ui.setIconX = function(id) {
+		setIcon(ui.btnX, id);
+	}
+
+	function setIcon(btn, id) {
+		btn.frameName = "icon_id_" + id;
+	}
 	return ui;
 };

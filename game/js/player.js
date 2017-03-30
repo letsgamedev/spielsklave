@@ -124,10 +124,18 @@ var Player = function(world, x, y) {
 		if (inChange) return;
 		if (player.state == STATES.STONE) {
 			fromStone();
+			player.setUI();
 			if (world.pig.state == STATES.NORMAL) world.pig.teleport();
 		} else {
 			toStone();
+			world.pig.setUI();
 		}
+	}
+
+	function setUI() {
+		world.ui.setIconY(0);
+		world.ui.setIconB(7);
+		world.ui.setIconX(1);
 	}
 
 	//Creates a stone statue an replaces the demon char
@@ -265,6 +273,7 @@ var Player = function(world, x, y) {
 	player.walkAuto = walkAuto;
 	player.myPostUpdate = myPostUpdate;
 	player.swapStone = swapStone;
+	player.setUI = setUI;
 
 	return player;
 };
