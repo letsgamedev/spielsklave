@@ -216,6 +216,7 @@ var Pig = function(world, x, y) {
 	}
 
 	pig.tweenToPlayer = function() {
+		if (pig.state == STATES.SIT) pig.standUp();
 		var tween = game.add.tween(pig.body).to({
 			x: world.player.x,
 			y: world.player.y
