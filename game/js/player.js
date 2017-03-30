@@ -106,36 +106,6 @@ var Player = function(world, x, y) {
 			player.state = STATES.STAND;
 		}
 
-
-		//Turn on/off multiplayer, will detroy stone at the moment
-		if (Pad.justDown(Pad.SELECT)) {
-			world.cursor.visible = !world.cursor.visible;
-			/*if (player.humanInput == false && world.cursor.visible) {
-				setHumanInput(true);
-			}*/
-		}
-
-		//Swap between stone and flesh
-		if (Pad.justDown(Pad.X)) {
-			swapStone();
-		}
-
-		//Item slot 1
-		if (player.state != STATES.INUSE && player.state != STATES.STONE) {
-			if (Pad.justDown(Pad.Y) && player.item1) {
-				player.item1.action();
-			}
-
-			if (Pad.justDown(Pad.B) && player.item2) {
-				player.item2.action();
-			}
-
-			if (Pad.justDown(Pad.A) && player.attachedEvent) {
-				player.animations.play("stand_" + lookDirection);
-				player.attachedEvent.interact();
-			}
-		}
-
 	}
 
 	player.onHit = GenPool.onHit;
@@ -154,7 +124,7 @@ var Player = function(world, x, y) {
 		if (inChange) return;
 		if (player.state == STATES.STONE) {
 			fromStone();
-			world.pig.teleport();
+			if (world.pig.state == STATES.NORMAL) world.pig.teleport();
 		} else {
 			toStone();
 		}
@@ -294,6 +264,7 @@ var Player = function(world, x, y) {
 	player.fromStone = fromStone;
 	player.walkAuto = walkAuto;
 	player.myPostUpdate = myPostUpdate;
+	player.swapStone = swapStone;
 
 	return player;
 };

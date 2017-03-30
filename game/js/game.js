@@ -19,7 +19,8 @@ var STATES = {
 	STONE: 1,
 	WALK: 2,
 	STAND: 3,
-	INUSE: 4
+	INUSE: 4,
+	SIT: 5
 };
 var TEST = null;
 var TEST2 = null;
@@ -27,7 +28,7 @@ var TEST3 = null;
 
 var firstStart = false;
 
-var globalMusicVolume = 0.5;
+var globalMusicVolume = 0;//0.5;
 var globalSoundVolume = 1;
 
 var MAP = {
@@ -137,6 +138,8 @@ Game.Main.prototype = {
 		//General setup
 		//Pad.init();
         this.initPhysics();
+
+        this.inputController = InputController(this);
 
         this.reflectionLayer = game.add.group();
         this.initMap();
@@ -581,15 +584,16 @@ Game.Main.prototype = {
 		DT = this.time.physicsElapsedMS * 0.001;
 		if (this.isInTransition) return;
 		Pad.checkJustDown();
+		this.inputController.update();
 
 		if (isEvent) {
 			currentEvent.myUpdate();
 		} else {
 			
-			this.player.input();
+			//this.player.input();
 			this.player.attachedEvent = null;
 			this.pig.update();
-			this.pig.input();
+			//this.pig.input();
 			this.myUpdateOn(this.enemies);
 			this.myUpdateOn(this.events);
 		}

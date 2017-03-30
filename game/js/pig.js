@@ -39,6 +39,7 @@ var Pig = function(world, x, y) {
 	pig.animations.add("stand_down", ["pig_walk_down_1"], 12, true);
 	pig.animations.add("stand_left", ["pig_walk_left_1"], 12, true);
 	pig.animations.add("stand_right", ["pig_walk_right_1"], 12, true);
+	pig.animations.add("sit", ["pig_sit_0"], 12, true);
 
 	addAnimation(pig, "walk_down", "pig_walk_down", 4, 12, true);
 	addAnimation(pig, "walk_up", "pig_walk_up", 4, 12, true);
@@ -55,15 +56,18 @@ var Pig = function(world, x, y) {
 	var sameDirectionCount = 0;
 	var lastDirection = 0;
 
+	pig.state = STATES.NORMAL;
+
 	/**
 	The pig will follow the player if its not controlled by a human.
 	May be some pathfinding will be added later.
 	*/
 	pig.update = function() {
 		//Yes, this function is a bit messi
-		pig.damageSave = world.player.state != STATES.STONE;
+		pig.damageSave = world.player.state != STATES.STONE && pig.state == STATES.NORMAL;
 
 		if (world.player.state == STATES.STONE && world.cursor.visible == false) return;
+		if (pig.state == STATES.SIT) return;
 
 		var follow = world.cursor.visible ? world.cursor : world.player.body;
 		minDis = world.cursor.visible ? 2 : 30;
@@ -117,6 +121,16 @@ var Pig = function(world, x, y) {
 
 	}
 
+	pig.sitDown = function() {
+		pig.state = STATES.SIT;
+		pig.animations.play("sit");
+	}
+
+	pig.standUp = function() {
+		pig.state = STATES.NORMAL;
+		pig.animations.play("stand_" + lookDirection);
+	}
+
 	pig.onHit = function(self, enemy) {
 		//GenPool.onHit;
 		console.log(enemy.harmless)
@@ -130,6 +144,7 @@ var Pig = function(world, x, y) {
 	Handels the input from Pad class. Has to be called every frame.
 	*/
 	pig.input = function() {
+		if (pig.state == STATES.SIT) return;
 		if (world.player.state == STATES.STONE && world.cursor.visible == false) {
 
 			var stand = true;
@@ -159,14 +174,6 @@ var Pig = function(world, x, y) {
 			if (stand) {
 				pig.animations.play("stand_" + lookDirection);
 			}
-
-
-			if (Pad.justDown(Pad.A)) {
-				
-			}
-			if (Pad.justDown(Pad.X)) {
-				
-			}
 		}
 		
 
@@ -177,6 +184,7 @@ var Pig = function(world, x, y) {
 		var dis = 16;
 		var xOff = 0;
 		var yOff = 0;
+		pig.state = STATES.NORMAL;
 		switch (world.player.lookDirection) {
 			case UP: 	yOff = dis; break;
 			case DOWN:  yOff = -dis; break;
