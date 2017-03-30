@@ -138,6 +138,7 @@ var Pig = function(world, x, y) {
 		console.log(enemy.harmless)
 		if (!enemy.harmless) {
 			world.player.fromStone();
+			world.player.setUI();
 		}
 		
 	}
