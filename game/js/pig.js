@@ -243,8 +243,8 @@ var ReflectionPig = function(world) {
 	reflection.alpha = 0.75;
 
 	reflection.update = function() {
-		reflection.x = pig.x - 10;
-		reflection.y = pig.y + 24;
+		reflection.x = pig.body.x - 10;
+		reflection.y = pig.body.y + 24;
 
 		reflection.animations.play(pig.animations.currentAnim.name);
 	}

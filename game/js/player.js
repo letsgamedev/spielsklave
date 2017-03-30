@@ -265,6 +265,7 @@ var Player = function(world, x, y) {
 	function myPostUpdate() {
 		if (player.attachedEvent == null) {
 			player.headIcon.visible = false;
+			player.reflection.myUpdate();
 		}
 	}
 	HeadIcon(player, 8, -25);
@@ -293,10 +294,11 @@ var ReflectionPlayer = function(world) {
 	addAnimation(reflection, "walk_left", "player_walk_left", 4, 10, true);
 	addAnimation(reflection, "walk_right", "player_walk_right", 4, 10, true);
 	reflection.alpha = 0.75;
+	world.player.reflection = reflection;
 
-	reflection.update = function() {
-		reflection.x = player.x - 32;
-		reflection.y = player.y + 50;
+	reflection.myUpdate = function() {
+		reflection.x = player.body.x - 32;
+		reflection.y = player.body.y + 50;
 
 		reflection.animations.play(player.animations.currentAnim.name);
 	}
