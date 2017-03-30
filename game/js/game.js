@@ -398,6 +398,7 @@ Game.Main.prototype = {
 	prepareNextChunk: function() {
 		this.oldChunk = this.currentChunk;
 		this.currentChunk = this.position2Chunk(this.player.x, this.player.y);
+		this.currentChunk.events = this.getEvents(this.currentChunk);
 		this.addEnemies();
 		this.addEvents();
 	},

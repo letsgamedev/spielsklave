@@ -13,7 +13,7 @@ var L = function(key) {
 		return input;
 	} 
 
-	if (Config.lang == null) Config.lang = navigator.language == 'de' ? 'de' : 'en';
+	if (Config.lang == null) Config.lang = navigator.language.indexOf("de") != -1 ? 'de' : 'en';
 	var result = LangKeys[Config.lang][key];
 	if (result) return replacer(result);
 	return "undefined!";

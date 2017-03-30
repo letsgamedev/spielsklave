@@ -174,4 +174,4 @@ var Fabrique;
         Plugins.NineSlice = NineSlice;
     })(Plugins = Fabrique.Plugins || (Fabrique.Plugins = {}));
 })(Fabrique || (Fabrique = {}));
-//# sourceMappingURL=phaser-nineslice.js.map
+// sourceMappingURL=phaser-nineslice.js.map
