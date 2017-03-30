@@ -554,9 +554,6 @@ Game.Main.prototype = {
 			case RIGHT: lookOffsetX = -lookOffsetDistance; break;
 		}
 
-		//var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
-		//var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
-
 		var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX);
 		var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY);
 
