@@ -148,7 +148,8 @@ Game.Main.prototype = {
         this.initMap();
         this.bottomLayer = game.add.group();
         this.middleLayer = game.add.group();
-        this.topLayerTiles = this.map.createLayer(MAP.TOP);
+        //this.topLayerTiles = this.map.createLayer(MAP.TOP);
+        this.topLayerTiles = this.createMapLayer(MAP.TOP);
         this.topLayer = game.add.group();
         this.uiLayer = game.add.group();
 
@@ -176,8 +177,7 @@ Game.Main.prototype = {
         
         this.cursor = Cursor(this);
 
-        
-        
+        TEST = this.createMapLayer.bind(this);
 
     	this.addClouds();
 
@@ -428,9 +428,9 @@ Game.Main.prototype = {
 	initMap: function() {
 		this.map = this.add.tilemap("map");
        
-        this.map.addTilesetImage("tiles", 'tiles'); //sets a image key to a json tileset name key
-        this.layer = this.map.createLayer(MAP.GROUND);
-        //this.groundDetail = this.map.createLayer(MAP.GROUND_DETAIL);
+        //this.map.addTilesetImage("tiles", 'tiles'); //sets a image key to a json tileset name key
+        this.layer = this.createMapLayer(MAP.GROUND);
+        this.layerHelper = this.map.createLayer(MAP.GROUND);
 
         var slopeMap = [0,//first is ignored
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -475,9 +475,10 @@ Game.Main.prototype = {
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
 
-        this.tiles = game.physics.ninja.convertTilemap(this.map, this.layer, slopeMap);
+        this.tiles = game.physics.ninja.convertTilemap(this.map, MAP.GROUND, slopeMap);
 
-        this.layer.resizeWorld();
+        this.layerHelper.resizeWorld();
+        this.layerHelper.visible = false;
 	},
 
 	addEnemies: function() {
@@ -732,14 +733,49 @@ Game.Main.prototype = {
 		}
 		game.state.start("Main");
 	},
+
+	createMapLayer: function(id) {
+		var name = "map_" + id;
+		var layer = game.add.renderTexture(this.map.width * 8, this.map.height * 8, name, true);
+
+		var tile = null;
+	    var w = this.map.width;
+	    var h = this.map.height;
+	    var dx = 0;
+	    var dy = 0;
+	    var clearTexture = true;
+	    var stamp = game.add.sprite(0, 0, 'tiless', 0);
+
+	    for (var y = 0; y < h; y++) {
+	        for (var x = 0; x < w; x++) {
+	            tile = this.map.getTile(x, y, id);
+	            if (tile) {
+	                stamp.frame = tile.index - 1;
+	                layer.renderXY(stamp, dx, dy, clearTexture);
+	                clearTexture = false;
+	            }
+
+	            dx += 8;
+	        }
+	        
+	        dx = 0;
+	        dy += 8;
+	    }
+
+	    stamp.destroy();
+	    return game.add.sprite(0, 0, layer);
+	    
+
+	},
 	
-	renderMapToTexture: function(render) {
+	/*renderMapToTexture: function(render) {
 		console.log("taka a snap");
-		var texture = game.add.renderTexture(game.width, game.height, "mapFade", true);
+		var texture = game.add.renderTexture(512, 512, "mapFade", true);
 		texture.render(this.layer);
 		//texture.render(this.groundDetail);
 		texture.render(this.topLayerTiles);
-	}
+		//game.add.sprite(10,10, texture);
+	}*/
 };
 
 

@@ -22,6 +22,7 @@ Game.Preloader.prototype = {
 		game.load.atlas("atlas");
 		game.load.atlas("atlas_pad");
 		this.load.image("tiles");
+		game.load.spritesheet('tiless', 'tiles.png', 8, 8);
 
 		// top is 10, left is 15, right is 20 and bottom is 30 pixels in size 
 		game.load.nineSlice('textBoxBig', 'textBoxBig.png', 9, 8, 8, 8);
