@@ -14,6 +14,7 @@ var L = function(key) {
 	} 
 
 	if (Config.lang == null) Config.lang = navigator.language.indexOf("de") != -1 ? 'de' : 'en';
+	Config.lang = "de"; //delete this when english texts are there
 	var result = LangKeys[Config.lang][key];
 	if (result) return replacer(result);
 	return "undefined!";
