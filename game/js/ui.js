@@ -84,7 +84,6 @@ var Map = function(x, y) {
 	openMap.mask.beginFill(0xffffff);
 	openMap.mask.drawRect(0, 0, 1, 1);
 
-	var clouds = game.add.sprite(0, 0, "atlas", "map_cloud");
 	var mapImg = game.add.sprite(0, 0, "atlas", "map_cloud");
 	
 	map.add(mapImg);
