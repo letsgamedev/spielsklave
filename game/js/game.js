@@ -30,7 +30,7 @@ var WORLD = null
 
 var firstStart = false;
 
-var globalMusicVolume = 0.5;
+var globalMusicVolume = 0;//0.5;
 var globalSoundVolume = 1;
 
 var MAP = {
@@ -151,7 +151,7 @@ Game.Main.prototype = {
         //this.topLayerTiles = this.map.createLayer(MAP.TOP);
         this.topLayerTiles = this.createMapLayer(MAP.TOP);
         this.topLayer = game.add.group();
-        this.uiLayer = game.add.group();
+        
 
 
         if (LastMapInfo) {
@@ -185,6 +185,7 @@ Game.Main.prototype = {
     	this.addTimeOverlay();
     	
 	    //Add UI
+	    this.uiLayer = game.add.group();
 	    this.ui = UI(this);
 	    this.uiLayer.add(this.ui);
 	    this.ui.updateHealth();
@@ -403,6 +404,8 @@ Game.Main.prototype = {
 		this.currentChunk.events = this.getEvents(this.currentChunk);
 		this.addEnemies();
 		this.addEvents();
+		console.log(MAPDATA[nextMapId].mapX , this.currentChunk.x , 512, MAPDATA[nextMapId].mapY , this.currentChunk.y ,512);
+		this.ui.miniMap.setCenterTile(MAPDATA[nextMapId].mapX + this.currentChunk.x / 512, MAPDATA[nextMapId].mapY + this.currentChunk.y / 512);
 	},
 
 	setWorldBoundsForCurrentChunk: function() {

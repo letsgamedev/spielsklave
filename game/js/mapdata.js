@@ -2,6 +2,8 @@ var MAPDATA = {
 	"01": {
 		backgroundColor: 0x279cf9,
 		chunkCoords: [[0,0], [0,1]],
+		mapX:5,
+		mapY:3,
 		events: [
 			{
 				tileX: 20,

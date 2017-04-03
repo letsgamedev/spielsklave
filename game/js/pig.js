@@ -55,6 +55,7 @@ var Pig = function(world, x, y) {
 	var walkSave = 0;
 	var sameDirectionCount = 0;
 	var lastDirection = 0;
+	var currentTween = null;
 
 	pig.state = STATES.NORMAL;
 
@@ -83,7 +84,7 @@ var Pig = function(world, x, y) {
 			case -1: lookDirection = UP; break;
 		}
 
-		if (distance > teleportDistance && world.cursor.visible == false) {
+		if (distance > teleportDistance && world.cursor.visible == false && currentTween == null) {
 			pig.teleport();
 		}
 
@@ -217,10 +218,15 @@ var Pig = function(world, x, y) {
 
 	pig.tweenToPlayer = function() {
 		if (pig.state == STATES.SIT) pig.standUp();
+		world.player.setUI();
 		var tween = game.add.tween(pig.body).to({
 			x: world.player.x,
 			y: world.player.y
 		}, 500, Phaser.Easing.Default, true);
+		tween.onComplete.add(function(){
+			currentTween = null
+		});
+		currentTween = tween;
 	}
 
 	return pig;
