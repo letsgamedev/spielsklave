@@ -30,7 +30,7 @@ var WORLD = null
 
 var firstStart = false;
 
-var globalMusicVolume = 0;//0.5;
+var globalMusicVolume = 0.5;
 var globalSoundVolume = 1;
 
 var MAP = {
