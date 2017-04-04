@@ -52,7 +52,7 @@ var UI = function(world) {
 	var map = MiniMap(game.width - 68, 0);
 	ui.add(map);
 	ui.miniMap = map;
-	ui.add(map.overlay);
+	if (Game.variant === 0) ui.add(map.overlay);
 
 	ui.setIconY = function(id) {
 		setIcon(ui.btnY, id);
@@ -102,8 +102,8 @@ var MiniMap = function(x, y) {
 	var map = Map(x, y);
 	var miniMapMask = game.add.graphics(0, 0);
 	miniMapMask.beginFill(0x444444);
-	//miniMapMask.drawRect(0, 0, 16 * 3 + 1, 16 * 3 + 1);
-	miniMapMask.drawCircle(16 * 1.5 + 0.5, 16 * 1.5 + 0.5, 16 * 3 + 1)
+	if (Game.variant === 1) miniMapMask.drawRect(0, 0, 16 * 3 + 1, 16 * 3 + 1);
+	if (Game.variant === 0) miniMapMask.drawCircle(16 * 1.5 + 0.5, 16 * 1.5 + 0.5, 16 * 3 + 1)
 
 	TEST2 = miniMapMask;
 	map.setCenterTile = function(tileX, tileY) {

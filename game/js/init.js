@@ -28,12 +28,12 @@ function init() {
 	var s = Size.big;
 
 	var params = getParams();
-	/*if (params.size) {
-		switch(params.size) {
-			case "big": s = Size.big; break;
-			case "max": s = Size.max; break;
+	Game.variant = 0;
+	if (params.map) {
+		switch(params.map) {
+			case "rect": Game.variant = 1; break;
 		}
-	}*/
+	}
 	Game.width = s.w;
 	Game.height = s.h;
 

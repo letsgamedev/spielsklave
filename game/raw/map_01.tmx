@@ -3,7 +3,7 @@
  <tileset firstgid="1" name="tiles" tilewidth="8" tileheight="8" tilecount="800">
   <image source="../assets/tiles.png" width="160" height="320"/>
  </tileset>
- <layer name="ground" width="64" height="128" visible="0">
+ <layer name="ground" width="64" height="128">
   <data>
    <tile gid="425"/>
    <tile gid="426"/>
@@ -32787,7 +32787,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="bigGrid" width="64" height="128" opacity="0.24">
+ <layer name="bigGrid" width="64" height="128" visible="0" opacity="0.24">
   <data>
    <tile gid="242"/>
    <tile gid="242"/>
