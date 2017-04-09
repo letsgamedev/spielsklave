@@ -6,48 +6,49 @@
 @mail letsgamedev@gmx.de
 */
 
-Game.Preloader = function(){
-};
+Game.Preloader = function () {
+}
 
 Game.Preloader.prototype = {
-	init: function() {
-		logInfo("init Preloader");
-	},
-	
-	preload: function() {
-		game.plugins.add(Fabrique.Plugins.NineSlice);
+  init: function () {
+    logInfo('init Preloader')
+  },
 
-		this.load.path = 'assets/';
-		
-		game.load.atlas("atlas");
-		game.load.atlas("atlas_pad");
-		this.load.image("tiles");
-		game.load.spritesheet('tiless', 'tiles.png', 8, 8);
+  preload: function () {
+    game.plugins.add(Fabrique.Plugins.NineSlice)
 
-		// top is 10, left is 15, right is 20 and bottom is 30 pixels in size 
-		game.load.nineSlice('textBoxBig', 'textBoxBig.png', 9, 8, 8, 8);
-		game.load.bitmapFont("font");
-		var loadSound = function(name, type, dir) {
-			type = type || "mp3"
-			dir = dir || "sounds/"
+    this.load.path = 'assets/'
 
-			game.load.audio(name, dir + name + "." + type);
-		}
-		loadSound("player_hit", "wav");
-		loadSound("hit2", "wav");
-		loadSound("player_to_stone", "wav");
-		loadSound("player_from_stone", "wav");
-		loadSound("little_egg_hatch", "wav");
-		loadSound("explosion1", "wav");
-		loadSound("stone_push", "wav");
-		loadSound("scythe", "wav");
-		loadSound("world", "ogg", "music/");
-	},
-	
-	create: function() {
-		//game.state.start("BlendModeTest");
-		Pad.init();
-		nextMapId = "01";
-		game.state.start("Main");
-	}
-};
+    game.load.atlas('atlas')
+    game.load.atlas('atlas_pad')
+    this.load.image('tiles')
+    game.load.spritesheet('tiless', 'tiles.png', 8, 8)
+
+		// top is 10, left is 15, right is 20 and bottom is 30 pixels in size
+    game.load.nineSlice('textBoxBig', 'textBoxBig.png', 9, 8, 8, 8)
+    game.load.bitmapFont('font')
+    game.load.bitmapFont('fontDamage')
+    var loadSound = function (name, type, dir) {
+      type = type || 'mp3'
+      dir = dir || 'sounds/'
+
+      game.load.audio(name, dir + name + '.' + type)
+    }
+    loadSound('player_hit', 'wav')
+    loadSound('hit2', 'wav')
+    loadSound('player_to_stone', 'wav')
+    loadSound('player_from_stone', 'wav')
+    loadSound('little_egg_hatch', 'wav')
+    loadSound('explosion1', 'wav')
+    loadSound('stone_push', 'wav')
+    loadSound('scythe', 'wav')
+    loadSound('world', 'ogg', 'music/')
+  },
+
+  create: function () {
+		// game.state.start("BlendModeTest");
+    Pad.init()
+    nextMapId = '01'
+    game.state.start('Main')
+  }
+}

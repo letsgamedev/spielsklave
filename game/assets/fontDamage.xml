@@ -1,0 +1,24 @@
+<font>
+  <info face="fontDamage" size="10" bold="0" italic="0" charset="" unicode="" stretchH="100" smooth="1" aa="1" padding="2,2,2,2" spacing="0,0" outline="0"/>
+  <common lineHeight="11" base="8" scaleW="95" scaleH="14" pages="1" packed="0"/>
+  <pages>
+    <page id="0" file="fontDamage.png"/>
+  </pages>
+  <chars count="11">
+    <char id="49" x="2" y="2" width="5" height="9" xoffset="1" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="50" x="9" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="51" x="18" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="52" x="27" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="53" x="36" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="54" x="45" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="55" x="54" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="56" x="63" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="57" x="72" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="48" x="81" y="2" width="7" height="9" xoffset="0" yoffset="0" xadvance="6" page="0" chnl="15"/>
+    <char id="33" x="90" y="2" width="3" height="0" xoffset="1" yoffset="0" xadvance="3" page="0" chnl="15"/>
+    <char id="32" x="0" y="0" width="0" height="0" xoffset="1" yoffset="0" xadvance="3" page="0" chnl="15"/>
+  </chars>
+  <kernings count="1">
+    <kerning first="49" second="49" amount="-1"/>
+  </kernings>
+</font>
