@@ -10,7 +10,7 @@ var UI = function (world) {
   var x = 0
   var y = 0
   for (var i = 0; i < 10; i++) {
-    var h = game.add.sprite(17 + x * 14, y * 14 - 100, 'atlas', 'health_full', ui)
+    var h = game.add.sprite(17 + x * 14, y * 14, 'atlas', 'health_full', ui)
     x++
     if (x >= 5) {
       y++
@@ -47,7 +47,7 @@ var UI = function (world) {
   var map = MiniMap(game.width - 68, 0)
   ui.add(map)
   ui.miniMap = map
-  if (Game.variant === 0) ui.add(map.overlay)
+  ui.add(map.overlay)
 
   var scytheBar = ScytheBar()
   ui.add(scytheBar)
@@ -108,12 +108,19 @@ var Map = function (x, y) {
 var MiniMap = function (x, y) {
   var oPos = {x: x, y: y}
   var map = Map(x, y)
-  var miniMapMask = game.add.graphics(0, 0)
-  miniMapMask.beginFill(0x444444)
-  if (Game.variant === 1) miniMapMask.drawRect(0, 0, 16 * 3 + 1, 16 * 3 + 1)
-  if (Game.variant === 0) miniMapMask.drawCircle(16 * 1.5 + 0.5, 16 * 1.5 + 0.5, 16 * 3 + 1)
 
-  TEST2 = miniMapMask
+  var miniMapMask = null
+  if (Game.variant === 1) {
+  	// miniMapMask = game.add.sprite(0, 0, 'atlas', 'mapoverlay2_mask')
+  	miniMapMask = game.add.graphics(0, 0)
+  	miniMapMask.beginFill(0x444444)
+  	miniMapMask.drawRoundedRect(0, 0, 16 * 3 + 1, 16 * 3 + 1, 14)
+  } else {
+  	miniMapMask = game.add.graphics(0, 0)
+  	miniMapMask.beginFill(0x444444)
+  	miniMapMask.drawCircle(16 * 1.5 + 0.5, 16 * 1.5 + 0.5, 16 * 3 + 1)
+  }
+
   map.setCenterTile = function (tileX, tileY) {
     console.log('create hole ', tileX, tileY)
     map.clearField(tileX, tileY)
@@ -127,7 +134,7 @@ var MiniMap = function (x, y) {
   map.addChild(miniMapMask)
   map.mask = miniMapMask
 
-  var overlay = game.add.sprite(x - 1, y - 1, 'atlas', 'mapoverlay')
+  var overlay = game.add.sprite(x - 1, y - 1, 'atlas', Game.variant === 1 ? 'mapoverlay2' : 'mapoverlay')
   map.overlay = overlay
 
   return map
