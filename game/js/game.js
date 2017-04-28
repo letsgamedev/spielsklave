@@ -633,7 +633,8 @@ Game.Main.prototype = {
       function check (e) {
         if (e.isFix) return
         r = e.body.aabb.collideAABBVsTile(tile)
-        if (r && e.hitTween) {
+        var isInWorldBounds = game.world.bounds.containsRect(e.body)
+        if (e.hitTween && (r || isInWorldBounds == false)) {
           e.hitTween.stop()
           e.hitTween = undefined
         }
