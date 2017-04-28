@@ -83,11 +83,11 @@ Game.Main.prototype = {
       game.debug.body(this.pig)
       game.debug.body(this.player)
       for (var i = 0; i < this.enemies.length; i++) {
-              game.debug.body(this.enemies[i])
+        game.debug.body(this.enemies[i])
       };
 
       for (var i = 0; i < this.events.length; i++) {
-              game.debug.body(this.events[i])
+        game.debug.body(this.events[i])
       };
       var pu = Pad.isDown(Pad.UP) ? 'U' : '-'
       var pd = Pad.isDown(Pad.DOWN) ? 'D' : '-'
@@ -108,13 +108,13 @@ Game.Main.prototype = {
   },
 
   preRender: function () {
-      this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING)
+    this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING)
   },
 
   swapLight: function () {
-      var finAlpha = this.overlay.alpha == 0 ? 1 : 0
+    var finAlpha = this.overlay.alpha == 0 ? 1 : 0
 
-      var tween = game.add.tween(this.overlay).to({
+    var tween = game.add.tween(this.overlay).to({
       alpha: finAlpha
     }, 3000, Phaser.Easing.Cubic.InOut, true)
     timeEvent(60, this.swapLight, this)
@@ -147,86 +147,87 @@ Game.Main.prototype = {
     this.topLayer = game.add.group()
 
     if (LastMapInfo) {
-          switch (LastMapInfo.mapEntryDirection) {
-            case LEFT:
-              this.player = Player(this, 0, LastMapInfo.player.y)
-              this.pig = Pig(this, this.player.x, this.player.y)
-              timeY = LastMapInfo.player.y
-            break
-            case RIGHT:
-              this.player = Player(this, 400, LastMapInfo.player.y)
-              this.pig = Pig(this, this.player.x, this.player.y)
-              timeY = LastMapInfo.player.y
-            break
-          }
+      switch (LastMapInfo.mapEntryDirection) {
+        case LEFT:
+          this.player = Player(this, 0, LastMapInfo.player.y)
+          this.pig = Pig(this, this.player.x, this.player.y - 9)
+          timeY = LastMapInfo.player.y
+          break
+        case RIGHT:
+          console.log('hui', LastMapInfo.player)
+          this.player = Player(this, 400, LastMapInfo.player.y)
+          this.pig = Pig(this, 512, LastMapInfo.player.y - 9)
+          timeY = LastMapInfo.player.y
+          break
+      }
     } else {
-          this.player = Player(this, 16 * 16, 16 * 50)
-          this.pig = Pig(this, this.player.x, this.player.y)
+      this.player = Player(this, 16 * 16, 16 * 50)
+      this.pig = Pig(this, this.player.x, this.player.y)
     }
 
     this.reflectionLayer.add(ReflectionPlayer(this))
-      this.reflectionLayer.add(ReflectionPig(this))
+    this.reflectionLayer.add(ReflectionPig(this))
 
     this.cursor = Cursor(this)
 
     TEST = this.createMapLayer.bind(this)
 
-      this.addClouds()
+    this.addClouds()
 
       // Day/Night Overlay
-      this.addTimeOverlay()
+    this.addTimeOverlay()
 
       // Add UI
-      this.uiLayer = game.add.group()
-      this.ui = UI(this)
-      this.uiLayer.add(this.ui)
-      this.ui.updateHealth()
+    this.uiLayer = game.add.group()
+    this.ui = UI(this)
+    this.uiLayer.add(this.ui)
+    this.ui.updateHealth()
 
-      this.prepareChunks()
+    this.prepareChunks()
 
-      this.updateCamera(true)
-      this.setCurrentChunk()
+    this.updateCamera(true)
+    this.setCurrentChunk()
 
-      this.isInTransition = false
+    this.isInTransition = false
 
       // Prepare the Fadein Effect
-      if (LastMapInfo) {
-        switch (LastMapInfo.mapEntryDirection) {
-          case LEFT:
-            this.player.body.y -= 32
-            this.player.body.x = -16 * 3
+    if (LastMapInfo) {
+      switch (LastMapInfo.mapEntryDirection) {
+        case LEFT:
+          this.player.body.y -= 32
+          this.player.body.x = -16 * 3
           break
-          case RIGHT:
-            this.player.body.y -= 32
-            this.player.body.x = 512 + 16 * 3
+        case RIGHT:
+          this.player.body.y -= 32
+          this.player.body.x = 512 + 16 * 3
           break
-        }
-        var that = this
-        setTimeout(function () {
-          that.player.walkAuto(that.getOppositDirection(LastMapInfo.mapEntryDirection), 4)
-        }, 0)
-        SwipeFade(this, LastMapInfo.mapEntryDirection, 'in')
-      } else {
-        game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
       }
+      var that = this
+      setTimeout(function () {
+        that.player.walkAuto(that.getOppositDirection(LastMapInfo.mapEntryDirection), 4)
+      }, 0)
+      SwipeFade(this, LastMapInfo.mapEntryDirection, 'in')
+    } else {
+      game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
+    }
 
-      this.updateCamera(true)
+    this.updateCamera(true)
 
       // Set Music
     if (backgroundMusic == null) {
-          backgroundMusic = playMusic('world', 0.75, true)
+      backgroundMusic = playMusic('world', 0.75, true)
     } else if (backgroundMusic.name != 'world') {
-          backgroundMusic.fadeOut(1)
-          backgroundMusic = playMusic('world', 0.75, true)
+      backgroundMusic.fadeOut(1)
+      backgroundMusic = playMusic('world', 0.75, true)
     }
 
     if (game.device.desktop == false) this.uiLayer.add(Pad.addVirtualButtons(game))
 
     if (firstStart == false) {
-          firstStart = true
-          timeEvent(0.1, function () {
-            TextBoxBig(L('TEXT01'))
-          })
+      firstStart = true
+      timeEvent(0.1, function () {
+        TextBoxBig(L('TEXT01'))
+      })
     }
   },
 
@@ -234,25 +235,25 @@ Game.Main.prototype = {
   Initialise the general physics preferences.
   */
   initPhysics: function () {
-     this.game.physics.startSystem(Phaser.Physics.NINJA)
-     this.game.physics.ninja.gravity = 0
+    this.game.physics.startSystem(Phaser.Physics.NINJA)
+    this.game.physics.ninja.gravity = 0
   },
 
   addTimeOverlay: function () {
     this.overlay = game.add.graphics(0, 0)
-      this.overlay.fixedToCamera = true
-      this.overlay.blendMode = 4// 2
-      var night = 0x0000a0
-      var dawn = 0xe04040
-      this.overlay.alpha = LastMapInfo ? LastMapInfo.timeOverlay.alpha : 0
-      this.overlay.tint = night
+    this.overlay.fixedToCamera = true
+    this.overlay.blendMode = 4// 2
+    var night = 0x0000a0
+    var dawn = 0xe04040
+    this.overlay.alpha = LastMapInfo ? LastMapInfo.timeOverlay.alpha : 0
+    this.overlay.tint = night
       /* this.overlay.update = function() {
         var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
         this.alpha = 0//proc;
       } */
-      timeEvent(30, this.swapLight, this) // TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
-      this.overlay.beginFill(0xffffff)
-      this.overlay.drawRect(0, 0, game.width, game.height)
+    timeEvent(30, this.swapLight, this) // TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
+    this.overlay.beginFill(0xffffff)
+    this.overlay.drawRect(0, 0, game.width, game.height)
   },
 
   prepareChunks: function () {
@@ -555,7 +556,7 @@ Game.Main.prototype = {
     this.camera.y = follower.body.y - Game.height / 2
 
     game.camera.x += game.camera._shake.xx
-      game.camera.y += game.camera._shake.yy
+    game.camera.y += game.camera._shake.yy
   },
 
   findTilesWithID: function (layerNr, tileId, bounds) {
@@ -596,13 +597,13 @@ Game.Main.prototype = {
     this.cursor.update()
     this.collision()
 
-      this.ui.updateHealth()
-      PlayerData.regenerateScytheEnergy()
-      this.checkForDeath()
+    this.ui.updateHealth()
+    PlayerData.regenerateScytheEnergy()
+    this.checkForDeath()
 
-      this.checkPlayerOutOfBounds()
+    this.checkPlayerOutOfBounds()
 
-      this.player.myPostUpdate()
+    this.player.myPostUpdate()
 
     this.updateCamera()
   },
@@ -633,9 +634,9 @@ Game.Main.prototype = {
         if (e.isFix) return
         r = e.body.aabb.collideAABBVsTile(tile)
         if (r && e.hitTween) {
-              e.hitTween.stop()
-              e.hitTween = undefined
-            }
+          e.hitTween.stop()
+          e.hitTween = undefined
+        }
       }
       function checkArray (array) {
         var arrayLength = array.length
@@ -647,28 +648,28 @@ Game.Main.prototype = {
       checkArray(this.events)
       check(this.player)
       check(this.pig)
-      }
+    }
 
     // Dont do this in the for loop cause this would be super dumb!
-      if (this.player.state == STATES.STONE) {
-        game.physics.ninja.collide(this.player.shell, this.pig)
-      }
+    if (this.player.state == STATES.STONE) {
+      game.physics.ninja.collide(this.player.shell, this.pig)
+    }
       // Overlap with enemies
 
-      for (var i = 0; i < this.enemies.length; i++) {
-        if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit)
-        if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit)
-        if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i])
-        for (var j = 0; j < this.events.length; j++) {
-          game.physics.ninja.collide(this.events[j], this.enemies[i])
-        };
-      };
-
+    for (var i = 0; i < this.enemies.length; i++) {
+      if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit)
+      if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit)
+      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i])
       for (var j = 0; j < this.events.length; j++) {
-        if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player)
-        if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j])
-        game.physics.ninja.collide(this.events[j], this.pig)
+        game.physics.ninja.collide(this.events[j], this.enemies[i])
       };
+    };
+
+    for (var j = 0; j < this.events.length; j++) {
+      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player)
+      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j])
+      game.physics.ninja.collide(this.events[j], this.pig)
+    };
   },
 
   checkPlayerOutOfBounds: function () {
@@ -718,31 +719,31 @@ Game.Main.prototype = {
     var layer = game.add.renderTexture(this.map.width * 8, this.map.height * 8, name, true)
 
     var tile = null
-      var w = this.map.width
-      var h = this.map.height
-      var dx = 0
-      var dy = 0
-      var clearTexture = true
-      var stamp = game.add.sprite(0, 0, 'tiless', 0)
+    var w = this.map.width
+    var h = this.map.height
+    var dx = 0
+    var dy = 0
+    var clearTexture = true
+    var stamp = game.add.sprite(0, 0, 'tiless', 0)
 
-      for (var y = 0; y < h; y++) {
-          for (var x = 0; x < w; x++) {
-              tile = this.map.getTile(x, y, id)
-              if (tile) {
-                  stamp.frame = tile.index - 1
-                  layer.renderXY(stamp, dx, dy, clearTexture)
-                  clearTexture = false
-              }
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        tile = this.map.getTile(x, y, id)
+        if (tile) {
+          stamp.frame = tile.index - 1
+          layer.renderXY(stamp, dx, dy, clearTexture)
+          clearTexture = false
+        }
 
-              dx += 8
-          }
-
-          dx = 0
-          dy += 8
+        dx += 8
       }
 
-      stamp.destroy()
-      return game.add.sprite(0, 0, layer)
+      dx = 0
+      dy += 8
+    }
+
+    stamp.destroy()
+    return game.add.sprite(0, 0, layer)
   }
 
   /* renderMapToTexture: function(render) {
