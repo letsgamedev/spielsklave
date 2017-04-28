@@ -39,7 +39,7 @@ var UI = function (world) {
     head.y = visible > health.length / 2 ? 3 : -2
   }
 
-	// items
+  // items
   var btnOffsetX = -40
   ui.btnY = game.add.sprite(game.width - 130 + btnOffsetX, -7, 'atlas', 'icon_id_0', ui)
   ui.btnB = game.add.sprite(game.width - 100 + btnOffsetX, -7, 'atlas', 'icon_id_7', ui)
@@ -65,15 +65,15 @@ var UI = function (world) {
   }
 
   ui.update = function () {
-  	scytheBar.update()
+    scytheBar.update()
 
-  	var playerKoords = TB.convert2UIKoords(world.player)
-  	var semiTrans = playerKoords.y < 70 && playerKoords.x > 230
-  	ui.btnB.alpha = semiTrans ? 0.5 : 1
-  	ui.btnX.alpha = semiTrans ? 0.5 : 1
-  	ui.btnY.alpha = semiTrans ? 0.5 : 1
-  	ui.miniMap.alpha = semiTrans ? 0.5 : 1
-  	ui.miniMap.overlay.alpha = semiTrans ? 0.5 : 1
+    var playerKoords = TB.convert2UIKoords(world.player)
+    var semiTrans = playerKoords.y < 70 && playerKoords.x > 230
+    ui.btnB.alpha = semiTrans ? 0.5 : 1
+    ui.btnX.alpha = semiTrans ? 0.5 : 1
+    ui.btnY.alpha = semiTrans ? 0.5 : 1
+    ui.miniMap.alpha = semiTrans ? 0.5 : 1
+    ui.miniMap.overlay.alpha = semiTrans ? 0.5 : 1
   }
 
   function setIcon (btn, id) {
@@ -98,7 +98,7 @@ var Map = function (x, y) {
   map.add(openMap)
 
   map.clearField = function (tileX, tileY) {
-	    openMap.mask.beginFill(0x0)
+      openMap.mask.beginFill(0x0)
     openMap.mask.drawRect(tileX * 16, tileY * 16, 16, 16)
   }
 
@@ -110,16 +110,9 @@ var MiniMap = function (x, y) {
   var map = Map(x, y)
 
   var miniMapMask = null
-  if (Game.variant === 1) {
-  	// miniMapMask = game.add.sprite(0, 0, 'atlas', 'mapoverlay2_mask')
-  	miniMapMask = game.add.graphics(0, 0)
-  	miniMapMask.beginFill(0x444444)
-  	miniMapMask.drawRoundedRect(0, 0, 16 * 3 + 1, 16 * 3 + 1, 14)
-  } else {
-  	miniMapMask = game.add.graphics(0, 0)
-  	miniMapMask.beginFill(0x444444)
-  	miniMapMask.drawCircle(16 * 1.5 + 0.5, 16 * 1.5 + 0.5, 16 * 3 + 1)
-  }
+  miniMapMask = game.add.graphics(0, 0)
+  miniMapMask.beginFill(0x444444)
+  miniMapMask.drawRoundedRect(0, 0, 16 * 3 + 1, 16 * 3 + 1, 14)
 
   map.setCenterTile = function (tileX, tileY) {
     console.log('create hole ', tileX, tileY)
@@ -134,7 +127,7 @@ var MiniMap = function (x, y) {
   map.addChild(miniMapMask)
   map.mask = miniMapMask
 
-  var overlay = game.add.sprite(x - 1, y - 1, 'atlas', Game.variant === 1 ? 'mapoverlay2' : 'mapoverlay')
+  var overlay = game.add.sprite(x - 1, y - 1, 'atlas', 'mapoverlay2')
   map.overlay = overlay
 
   return map
@@ -159,11 +152,11 @@ var ScytheBar = function () {
   container.addChild(currentFill)
 
   container.update = function () {
-  	var max = PlayerData.scytheEnergyMax
-  	var current = PlayerData.scytheEnergyCurrent
+    var max = PlayerData.scytheEnergyCurrentMax
+    var current = PlayerData.scytheEnergyCurrent
 
-  	maxFill.mask.y = Math.floor(46 - (46 * max / 100))
-  	currentFill.mask.y = Math.floor(46 - (46 * current / 100))
+    maxFill.mask.y = Math.floor(46 - (46 * max / 100))
+    currentFill.mask.y = Math.floor(46 - (46 * current / 100))
   }
   return container
 }
@@ -195,7 +188,7 @@ var ScytheEnergyBubble = function (reference) {
     x: 18
   }, 1000, Phaser.Easing.Cubic.InOut, true)
   tween.onComplete.add(function () {
-  	PlayerData.addScytheEnergy(reference.scytheEnergy)
+    PlayerData.addScytheEnergy(reference.scytheEnergy)
     bubble.destroy()
   })
 }

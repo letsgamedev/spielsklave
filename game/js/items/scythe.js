@@ -26,6 +26,7 @@ var Scythe = function (player, world) {
     player.state = STATES.INUSE
     playSound('scythe')
     isPlaying = true
+    PlayerData.calcAtk()
     PlayerData.subScytheEnergy(20)
 
     player.animations.play('scythe_' + player.lookDirection)

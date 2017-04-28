@@ -1,19 +1,26 @@
 var PlayerData = {
+  isKoop: false,
   playerRef: null,
+  calcedAtk: 0,
   getCalcAtk: function () {
-    var p = this.playerRef
-    return Math.floor(this.atk + this.atk * (this.scytheEnergyCurrent / 100))
+    return this.calcedAtk
+  },
+
+  calcAtk: function () {
+    this.calcedAtk = Math.floor(this.atk + this.atk * (this.scytheEnergyCurrent / 100))
   },
   addScytheEnergy: function (value) {
-  	this.scytheEnergyMax = Phaser.Math.clamp(this.scytheEnergyMax + value, 0, 100)
+    this.scytheEnergyMax = Phaser.Math.clamp(this.scytheEnergyMax + value, 0, 100)
   },
   subScytheEnergy: function (value) {
-  	this.scytheEnergyCurrent = Phaser.Math.clamp(this.scytheEnergyCurrent - value, -1, 100)
+    this.scytheEnergyCurrent = Phaser.Math.clamp(this.scytheEnergyCurrent - value, -1, 100)
   },
   regenerateScytheEnergy: function () {
-  	this.scytheEnergyCurrent = Phaser.Math.clamp(this.scytheEnergyCurrent + DT * 30, 0, this.scytheEnergyMax)
+    this.scytheEnergyCurrentMax = Phaser.Math.clamp(this.scytheEnergyCurrentMax + DT * 90, 0, this.scytheEnergyMax)
+    this.scytheEnergyCurrent = Phaser.Math.clamp(this.scytheEnergyCurrent + DT * 30, 0, this.scytheEnergyCurrentMax)
   },
   scytheEnergyMax: 30,
+  scytheEnergyCurrentMax: 0,
   scytheEnergyCurrent: 0,
   atk: 10
 }
