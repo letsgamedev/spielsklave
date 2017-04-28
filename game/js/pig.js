@@ -233,6 +233,7 @@ var ReflectionPig = function (world) {
   addAnimation(reflection, 'walk_up', 'pig_walk_up', 4, 10, true)
   addAnimation(reflection, 'walk_left', 'pig_walk_left', 4, 10, true)
   addAnimation(reflection, 'walk_right', 'pig_walk_right', 4, 10, true)
+  reflection.animations.add('sit', ['pig_sit_0'], 12, true)
   reflection.alpha = 0.75
 
   reflection.update = function () {
