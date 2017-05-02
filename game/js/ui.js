@@ -98,7 +98,7 @@ var Map = function (x, y) {
   map.add(openMap)
 
   map.clearField = function (tileX, tileY) {
-      openMap.mask.beginFill(0x0)
+    openMap.mask.beginFill(0x0)
     openMap.mask.drawRect(tileX * 16, tileY * 16, 16, 16)
   }
 
@@ -187,6 +187,24 @@ var ScytheEnergyBubble = function (reference) {
     y: 18,
     x: 18
   }, 1000, Phaser.Easing.Cubic.InOut, true)
+  tween.onComplete.add(function () {
+    PlayerData.addScytheEnergy(reference.scytheEnergy)
+    bubble.destroy()
+  })
+}
+
+var ScytheEnergyBubbleVarB = function (reference) {
+  var bubble = game.add.sprite(reference.x, reference.y, 'atlas', 'energy_bulb_4')
+  bubble.anchor.set(0.5)
+  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, 16, false)
+  bulbAnim.play()
+  bubble.scale.set(1)
+  var tween = game.add.tween(bubble.cameraOffset).to({
+  }, 700, Phaser.Easing.Cubic.InOut, true)
+  tween.onUpdateCallback(function (tween, ratio) {
+    bubble.x = Phaser.Math.linearInterpolation([bubble.x, WORLD.player.x], ratio)
+    bubble.y = Phaser.Math.linearInterpolation([bubble.y, WORLD.player.y], ratio)
+  })
   tween.onComplete.add(function () {
     PlayerData.addScytheEnergy(reference.scytheEnergy)
     bubble.destroy()

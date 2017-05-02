@@ -7,7 +7,7 @@ var PlayerData = {
   },
 
   calcAtk: function () {
-    this.calcedAtk = 1// Math.floor(this.atk + this.atk * (this.scytheEnergyCurrent / 100))
+    this.calcedAtk = Math.floor(this.atk + this.atk * (this.scytheEnergyCurrent / 100))
   },
   addScytheEnergy: function (value) {
     this.scytheEnergyMax = Phaser.Math.clamp(this.scytheEnergyMax + value, 0, 100)

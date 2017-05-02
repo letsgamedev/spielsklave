@@ -38,12 +38,12 @@ var LittleEgg = function (world, x, y) {
 
   egg.status = EGG
 
-	// Configure physics
+  // Configure physics
   game.physics.ninja.enable(egg, 1)
   egg.body.drag = 0.1
   var lookDirection = DOWN
 
-	// Config body size and alignment
+  // Config body size and alignment
   egg.body.setSize(12, 12)
   egg.anchor.set(0.5, 0.6)
 
@@ -70,17 +70,18 @@ var LittleEgg = function (world, x, y) {
     if (egg.hp <= 0) {
       timeEvent(0.1, function () {
         PigSmoke(egg, world)
-        ScytheEnergyBubble(egg)
+        if (Game.variant == 1)ScytheEnergyBubbleVarB(egg)
+        else ScytheEnergyBubble(egg)
         playSound('explosion1')
         egg.kill()
       })
     }
   }
 
-	/**
-	if the player is near the egg, it will hatch and
-	walk in random directions
-	*/
+  /**
+  if the player is near the egg, it will hatch and
+  walk in random directions
+  */
   egg.myUpdate = function () {
     moveTime -= DT
     hitSaveTime -= DT
@@ -94,24 +95,24 @@ var LittleEgg = function (world, x, y) {
           isBushSet = true
           var bush = game.add.sprite(egg.originPos.x - 0, egg.originPos.y + 4, 'atlas', 'little_egg_shell_0', world.middleLayer)
           game.physics.ninja.enable(bush, 1)
-				    bush.body.drag = 0.1
-				    bush.body.immovable = true
+          bush.body.drag = 0.1
+          bush.body.immovable = true
 
-				    bush.hitBox = new Phaser.Rectangle(-10, -10, 20, 20)
-				    bush.getHitBox = GenPool.getHitBox
-				    bush.onHit = function () {
-				    	// console.log(bush.kill)
-				    	bush.kill()
-				    }
-				    bush.myUpdate = nothing
-				    bush.isFix = true
-				    bush.harmless = true
-				    bush.ySortOffset = -5
-				    bush.body.setSize(14, 10)
-				    bush.anchor.set(0.5, 0.8)
-				    world.enemies.push(bush)
-				    egg.body.y++
-				    playSound('little_egg_hatch')
+          bush.hitBox = new Phaser.Rectangle(-10, -10, 20, 20)
+          bush.getHitBox = GenPool.getHitBox
+          bush.onHit = function () {
+              // console.log(bush.kill)
+            bush.kill()
+          }
+          bush.myUpdate = nothing
+          bush.isFix = true
+          bush.harmless = true
+          bush.ySortOffset = -5
+          bush.body.setSize(14, 10)
+          bush.anchor.set(0.5, 0.8)
+          world.enemies.push(bush)
+          egg.body.y++
+          playSound('little_egg_hatch')
         }
         break
       case HATCHED:
@@ -122,9 +123,9 @@ var LittleEgg = function (world, x, y) {
     }
   }
 
-	/**
-	checks if the player is near enough and inits the hatching if so.
-	*/
+  /**
+  checks if the player is near enough and inits the hatching if so.
+  */
   function hatchCheck () {
     var distancePlayer = game.math.distance(world.player.x, world.player.y, egg.body.x, egg.body.y)
     var distancePig = game.math.distance(world.pig.x, world.pig.y, egg.body.x, egg.body.y)
@@ -139,10 +140,10 @@ var LittleEgg = function (world, x, y) {
     }
   }
 
-	/**
-	chooses a random direction to walk. There is a 50% chance the
-	egg will stand in place.
-	*/
+  /**
+  chooses a random direction to walk. There is a 50% chance the
+  egg will stand in place.
+  */
   function setNewMove () {
     switch (game.rnd.between(0, 7)) {
       case 0: xDir = 1; yDir = 0; lookDirection = RIGHT; break

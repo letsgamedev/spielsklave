@@ -24,9 +24,11 @@ Game.Preloader.prototype = {
     this.load.image('tiles')
     game.load.spritesheet('tiless', 'tiles.png', 8, 8)
 
-		// top is 10, left is 15, right is 20 and bottom is 30 pixels in size
+    // top is 10, left is 15, right is 20 and bottom is 30 pixels in size
     game.load.nineSlice('textBoxBig', 'textBoxBig.png', 9, 8, 8, 8)
     game.load.bitmapFont('font')
+    game.load.bitmapFont('fontBig')
+    game.load.bitmapFont('fontBigThin')
     game.load.bitmapFont('fontDamage')
     var loadSound = function (name, type, dir) {
       type = type || 'mp3'
@@ -46,7 +48,7 @@ Game.Preloader.prototype = {
   },
 
   create: function () {
-		// game.state.start("BlendModeTest");
+    // game.state.start("BlendModeTest");
     Pad.init()
     nextMapId = '01'
     game.state.start('Main')
