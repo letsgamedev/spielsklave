@@ -387,6 +387,7 @@ Game.Main.prototype = {
     this.currentChunk = this.position2Chunk(this.player.x, this.player.y)
     this.currentChunk.events = this.getEvents(this.currentChunk)
     this.addEnemies()
+    this.addObjects()
     this.addEvents()
     console.log(MAPDATA[nextMapId].mapX, this.currentChunk.x, 512, MAPDATA[nextMapId].mapY, this.currentChunk.y, 512)
     this.ui.miniMap.setCenterTile(MAPDATA[nextMapId].mapX + this.currentChunk.x / 512, MAPDATA[nextMapId].mapY + this.currentChunk.y / 512)
@@ -486,6 +487,26 @@ Game.Main.prototype = {
     };
 
     console.log('enemies', this.enemies.length)
+  },
+
+  addObjects: function () {
+    this.objects = []
+    var ids = [
+      {tileId: 38, className: Stone}
+    ]
+
+    var that = this
+
+    for (var i = 0; i < ids.length; i++) {
+      var objectId = ids[i]
+      var result = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
+      result.forEach(function addObject (tile) {
+        var object = objectId.className(that, tile.x * 8, tile.y * 8)
+        that.objects.push(object)
+      })
+    };
+
+    console.log('objects', this.objects.length)
   },
 
   addEvents: function () {
@@ -591,6 +612,7 @@ Game.Main.prototype = {
       this.pig.update()
       // this.pig.input();
       this.myUpdateOn(this.enemies)
+      this.myUpdateOn(this.objects)
       this.myUpdateOn(this.events)
     }
 
@@ -646,6 +668,7 @@ Game.Main.prototype = {
         };
       }
       checkArray(this.enemies)
+      checkArray(this.objects)
       checkArray(this.events)
       check(this.player)
       check(this.pig)
@@ -664,12 +687,21 @@ Game.Main.prototype = {
       for (var j = 0; j < this.events.length; j++) {
         game.physics.ninja.collide(this.events[j], this.enemies[i])
       };
+      for (var j = 0; j < this.objects.length; j++) {
+        game.physics.ninja.collide(this.events[j], this.enemies[i])
+      };
     };
 
     for (var j = 0; j < this.events.length; j++) {
       if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player)
       if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j])
       game.physics.ninja.collide(this.events[j], this.pig)
+    };
+
+    for (var j = 0; j < this.objects.length; j++) {
+      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.objects[j], this.player)
+      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.objects[j])
+      game.physics.ninja.collide(this.objects[j], this.pig)
     };
   },
 

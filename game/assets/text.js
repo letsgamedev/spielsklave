@@ -8,8 +8,8 @@ var L = function (key) {
   }
   var replacer = function (input) {
     if (input.includes('{') == false) return input
-    input = input.replace('{VERSION}', 'v0.13.0')
-		// input = input.replace('{LEFT}', keyToString(Config.controlls.left.k) + getPadCode(Config.controlls.left.p));
+    input = input.replace('{VERSION}', 'v0.14.0')
+    // input = input.replace('{LEFT}', keyToString(Config.controlls.left.k) + getPadCode(Config.controlls.left.p));
     return input
   }
 
@@ -40,6 +40,6 @@ var LangKeys = {
   },
 
   en: {
-		// NOTHING HERE
+    // NOTHING HERE
   }
 }
