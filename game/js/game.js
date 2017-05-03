@@ -70,6 +70,7 @@ Game.Main.prototype = {
     this.currentChunk = null
     this.oldChunk = null
     this.enemies = []
+    this.objects = []
     this.events = []
 
     game.stage.backgroundColor = 0x000000
@@ -84,6 +85,10 @@ Game.Main.prototype = {
       game.debug.body(this.player)
       for (var i = 0; i < this.enemies.length; i++) {
         game.debug.body(this.enemies[i])
+      };
+
+      for (var i = 0; i < this.objects.length; i++) {
+        game.debug.body(this.objects[i])
       };
 
       for (var i = 0; i < this.events.length; i++) {
@@ -337,6 +342,7 @@ Game.Main.prototype = {
     if (isValidChunkCoord) {
       if (this.currentChunk) {
         this.currentChunk.enemies = this.enemies
+        this.currentChunk.objects = this.objects
         this.currentChunk.events = this.events
         this.prepareNextChunk()
 
@@ -407,6 +413,11 @@ Game.Main.prototype = {
       this.oldChunk.events[i].destroy()
     }
     this.oldChunk.events = []
+
+    for (var i = 0; i < this.oldChunk.objects.length; i++) {
+      this.oldChunk.objects[i].destroy()
+    }
+    this.oldChunk.objects = []
   },
 
   /**
