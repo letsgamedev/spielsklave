@@ -166,7 +166,7 @@ Game.Main.prototype = {
           break
       }
     } else {
-      this.player = Player(this, 16 * 16, 16 * 50)
+      this.player = Player(this, 16 * 16, 16 * 45)
       this.pig = Pig(this, this.player.x, this.player.y)
     }
 
@@ -502,20 +502,36 @@ Game.Main.prototype = {
 
   addObjects: function () {
     this.objects = []
-    var ids = [
-      {tileId: 38, className: Stone}
+    var ids = [// tiled id + 1
+      {tileId: 38, className: Stone},
+      {tileId: 503, className: FenceMaker(0)},
+      {tileId: 505, className: FenceMaker(1)},
+      {tileId: 504, className: FenceMaker(2)},
+      {tileId: 486, className: FenceMaker(1)},
+      {tileId: 506, className: FenceMaker(3)},
+      {tileId: 483, className: FenceMaker(0)},
+      {tileId: 485, className: FenceMaker(3)},
+      {tileId: 484, className: FenceMaker(2)}
     ]
 
     var that = this
 
-    for (var i = 0; i < ids.length; i++) {
-      var objectId = ids[i]
-      var result = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
-      result.forEach(function addObject (tile) {
+    ids.forEach(function (objectId) {
+      var tiles = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
+      tiles.forEach(function addObject (tile) {
         var object = objectId.className(that, tile.x * 8, tile.y * 8)
         that.objects.push(object)
       })
-    };
+    }.bind(this))
+
+    /* for (var i = 0; i < ids.length; i++) {
+      var objectId = ids[i]
+      var tiles = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
+      tiles.forEach(function addObject (tile) {
+        var object = objectId.className(that, tile.x * 8, tile.y * 8)
+        that.objects.push(object)
+      })
+    }; */
 
     console.log('objects', this.objects.length)
   },

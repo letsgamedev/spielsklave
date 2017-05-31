@@ -3,7 +3,7 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
   var bmpText = null
   var buttonNext = null
 
-	// Char TextBox
+  // Char TextBox
   var charName = game.add.nineSlice(62, 150, 'textBoxBig', null, 84, 50, WORLD.topLayer)
   charName.fixedToCamera = true
   charName.visible = false
@@ -11,7 +11,7 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
     y: 130
   }, 200, Phaser.Easing.Circular.Out)
 
-	// Main TextBox
+  // Main TextBox
   var tb = game.add.nineSlice(game.width / 2, game.height - 20, 'textBoxBig', null, 20, 20, WORLD.topLayer)
   tb.fixedToCamera = true
   tb.anchor.set(0.5)
@@ -23,7 +23,7 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
     y: tb.cameraOffset.y
   }
 
-	// Animate In
+  // Animate In
   var tween = game.add.tween(tweenHelper).to({
     width: 262,
     height: 66,
@@ -44,11 +44,11 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
   isEvent = true
 
   function addText () {
-		// Char name text
+    // Char name text
     bmpTextName = game.add.bitmapText(10, -35, 'fontBig', name, 10, WORLD.topLayer)
     charName.addChild(bmpTextName)
-		// BigText
-    bmpText = game.add.bitmapText(-120, -22, Game.variant == 1 ? 'fontBig' : 'fontBigThin', '', 13, WORLD.topLayer)
+    // BigText
+    bmpText = game.add.bitmapText(-120, -22, 'fontBig', '', 13, WORLD.topLayer)
     tb.addChild(bmpText)
     bmpText.maxWidth = 225
     var hold = false

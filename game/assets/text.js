@@ -8,7 +8,7 @@ var L = function (key) {
   }
   var replacer = function (input) {
     if (input.includes('{') == false) return input
-    input = input.replace('{VERSION}', 'v0.14.1')
+    input = input.replace('{VERSION}', 'v0.15.0')
     // input = input.replace('{LEFT}', keyToString(Config.controlls.left.k) + getPadCode(Config.controlls.left.p));
     return input
   }
@@ -35,7 +35,14 @@ var LangKeys = {
     TEXT01: "Hallo! Drücke 'N' und es geht weiter! So kannst du auch Grabinschriften lesen!",
     TEXT02: 'Hier liegt ein Junge mit grüner Zipfelmütze.',
     TEXT03: 'Letzte Worte:\nDie Schriftart der Textbox ist scheiße!',
-    TEXT04: 'Alles muss, nichts kann.'
+    TEXT04: 'Alles muss, nichts kann.',
+    TEXT05: 'Hier liegt Berta.',
+    TEXT06: 'Seine letzten Worte: Gurg gra huunnnn',
+    TEXT07: 'Kauft bei Amazon nur über Let\'s GameDevs Links!',
+    TEXT08: 'lol',
+    TEXT09: 'rofl',
+    TEXT10: 'Die Lindenstrasse fängt gleich an!',
+    TEXT10: 'Ich liege rechts aussen...'
 
   },
 

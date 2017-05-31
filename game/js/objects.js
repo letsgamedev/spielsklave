@@ -14,3 +14,21 @@ var Stone = function (world, x, y) {
 
   return stone
 }
+
+var FenceMaker = function (id) {
+  return function Fance (world, x, y) {
+    var fence = game.add.sprite(x, y - 16, 'atlas', 'graveyard_fence_' + id, world.middleLayer)
+    game.physics.ninja.enable(fence, 1)
+    fence.isFix = true
+    fence.body.setSize(8, 8)
+    fence.anchor.set(0.5, 0.9)
+    fence.body.immovable = true
+    fence.myUpdate = function () {
+    }
+
+    fence.interact = function () {
+    }
+
+    return fence
+  }
+}

@@ -49,6 +49,8 @@ var UI = function (world) {
   ui.miniMap = map
   ui.add(map.overlay)
 
+  ui.hpLayer = game.add.group()
+
   var scytheBar = ScytheBar()
   ui.add(scytheBar)
 
@@ -66,6 +68,10 @@ var UI = function (world) {
 
   ui.update = function () {
     scytheBar.update()
+
+    ui.hpLayer.forEach(function (bar) {
+      bar.update()
+    })
 
     var playerKoords = TB.convert2UIKoords(world.player)
     var semiTrans = playerKoords.y < 70 && playerKoords.x > 230
@@ -209,4 +215,26 @@ var ScytheEnergyBubbleVarB = function (reference) {
     PlayerData.addScytheEnergy(reference.scytheEnergy)
     bubble.destroy()
   })
+}
+
+var HPBar = function (reference) {
+  var bar = game.add.sprite(0, 0, 'atlas', 'lpbar_back', WORLD.ui.hpLayer)
+  bar.update = function () {
+    bar.x = reference.left
+    bar.y = reference.top - 5
+
+    full.width = Math.floor((reference.hp / reference.maxHp) * 17)
+    full.width = Phaser.Math.clamp(full.width, 0, 17)
+
+    bar.visible = reference.hp !== reference.maxHp
+
+    if (full.width === 0) bar.destroy()
+  }
+
+  // var bleed = game.add.sprite(2, 1, 'atlas', 'lpbar_bleed')
+  var full = game.add.sprite(2, 1, 'atlas', 'lpbar_full')
+
+  bar.addChild(full)
+
+  return bar
 }
