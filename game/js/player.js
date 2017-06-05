@@ -17,15 +17,17 @@ This is the Player aka the demon contructor.
 */
 var Player = function (world, x, y) {
   var player = game.add.sprite(x, y, 'atlas', 'dengel_walk_down_1', world.middleLayer)
-	// var Graphic = game.add.sprite(x, y, "atlas", "dengel_walk_down_1", world.middleLayer);
-	// Configure physics
+  // var Graphic = game.add.sprite(x, y, "atlas", "dengel_walk_down_1", world.middleLayer);
+  // Configure physics
   game.physics.ninja.enable(player, 1)
   player.body.drag = 0.000
   player.body.bounce = 0.000
   player.body.friction = 0.000
   console.log(player)
+  player.body.x -= 3 * 8
+  player.body.y -= 4 * 8
 
-	// Config body size and alignment
+  // Config body size and alignment
   player.body.setSize(12, 12)
   player.anchor.set(0.5, 0.6)
 
@@ -38,19 +40,19 @@ var Player = function (world, x, y) {
 
   player.item1 = Scythe(player, world)
 
-	// Prepare animations
+  // Prepare animations
   player.animations.add('stand_up', ['dengel_stand_up_0'], 12, true)
   player.animations.add('stand_down', ['dengel_stand_down_0'], 12, true)
   player.animations.add('stand_left', ['dengel_stand_left_0'], 12, true)
   player.animations.add('stand_right', ['dengel_stand_right_0'], 12, true)
-  addAnimation(player, 'walk_down', 'dengel_walk_down', 8, 20, true)
-  addAnimation(player, 'walk_up', 'dengel_walk_up', 8, 20, true)
-  addAnimation(player, 'walk_left', 'dengel_walk_left', 8, 20, true)
-  addAnimation(player, 'walk_right', 'dengel_walk_right', 8, 20, true)
+  addAnimation(player, 'walk_down', 'dengel_walk_down', 20, true)
+  addAnimation(player, 'walk_up', 'dengel_walk_up', 20, true)
+  addAnimation(player, 'walk_left', 'dengel_walk_left', 20, true)
+  addAnimation(player, 'walk_right', 'dengel_walk_right', 20, true)
 
   player.animations.play('stand_down')
 
-	// Private variables
+  // Private variables
   var speed = 80
   var lookDirection = DOWN
   player.lookDirection = lookDirection
@@ -67,16 +69,16 @@ var Player = function (world, x, y) {
     if (player.item2) player.item2.update()
   }
 
-	/*
-	Handels the input from Pad class. Has to be called every frame.
-	*/
+  /*
+  Handels the input from Pad class. Has to be called every frame.
+  */
   player.input = function () {
     var stand = true
     var newAnimation = 'stand'
 
     var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.80 : 1
 
-		// Process movement and animation
+    // Process movement and animation
     if (player.state !== STATES.STONE && player.state !== STATES.INUSE && !(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
       function setMove (padKey, axis, multi, dirID) {
         if (Pad.isDown(padKey)) {
@@ -106,7 +108,7 @@ var Player = function (world, x, y) {
 
   player.onHit = GenPool.onHit
 
-	// Helper for turn on/off stone swap
+  // Helper for turn on/off stone swap
   function setHumanInput (isOn) {
     player.humanInput = isOn
     if (isOn) {
@@ -134,7 +136,7 @@ var Player = function (world, x, y) {
     world.ui.setIconX(1)
   }
 
-	// Creates a stone statue an replaces the demon char
+  // Creates a stone statue an replaces the demon char
   function toStone () {
     player.visible = false
     player.state = STATES.STONE
@@ -142,8 +144,8 @@ var Player = function (world, x, y) {
     game.physics.ninja.enable(shell)
     shell.isBroked = false
     shell.body.bounce = 0
-	    shell.body.drag = 0
-	    shell.body.oldPos = {x: shell.body.x, y: shell.body.y}
+    shell.body.drag = 0
+    shell.body.oldPos = {x: shell.body.x, y: shell.body.y}
     shell.body.setSize(12, 12)
     shell.anchor.set(0.5, 0.6)
 
@@ -213,7 +215,7 @@ var Player = function (world, x, y) {
     player.shell = shell
   }
 
-	// shatters the stone statue and get back the demon char
+  // shatters the stone statue and get back the demon char
   function fromStone () {
     if (player.state == STATES.STONE) {
       shell.body.y += 1
@@ -227,7 +229,7 @@ var Player = function (world, x, y) {
     }
   }
 
-	/* usefull vor event stuff also used vor map transitions */
+  /* usefull vor event stuff also used vor map transitions */
   function walkAuto (dir, tiles) {
     tiles = tiles || 1
     var x = 0
@@ -277,10 +279,10 @@ var ReflectionPlayer = function (world) {
   reflection.animations.add('stand_down', ['player_walk_down_1'], 12, true)
   reflection.animations.add('stand_left', ['player_walk_left_1'], 12, true)
   reflection.animations.add('stand_right', ['player_walk_right_1'], 12, true)
-  addAnimation(reflection, 'walk_down', 'player_walk_down', 4, 10, true)
-  addAnimation(reflection, 'walk_up', 'player_walk_up', 4, 10, true)
-  addAnimation(reflection, 'walk_left', 'player_walk_left', 4, 10, true)
-  addAnimation(reflection, 'walk_right', 'player_walk_right', 4, 10, true)
+  addAnimation(reflection, 'walk_down', 'player_walk_down', 10, true)
+  addAnimation(reflection, 'walk_up', 'player_walk_up', 10, true)
+  addAnimation(reflection, 'walk_left', 'player_walk_left', 10, true)
+  addAnimation(reflection, 'walk_right', 'player_walk_right', 10, true)
   reflection.alpha = 0.75
   world.player.reflection = reflection
 

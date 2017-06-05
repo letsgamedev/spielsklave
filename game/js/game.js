@@ -30,7 +30,7 @@ var WORLD = null
 
 var firstStart = false
 
-var globalMusicVolume = 0.5
+var globalMusicVolume = 0
 var globalSoundVolume = 1
 
 var MAP = {
@@ -104,7 +104,9 @@ Game.Main.prototype = {
 
       if (this.player.shell) game.debug.body(this.player.shell)
     }
-
+    var rect = new Phaser.Rectangle(Math.floor(this.player.x / 8) * 8, Math.floor(this.player.y / 8) * 8, 8, 8)
+    game.debug.geom(rect, 'rgba(255,0,0,1)')
+    game.debug.text(rect.x / 8, 5, 10)
         // if (TEST) game.debug.rectangle(TEST);
         // if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
@@ -152,23 +154,12 @@ Game.Main.prototype = {
     this.topLayer = game.add.group()
 
     if (LastMapInfo) {
-      switch (LastMapInfo.mapEntryDirection) {
-        case LEFT:
-          this.player = Player(this, 0, LastMapInfo.player.y)
-          this.pig = Pig(this, this.player.x, this.player.y - 9)
-          timeY = LastMapInfo.player.y
-          break
-        case RIGHT:
-          console.log('hui', LastMapInfo.player)
-          this.player = Player(this, 400, LastMapInfo.player.y)
-          this.pig = Pig(this, 512, LastMapInfo.player.y - 9)
-          timeY = LastMapInfo.player.y
-          break
-      }
+      console.log('playertiles', LastMapInfo.player.x, LastMapInfo.player.y)
+      this.player = Player(this, LastMapInfo.player.x * 8, LastMapInfo.player.y * 8)
     } else {
-      this.player = Player(this, 16 * 16, 16 * 45)
-      this.pig = Pig(this, this.player.x, this.player.y)
+      this.player = Player(this, 23 * 8, 93 * 8)
     }
+    this.pig = Pig(this, this.player.x, this.player.y)
 
     this.reflectionLayer.add(ReflectionPlayer(this))
     this.reflectionLayer.add(ReflectionPig(this))
@@ -196,27 +187,27 @@ Game.Main.prototype = {
     this.isInTransition = false
 
       // Prepare the Fadein Effect
+    this.updateCamera(true)
     if (LastMapInfo) {
       switch (LastMapInfo.mapEntryDirection) {
         case LEFT:
-          this.player.body.y -= 32
-          this.player.body.x = -16 * 3
+          this.player.body.x += -16 * 2
           break
         case RIGHT:
-          this.player.body.y -= 32
-          this.player.body.x = 512 + 16 * 3
+          this.player.body.x += 16 * 2
           break
       }
       var that = this
       setTimeout(function () {
-        that.player.walkAuto(that.getOppositDirection(LastMapInfo.mapEntryDirection), 4)
-      }, 0)
-      SwipeFade(this, LastMapInfo.mapEntryDirection, 'in')
+        that.player.walkAuto(that.getOppositDirection(LastMapInfo.mapEntryDirection), 2)
+      }, 400)
+      SwipeFade(this, LastMapInfo.mapEntryDirection, 'in', function () {
+        this.isInTransition = false
+      }.bind(this))
     } else {
       game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
     }
-
-    this.updateCamera(true)
+    this.currentMapId = nextMapId
 
       // Set Music
     if (backgroundMusic == null) {
@@ -256,7 +247,7 @@ Game.Main.prototype = {
         var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
         this.alpha = 0//proc;
       } */
-    timeEvent(30, this.swapLight, this) // TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
+    // timeEvent(30, this.swapLight, this) // TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
     this.overlay.beginFill(0xffffff)
     this.overlay.drawRect(0, 0, game.width, game.height)
   },
@@ -432,8 +423,8 @@ Game.Main.prototype = {
     this.layerHelper = this.map.createLayer(MAP.GROUND)
 
     var slopeMap = [0, // first is ignored
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
       1, 1, 1, 1, 0, 3, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       1, 1, 1, 1, 3, 1, 1, 1, 1, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0,
       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0,
@@ -458,16 +449,16 @@ Game.Main.prototype = {
       0, 0, 0, 4, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -483,7 +474,8 @@ Game.Main.prototype = {
   addEnemies: function () {
     this.enemies = []
     var ids = [
-      {tileId: 17, className: LittleEgg}
+      {tileId: 17, className: LittleEgg},
+      {tileId: 801, className: LittleEgg}
     ]
 
     var that = this
@@ -559,7 +551,6 @@ Game.Main.prototype = {
       c.scale.set(2)
       c.xSpeed = game.rnd.between(3, 15)
       c.ySpeed = game.rnd.between(3, 15)
-      console.log(c)
       c.update = function () {
         c.x += DT * c.xSpeed
         c.y += DT * c.xSpeed
@@ -706,7 +697,6 @@ Game.Main.prototype = {
       game.physics.ninja.collide(this.player.shell, this.pig)
     }
       // Overlap with enemies
-
     for (var i = 0; i < this.enemies.length; i++) {
       if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit)
       if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit)
@@ -715,12 +705,12 @@ Game.Main.prototype = {
         game.physics.ninja.collide(this.events[j], this.enemies[i])
       };
       for (var j = 0; j < this.objects.length; j++) {
-        game.physics.ninja.collide(this.events[j], this.enemies[i])
+        game.physics.ninja.collide(this.objects[j], this.enemies[i])
       };
     };
 
     for (var j = 0; j < this.events.length; j++) {
-      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player)
+      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player, this.events[j].onCollide)
       if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j])
       game.physics.ninja.collide(this.events[j], this.pig)
     };
@@ -748,8 +738,15 @@ Game.Main.prototype = {
   },
 
   goToNextMap: function () {
+    this.onLeavePlayerPos = {
+      x: this.player.x,
+      y: this.player.y
+    }
     this.player.walkAuto(this.getOppositDirection(this.oldChunkDirection))
-    SwipeFade(this, this.oldChunkDirection, 'out')
+    SwipeFade(this, this.oldChunkDirection, 'out', function () {
+      game.stage.backgroundColor = 0x000000
+      this.startNextMap('OverWorld', null, null, 'out')
+    }.bind(this))
   },
 
   getOppositDirection: function (dir) {
@@ -759,14 +756,46 @@ Game.Main.prototype = {
     if (dir == RIGHT) return LEFT
   },
 
-  startNextMap: function () {
-    nextMapId = '01'
+  startNextMap: function (mapId, tileX, tileY, walkInFrom) {
+    var startTileX = null
+    var startTileY = null
+    var direction = null
+    var oldMapCoord = {
+      x: MAPDATA[this.currentMapId].mapX + Math.trunc(this.currentChunk.x / 512),
+      y: MAPDATA[this.currentMapId].mapY + Math.trunc(this.currentChunk.y / 512)
+    }
+
+    if (mapId === 'OverWorld') {
+      var newMapCoords = {
+        x: MAPDATA[this.currentMapId].mapX + Math.floor(this.onLeavePlayerPos.x / 512),
+        y: MAPDATA[this.currentMapId].mapY + Math.floor(this.onLeavePlayerPos.y / 512)
+      }
+      nextMapId = MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)
+
+      var newMap = MAPDATA[MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)]
+
+      var chunkOffSet = {
+        x: newMapCoords.x - newMap.mapX,
+        y: newMapCoords.y - newMap.mapY
+      }
+      startTileX = TB.loopClamp(Math.floor(this.onLeavePlayerPos.x / 8), 0, 63) + chunkOffSet.x * 64
+      startTileY = TB.loopClamp(Math.floor(this.onLeavePlayerPos.y / 8), 0, 63) + chunkOffSet.y * 64
+
+      direction = this.oldChunkDirection
+    } else {
+      // hart Teleport
+      nextMapId = mapId
+      startTileX = tileX
+      startTileY = tileY
+      direction = walkInFrom
+    }
+
     LastMapInfo = {
       player: {
-        x: this.player.x,
-        y: this.player.y
+        x: startTileX,
+        y: startTileY
       },
-      mapEntryDirection: this.oldChunkDirection,
+      mapEntryDirection: direction,
       timeOverlay: {
         alpha: this.overlay.alpha
       }
@@ -816,6 +845,10 @@ Game.Main.prototype = {
   } */
 }
 
+Game.teleport = function (mapId, tileX, tileY) {
+  LastMapInfo = null
+}
+
 /**
 This is the mouse pointer substitue for
 a second player. The pig will follow
@@ -830,7 +863,7 @@ var Cursor = function (world) {
   cursor.anchor.set(0, 0)
   cursor.change = false
   cursor.update = function () {
-    var nx = Math.floor(game.input.mousePointer.position.x) + game.camera.x
+    var nx = Math.round(game.input.mousePointer.position.x) + game.camera.x
     var ny = Math.floor(game.input.mousePointer.position.y) + game.camera.y
 
     cursor.change = (nx != cursor.x || ny != cursor.y)

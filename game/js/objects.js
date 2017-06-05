@@ -32,3 +32,30 @@ var FenceMaker = function (id) {
     return fence
   }
 }
+
+var HouseDoor = function (world, eventData) {
+  var door = game.add.sprite(eventData.tileX * 8, eventData.tileY * 8 - 13, 'atlas', 'house_door_open_0', world.middleLayer)
+  game.physics.ninja.enable(door, 1)
+  door.isFix = true
+  // door.body.setSize(8, 8)
+  // door.anchor.set(0.5, 0.9)
+  door.body.immovable = true
+  addAnimation(door, 'open', 'house_door_open', 12, false)
+  door.myUpdate = function () {
+  }
+
+  door.onCollide = function (self, collider) {
+    door.animations.play('open')
+    playSound('door_open')
+
+    world.isInTransition = true
+    SwipeFade(world, LEFT, 'out', function () {
+      world.startNextMap(eventData.dest.map, eventData.dest.tileX, eventData.dest.tileY, eventData.dest.walkIn)
+    })
+    door.onCollide = nothing
+  }
+
+  door.interact = nothing
+
+  return door
+}

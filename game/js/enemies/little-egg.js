@@ -22,15 +22,15 @@ var LittleEgg = function (world, x, y) {
   egg.hp = 30
   egg.scytheEnergy = 10
   egg.originPos = {x: x, y: y}
-  addAnimation(egg, 'stand_down', 'little_egg_stand_down', 2, 3, true)
-  addAnimation(egg, 'stand_up', 'little_egg_stand_up', 2, 3, true)
-  addAnimation(egg, 'stand_left', 'little_egg_stand_left', 2, 3, true)
-  addAnimation(egg, 'stand_right', 'little_egg_stand_right', 2, 3, true)
-  addAnimation(egg, 'walk_down', 'little_egg_walk_down', 4, 12, true)
-  addAnimation(egg, 'walk_up', 'little_egg_walk_up', 4, 12, true)
-  addAnimation(egg, 'walk_left', 'little_egg_walk_left', 4, 12, true)
-  addAnimation(egg, 'walk_right', 'little_egg_walk_right', 4, 12, true)
-  addAnimation(egg, 'hatch', 'little_egg_hatch', 7, 24, false)
+  addAnimation(egg, 'stand_down', 'little_egg_stand_down', 3, true)
+  addAnimation(egg, 'stand_up', 'little_egg_stand_up', 3, true)
+  addAnimation(egg, 'stand_left', 'little_egg_stand_left', 3, true)
+  addAnimation(egg, 'stand_right', 'little_egg_stand_right', 3, true)
+  addAnimation(egg, 'walk_down', 'little_egg_walk_down', 12, true)
+  addAnimation(egg, 'walk_up', 'little_egg_walk_up', 12, true)
+  addAnimation(egg, 'walk_left', 'little_egg_walk_left', 12, true)
+  addAnimation(egg, 'walk_right', 'little_egg_walk_right', 12, true)
+  addAnimation(egg, 'hatch', 'little_egg_hatch', 24, false)
 
   egg.hpbar = HPBar(egg)
 

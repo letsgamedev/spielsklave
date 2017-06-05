@@ -24,7 +24,7 @@ like the demon.
 var Pig = function (world, x, y) {
   var pig = game.add.sprite(x, y, 'atlas', 'pig_walk_down_1', world.middleLayer)
 
-	// Configure physics
+  // Configure physics
   game.physics.ninja.enable(pig, 1, 0, 4)
   pig.body.drag = 0.001
   pig.damageSave = true
@@ -34,20 +34,20 @@ var Pig = function (world, x, y) {
   pig.body.setSize(8, 8)
   pig.ySortOffset = -5
 
-	// Prepare animations
+  // Prepare animations
   pig.animations.add('stand_up', ['pig_walk_up_1'], 24, true)
   pig.animations.add('stand_down', ['pig_walk_down_1'], 12, true)
   pig.animations.add('stand_left', ['pig_walk_left_1'], 12, true)
   pig.animations.add('stand_right', ['pig_walk_right_1'], 12, true)
   pig.animations.add('sit', ['pig_sit_0'], 12, true)
 
-  addAnimation(pig, 'walk_down', 'pig_walk_down', 4, 12, true)
-  addAnimation(pig, 'walk_up', 'pig_walk_up', 4, 12, true)
-  addAnimation(pig, 'walk_left', 'pig_walk_left', 4, 12, true)
-  addAnimation(pig, 'walk_right', 'pig_walk_right', 4, 12, true)
+  addAnimation(pig, 'walk_down', 'pig_walk_down', 12, true)
+  addAnimation(pig, 'walk_up', 'pig_walk_up', 12, true)
+  addAnimation(pig, 'walk_left', 'pig_walk_left', 12, true)
+  addAnimation(pig, 'walk_right', 'pig_walk_right', 12, true)
   pig.animations.play('stand_down')
 
-	// Private variables
+  // Private variables
   var speed = 110
   var minDis = 30
   var teleportDistance = 90
@@ -59,12 +59,12 @@ var Pig = function (world, x, y) {
 
   pig.state = STATES.NORMAL
 
-	/**
-	The pig will follow the player if its not controlled by a human.
-	May be some pathfinding will be added later.
-	*/
+  /**
+  The pig will follow the player if its not controlled by a human.
+  May be some pathfinding will be added later.
+  */
   pig.update = function () {
-		// Yes, this function is a bit messi
+    // Yes, this function is a bit messi
     pig.damageSave = world.player.state != STATES.STONE && pig.state == STATES.NORMAL
 
     if (world.player.state == STATES.STONE && world.cursor.visible == false) return
@@ -128,7 +128,7 @@ var Pig = function (world, x, y) {
   }
 
   pig.onHit = function (self, enemy) {
-		// GenPool.onHit;
+    // GenPool.onHit;
     console.log(enemy.harmless)
     if (!enemy.harmless) {
       world.player.fromStone()
@@ -136,9 +136,9 @@ var Pig = function (world, x, y) {
     }
   }
 
-	/*
-	Handels the input from Pad class. Has to be called every frame.
-	*/
+  /*
+  Handels the input from Pad class. Has to be called every frame.
+  */
   pig.input = function () {
     if (pig.state == STATES.SIT) return
     if (world.player.state == STATES.STONE && world.cursor.visible == false) {
@@ -147,7 +147,7 @@ var Pig = function (world, x, y) {
 
       var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1
 
-			// Process movement and animation
+      // Process movement and animation
       if (!(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
         function setMove (padKey, axis, multi, dirID) {
           if (Pad.isDown(padKey)) {
@@ -183,13 +183,13 @@ var Pig = function (world, x, y) {
   }
 
   pig.teleport = function () {
-		// puff!
+    // puff!
     var dis = 16
     var xOff = 0
     var yOff = 0
     pig.state = STATES.NORMAL
     switch (world.player.lookDirection) {
-      case UP: 	yOff = dis; break
+      case UP: yOff = dis; break
       case DOWN: yOff = -dis; break
       case LEFT: xOff = dis; break
       case RIGHT: xOff = -dis; break
@@ -229,10 +229,10 @@ var ReflectionPig = function (world) {
   reflection.animations.add('stand_down', ['pig_walk_down_1'], 12, true)
   reflection.animations.add('stand_left', ['pig_walk_left_1'], 12, true)
   reflection.animations.add('stand_right', ['pig_walk_right_1'], 12, true)
-  addAnimation(reflection, 'walk_down', 'pig_walk_down', 4, 10, true)
-  addAnimation(reflection, 'walk_up', 'pig_walk_up', 4, 10, true)
-  addAnimation(reflection, 'walk_left', 'pig_walk_left', 4, 10, true)
-  addAnimation(reflection, 'walk_right', 'pig_walk_right', 4, 10, true)
+  addAnimation(reflection, 'walk_down', 'pig_walk_down', 10, true)
+  addAnimation(reflection, 'walk_up', 'pig_walk_up', 10, true)
+  addAnimation(reflection, 'walk_left', 'pig_walk_left', 10, true)
+  addAnimation(reflection, 'walk_right', 'pig_walk_right', 10, true)
   reflection.animations.add('sit', ['pig_sit_0'], 12, true)
   reflection.alpha = 0.75
 
@@ -250,7 +250,7 @@ var PigSmoke = function (xy, world) {
   var smoke = game.add.sprite(xy.x, xy.y, 'atlas', 'pig_smoke_0', world.middleLayer)
   smoke.anchor.set(0.6)
   smoke.ySortOffset = 5
-  smoke.anim = addAnimation(smoke, 'play', 'pig_smoke', 5, 12, false)
+  smoke.anim = addAnimation(smoke, 'play', 'pig_smoke', 12, false)
   smoke.anim.onComplete.add(destroyWrap(smoke))
   smoke.animations.play('play')
 }

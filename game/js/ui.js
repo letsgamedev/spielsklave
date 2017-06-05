@@ -186,7 +186,7 @@ var ScytheEnergyBubble = function (reference) {
   var bubble = game.add.sprite(koords.x, koords.y, 'atlas', 'energy_bulb_4')
   bubble.anchor.set(0.5)
   bubble.fixedToCamera = true
-  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, 10, false)
+  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 10, false)
   bulbAnim.play()
   bubble.scale.set(2)
   var tween = game.add.tween(bubble.cameraOffset).to({
@@ -202,7 +202,7 @@ var ScytheEnergyBubble = function (reference) {
 var ScytheEnergyBubbleVarB = function (reference) {
   var bubble = game.add.sprite(reference.x, reference.y, 'atlas', 'energy_bulb_4')
   bubble.anchor.set(0.5)
-  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, 16, false)
+  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, false)
   bulbAnim.play()
   bubble.scale.set(1)
   var tween = game.add.tween(bubble.cameraOffset).to({

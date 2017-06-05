@@ -110,7 +110,6 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
 }
 
 var HeadIcon = function (reference, offsetX, offsetY) {
-  console.log(reference)
   var icon = game.add.sprite(offsetX, offsetY, 'atlas', 'icon_eye')
   reference.setIcon = function (id) {
     icon.frameName = id

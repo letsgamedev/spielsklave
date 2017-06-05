@@ -44,6 +44,7 @@ Game.Preloader.prototype = {
     loadSound('explosion1', 'wav')
     loadSound('stone_push', 'wav')
     loadSound('scythe', 'wav')
+    loadSound('door_open', 'wav')
     loadSound('world', 'ogg', 'music/')
   },
 

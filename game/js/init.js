@@ -20,8 +20,8 @@ function init () {
 
   var Size = {
     normal: {w: 256, h: 144}, // Zelda NES,GB (9 Zeilen)
-    big: {w: 384, h: 216},	// Lufia, Zelda SNES, Alwa (13.5 Zeilen)
-    max: {w: 512, h: 288}	// (18 Zeilen)
+    big: {w: 384, h: 216},  // Lufia, Zelda SNES, Alwa (13.5 Zeilen)
+    max: {w: 512, h: 288} // (18 Zeilen)
   }
 
   var s = Size.big
@@ -79,9 +79,9 @@ function saveItem (id, value) {
   localStorage.setItem('spielsklave_' + id, value)
 };
 
-function addAnimation (obj, name, assetsName, count, fps, loop) {
+function addAnimation (obj, name, assetsName, fps, loop) {
   var animNames = []
-  for (var i = 0; i < count; i++) {
+  for (var i = 0; i < 30; i++) {
     animNames.push(assetsName + '_' + i)
   };
   return obj.animations.add(name, animNames, fps, loop)

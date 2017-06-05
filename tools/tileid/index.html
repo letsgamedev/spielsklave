@@ -94,6 +94,8 @@
 
 			canvas.drawImage(ninja_img,sx * 16,sy * 16,16,16,x * tileSize,y * tileSize,tileSize,tileSize);
 		};
+
+		saveField();
 	}
 
 	function drawNinjaField() {
@@ -121,7 +123,7 @@
 	}
 
 	function setIdOnTileset(mouse) {
-		var scale = ninja_base.getBoundingClientRect().width / ninja_img.width;
+		var scale = canvas_base.getBoundingClientRect().width / ninja_img.width;
 		var tilesCountWidth = img.width / tileSize;
 		var x = Math.floor((mouse.layerX / scale ) / tileSize);
 		var y = Math.floor((mouse.layerY / scale ) / tileSize);
@@ -166,12 +168,23 @@
 		canvas = canvas_base.getContext('2d');
 		ninja_base = document.getElementById('ninja');
 		ninja = ninja_base.getContext('2d');
+
+		loadField();
+
 		ninja_base.addEventListener('click', ninjaSelectId, false);
 		canvas_base.addEventListener('click', setIdOnTileset, false);
 
 		ninja_img = new Image();
 		ninja_img.src = "ninjatiles.png";
 		ninja_img.onload = drawNinjaField;
+	}
+
+	function loadField() {
+		field = JSON.parse(localStorage.getItem("tile_field"));
+	}
+
+	function saveField() {
+		localStorage.setItem("tile_field", JSON.stringify(field));
 	}
 
 	
@@ -184,11 +197,19 @@
 		image-rendering: pixelated;
 		image-rendering: -moz-crisp-edges;
 	}
+
+	#ninja {
+		height: 150px;
+	}
+
+	#can {
+		width: 400px;
+	}
 	</style>
 </head>
 <body onload="init()">
-<input type="file" id="file-input" /><button onclick="printArray()">CREATE ARRAY</button>
-<canvas id="ninja" width="200" hight="200">The canvas jo</canvas>
+<input type="file" id="file-input" /><button onclick="printArray()">CREATE ARRAY</button><br>
+<canvas id="ninja" width="200" hight="200">The canvas jo</canvas><br>
 <canvas id="can" width="200" hight="200">The canvas jo</canvas>
 <div id="output"></div>
 </body>
