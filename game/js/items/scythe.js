@@ -82,12 +82,10 @@ var Scythe = function (player, world) {
       setMove(Pad.DOWN, 'y', 1, DOWN)
 
       var hb = hitbox[player.lookDirection][player.frameName.slice(-1)]
-      try {
+      if (hb) {
         currentHitBox = new Phaser.Rectangle(player.body.x + hb.x, player.body.y + hb.y, hb.w, hb.h)
-      } catch (e) {
-        scythe.update = nothing
+        hitTest()
       }
-      hitTest()
     }
   }
 
