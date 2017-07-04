@@ -28,6 +28,7 @@ var SwipeFade = function (world, from, kind, callBack) {
 
   world.isInTransition = true
   if (kind == 'out') {
+    console.log('KIND', kind, from)
     switch (from) {
       case LEFT:
         for (var i = 0; i < 9; i++) addShape(-24, 24 * i)
@@ -39,8 +40,18 @@ var SwipeFade = function (world, from, kind, callBack) {
         addBlack(game.width + 12, 0, 0, 0)
         tweenContainer(-game.width - 12, 0)
         break
+      case UP:
+        for (var i = 0; i < 16; i++) addShape(24 * i, -24)
+        addBlack(0, -12, 0, 1)
+        tweenContainer(0, game.height + 24)
+        break
+      case DOWN:
+        for (var i = 0; i < 16; i++) addShape(24 * i, game.height)
+        addBlack(0, game.height + 12, 0, 0)
+        tweenContainer(0, -game.height - 12)
+        break
     }
-  } else {
+  } else { // in
     switch (from) {
       case LEFT:
         for (var i = 0; i < 9; i++) addShape(-24, 24 * i)
@@ -51,6 +62,16 @@ var SwipeFade = function (world, from, kind, callBack) {
         for (var i = 0; i < 9; i++) addShape(game.width, 24 * i)
         addBlack(game.width + 12, 0, 1, 0)
         tweenContainer(-game.width - 24, 0)
+        break
+      case UP:
+        for (var i = 0; i < 16; i++) addShape(24 * i, -36)
+        addBlack(0, game.height, 0, 1)
+        tweenContainer(0, game.height + 36)
+        break
+      case DOWN:
+        for (var i = 0; i < 16; i++) addShape(24 * i, game.height)
+        addBlack(0, game.height + 12, 0, 1)
+        tweenContainer(0, -game.height - 24)
         break
     }
     world.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor

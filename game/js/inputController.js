@@ -16,7 +16,7 @@ var InputController = function (world) {
         }
 
         if (player.state != STATES.STONE) {
-					// Controll of the player
+          // Controll of the player
           player.input()
 
           if (player.state != STATES.INUSE && Pad.justDown(Pad.Y) && player.item1) {
@@ -32,7 +32,10 @@ var InputController = function (world) {
             player.attachedEvent.interact()
           }
         } else {
-					// Player ist stone so we controll the pig
+          // Player ist stone so we controll the pig
+          if (pig.state == STATES.SUCK) return
+          if (pig.state == STATES.SHOOT) return
+
           pig.input()
 
           if (Pad.justDown(Pad.B)) {
@@ -40,6 +43,14 @@ var InputController = function (world) {
               pig.sitDown()
             } else {
               pig.standUp()
+            }
+          } else if (Pad.justDown(Pad.Y)) {
+            if (pig.state == STATES.NORMAL) {
+              if (pig.carryedItem) {
+                pig.shoot()
+              } else {
+                pig.suck()
+              }
             }
           }
         }

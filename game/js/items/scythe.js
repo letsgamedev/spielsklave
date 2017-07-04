@@ -1,5 +1,6 @@
 var Scythe = function (player, world) {
   var scythe = {}
+  scythe.isEnergyDrain = true
   scythe.strength = 1
 
   var sicle_down = addAnimation(player, 'scythe_down', 'dengel_scythe_down', 30, false)
@@ -95,7 +96,7 @@ var Scythe = function (player, world) {
       for (var i = 0; i < world.enemies.length; i++) {
         var e = world.enemies[i]
         if (e.alive && currentHitBox.intersects(e.getHitBox())) {
-          e.onHit(scythe.strength)
+          e.onHit(PlayerData.getCalcAtk(), scythe)
         }
       };
     }

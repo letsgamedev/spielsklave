@@ -65,18 +65,22 @@ var LittleEgg = function (world, x, y) {
     hitSaveTime = 0.15
     egg.tint = 0x62B3F5
     playSound('hit2', 0.25)
-    var dmg = PlayerData.getCalcAtk()
+    var dmg = self
     DamageText(egg.x, egg.y - 15, dmg)
     GenPool.throwBack(egg, world.player, 20, 100)
     egg.hp -= dmg
     if (egg.hp <= 0) {
       timeEvent(0.1, function () {
         PigSmoke(egg, world)
-        if (Game.variant == 1)ScytheEnergyBubbleVarB(egg)
-        else ScytheEnergyBubble(egg)
+        if (other.isEnergyDrain) {
+          if (Game.variant == 1)ScytheEnergyBubbleVarB(egg)
+          else ScytheEnergyBubble(egg)
+        }
         playSound('explosion1')
         egg.kill()
       })
+    } else {
+      if (egg.status === EGG) hatchCheck(true)
     }
   }
 
@@ -128,12 +132,12 @@ var LittleEgg = function (world, x, y) {
   /**
   checks if the player is near enough and inits the hatching if so.
   */
-  function hatchCheck () {
+  function hatchCheck (forced) {
     var distancePlayer = game.math.distance(world.player.x, world.player.y, egg.body.x, egg.body.y)
     var distancePig = game.math.distance(world.pig.x, world.pig.y, egg.body.x, egg.body.y)
     var dist = Math.min(distancePlayer, distancePig)
 
-    if (dist < 40) {
+    if (dist < 40 || forced) {
       var anim = egg.animations.play('hatch')
       egg.status = HATCHING
       anim.onComplete.add(function () {

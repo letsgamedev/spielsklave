@@ -20,7 +20,9 @@ var STATES = {
   WALK: 2,
   STAND: 3,
   INUSE: 4,
-  SIT: 5
+  SIT: 5,
+  SUCK: 6,
+  SHOOT: 7
 }
 var TEST = null
 var TEST2 = null
@@ -30,7 +32,7 @@ var WORLD = null
 
 var firstStart = false
 
-var globalMusicVolume = 0
+var globalMusicVolume = 0.5
 var globalSoundVolume = 1
 
 var MAP = {
@@ -104,9 +106,7 @@ Game.Main.prototype = {
 
       if (this.player.shell) game.debug.body(this.player.shell)
     }
-    var rect = new Phaser.Rectangle(Math.floor(this.player.x / 8) * 8, Math.floor(this.player.y / 8) * 8, 8, 8)
-    game.debug.geom(rect, 'rgba(255,0,0,1)')
-    game.debug.text(rect.x / 8, 5, 10)
+    game.debug.geom(TEST, 'rgba(255,0,0,0.5)')
         // if (TEST) game.debug.rectangle(TEST);
         // if (TEST2) game.debug.rectangle(TEST2.getHitBox());
 
@@ -165,8 +165,6 @@ Game.Main.prototype = {
     this.reflectionLayer.add(ReflectionPig(this))
 
     this.cursor = Cursor(this)
-
-    TEST = this.createMapLayer.bind(this)
 
     this.addClouds()
 
@@ -671,12 +669,24 @@ Game.Main.prototype = {
       }
 
       function check (e) {
-        if (e.isFix) return
+        if (e.isFix || e.isCarry) {
+          if (e.isShoot) {
+            // nothing
+          } else {
+            return
+          }
+        }
         r = e.body.aabb.collideAABBVsTile(tile)
         var isInWorldBounds = game.world.bounds.containsRect(e.body)
-        if (e.hitTween && (r || isInWorldBounds == false)) {
-          e.hitTween.stop()
-          e.hitTween = undefined
+        if (r || isInWorldBounds == false) {
+          if (e.hitTween) {
+            e.hitTween.stop()
+            e.hitTween = undefined
+          }
+          if (e.shootTween) {
+            e.shootTween.stop(true)
+            e.shootTween = undefined
+          }
         }
       }
       function checkArray (array) {
@@ -705,7 +715,8 @@ Game.Main.prototype = {
         game.physics.ninja.collide(this.events[j], this.enemies[i])
       };
       for (var j = 0; j < this.objects.length; j++) {
-        game.physics.ninja.collide(this.objects[j], this.enemies[i])
+        if (this.objects[j].isCarry) continue
+        game.physics.ninja.collide(this.objects[j], this.enemies[i], this.onObjectEnemyCollision)
       };
     };
 
@@ -716,8 +727,10 @@ Game.Main.prototype = {
     };
 
     for (var j = 0; j < this.objects.length; j++) {
+      if (this.objects[j].isCarry) continue
       if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.objects[j], this.player)
       if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.objects[j])
+      if (this.objects[j].isShoot) continue
       game.physics.ninja.collide(this.objects[j], this.pig)
     };
   },
@@ -729,6 +742,15 @@ Game.Main.prototype = {
       if (this.player.x > game.world.bounds.right) this.onLeaveChunk(LEFT)
       if (this.player.y < game.world.bounds.top) this.onLeaveChunk(DOWN)
       if (this.player.y > game.world.bounds.bottom) this.onLeaveChunk(UP)
+    }
+  },
+
+  onObjectEnemyCollision: function (object, enemy) {
+    if (object.isShoot) {
+      object.shootTween.stop(true)
+      object.shootTween == null
+      enemy.onHit(object.getDmg(), object)
+      object.onBreak()
     }
   },
 

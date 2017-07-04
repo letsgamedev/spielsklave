@@ -23,11 +23,11 @@ var MAPDATA = {
         tileY: 94,
         obj: HouseDoor,
         dest: {
-        	map: '01',
-    			tileX: 30,
-    			tileY: 121,
-    			walkIn: LEFT
-    		}
+          map: '01',
+          tileX: 30,
+          tileY: 121,
+          walkIn: DOWN
+        }
       },
       {
         tileX: 20,
@@ -113,11 +113,11 @@ var MAPDATA = {
         tileY: 94,
         obj: HouseDoor,
         dest: {
-        	map: '01',
-    			tileX: 30,
-    			tileY: 117,
-    			walkIn: UP
-    		}
+          map: '01',
+          tileX: 30,
+          tileY: 117,
+          walkIn: UP
+        }
       }
     ]
   }

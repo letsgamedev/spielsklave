@@ -39,12 +39,44 @@ var Pig = function (world, x, y) {
   pig.animations.add('stand_down', ['pig_walk_down_1'], 12, true)
   pig.animations.add('stand_left', ['pig_walk_left_1'], 12, true)
   pig.animations.add('stand_right', ['pig_walk_right_1'], 12, true)
+  pig.animations.add('stand_fat1_up', ['pig_walk_fat1_up_1'], 24, true)
+  pig.animations.add('stand_fat1_down', ['pig_walk_fat1_down_1'], 12, true)
+  pig.animations.add('stand_fat1_left', ['pig_walk_fat1_left_1'], 12, true)
+  pig.animations.add('stand_fat1_right', ['pig_walk_fat1_right_1'], 12, true)
   pig.animations.add('sit', ['pig_sit_0'], 12, true)
+
+  function addSuckAnimation (direction) {
+    var ani = pig.animations.add('suck_' + direction + '_init', ['pig_suck_' + direction + '_0'], 12, false)
+    ani.onComplete.add(function () { pig.animations.play('suck_' + direction) })
+    pig.animations.add('suck_' + direction, ['pig_suck_' + direction + '_1', 'pig_suck_' + direction + '_2', 'pig_suck_' + direction + '_3', 'pig_suck_' + direction + '_2'], 12, true)
+  }
+  addSuckAnimation('up')
+  addSuckAnimation('down')
+  addSuckAnimation('left')
+  addSuckAnimation('right')
+
+  function addShootAnimation (direction) {
+    var ani = pig.animations.add('shoot_' + direction, ['pig_suck_' + direction + '_2', 'pig_suck_' + direction + '_1', 'pig_suck_' + direction + '_0'], 30, false)
+    ani.onComplete.add(function () {
+      console.log('SHOOT COMPET')
+      pig.state = STATES.NORMAL
+      doStandAnimation(lookDirection)
+    })
+  }
+
+  addShootAnimation('up')
+  addShootAnimation('down')
+  addShootAnimation('left')
+  addShootAnimation('right')
 
   addAnimation(pig, 'walk_down', 'pig_walk_down', 12, true)
   addAnimation(pig, 'walk_up', 'pig_walk_up', 12, true)
   addAnimation(pig, 'walk_left', 'pig_walk_left', 12, true)
   addAnimation(pig, 'walk_right', 'pig_walk_right', 12, true)
+  addAnimation(pig, 'walk_fat1_down', 'pig_walk_fat1_down', 12, true)
+  addAnimation(pig, 'walk_fat1_up', 'pig_walk_fat1_up', 12, true)
+  addAnimation(pig, 'walk_fat1_left', 'pig_walk_fat1_left', 12, true)
+  addAnimation(pig, 'walk_fat1_right', 'pig_walk_fat1_right', 12, true)
   pig.animations.play('stand_down')
 
   // Private variables
@@ -52,6 +84,7 @@ var Pig = function (world, x, y) {
   var minDis = 30
   var teleportDistance = 90
   var lookDirection = DOWN
+  var showedLookDirection = DOWN
   var walkSave = 0
   var sameDirectionCount = 0
   var lastDirection = 0
@@ -66,6 +99,7 @@ var Pig = function (world, x, y) {
   pig.update = function () {
     // Yes, this function is a bit messi
     pig.damageSave = world.player.state != STATES.STONE && pig.state == STATES.NORMAL
+    if (pig.carryedItem) pig.updateCarryedItem()
 
     if (world.player.state == STATES.STONE && world.cursor.visible == false) return
     if (pig.state == STATES.SIT) return
@@ -102,7 +136,10 @@ var Pig = function (world, x, y) {
       if (lastDirection == dirKey) sameDirectionCount++
       else sameDirectionCount = 0
 
-      if (sameDirectionCount > 5) { pig.animations.play('walk_' + lookDirection) }
+      if (sameDirectionCount > 5) {
+        doWalkAnimation(lookDirection)
+        showedLookDirection = lookDirection
+      }
 
       lastDirection = dirKey
       walkSave = 0
@@ -110,12 +147,28 @@ var Pig = function (world, x, y) {
       if (walkSave < 6) {
         walkSave++
       } else {
-        pig.animations.play('stand_' + lookDirection)
+        doStandAnimation(lookDirection)
+        showedLookDirection = lookDirection
       }
     }
   }
 
+  function doWalkAnimation (dir) {
+    var fatLevel = ''
+    if (pig.carryedItem) fatLevel = 'fat1_'
+    pig.animations.play('walk_' + fatLevel + lookDirection)
+  }
+
+  function doStandAnimation (dir) {
+    var fatLevel = ''
+    if (pig.carryedItem) fatLevel = 'fat1_'
+    pig.animations.play('stand_' + fatLevel + lookDirection)
+  }
+
   pig.sitDown = function () {
+    if (pig.carryedItem) {
+      var item = pig.releaseCarryedItem()
+    }
     pig.state = STATES.SIT
     pig.setUI()
     pig.animations.play('sit')
@@ -124,13 +177,185 @@ var Pig = function (world, x, y) {
   pig.standUp = function () {
     pig.state = STATES.NORMAL
     pig.setUI()
-    pig.animations.play('stand_' + lookDirection)
+    doStandAnimation(lookDirection)
+    showedLookDirection = lookDirection
+  }
+
+  pig.suck = function () {
+    /*
+      suche alle objekte die in der entsprechenden
+      richtung rumliegen und nimmt das, welches
+      am nahesten dran ist. dieses objekt soll zum
+      schwein getweent werden. wenn das schwein
+      dabei getroffen wird, wird der vorgang
+      abgebrochen. man kann sich erst dann
+      wieder wieder bewegen, wenn der tween
+      abgeschlossen ist.
+    */
+
+    pig.animations.play('suck_' + showedLookDirection + '_init')
+
+    var dist = 60
+    var width = 32
+
+    var objects = world.objects.filter(function (o) {
+      var rect = null
+      switch (showedLookDirection) {
+        case UP:
+          rect = new Phaser.Rectangle(pig.x - width / 2, pig.y - dist, width, dist)
+          break
+        case DOWN:
+          rect = new Phaser.Rectangle(pig.x - width / 2, pig.y, width, dist)
+          break
+        case LEFT:
+          rect = new Phaser.Rectangle(pig.x - dist, pig.y - width / 2, dist, width)
+          break
+        case RIGHT:
+          rect = new Phaser.Rectangle(pig.x, pig.y - width / 2, dist, width)
+          break
+      }
+
+      if (rect !== null && o.suckable === true) {
+        return rect.intersects(o)
+      }
+      return false
+    })
+
+    var object = null
+
+    if (objects.length > 0) {
+      var nearestObj = objects[0]
+      var min = Phaser.Math.distance(nearestObj.x, nearestObj.y, pig.x, pig.y)
+      for (var i = 0; i < objects.length; i++) {
+        var newValue = Phaser.Math.distance(objects[i].x, objects[i].y, pig.x, pig.y)
+        if (newValue < min) {
+          nearestObj = objects[i]
+          min = newValue
+        }
+      }
+
+      if (nearestObj.shootTween) {
+        nearestObj.shootTween.stop(true)
+        nearestObj.shootTween = null
+      }
+
+      nearestObj.onSuck()
+      nearestObj.body.immovable = false
+      pig.state = STATES.SUCK
+      nearestObj.isCarry = true
+
+      var tween = game.add.tween(nearestObj.body).to({
+        x: pig.x,
+        y: pig.y
+      }, 8 * min, Phaser.Easing.Quadratic.In, true)
+      tween.onComplete.add(function () {
+        nearestObj.carry()
+        pig.carryItem(nearestObj)
+
+        pig.state = STATES.NORMAL
+        doStandAnimation(lookDirection)
+      })
+    } else {
+      // no suckable objects
+      pig.state = STATES.SUCK
+      timeEvent(0.5, function () {
+        pig.state = STATES.NORMAL
+        doStandAnimation(lookDirection)
+      })
+    }
+
+    console.log(objects.length)
+  }
+
+  pig.carryItem = function (item) {
+    pig.carryedItem = item
+    item.visible = false
+    // pig.addChild(item)
+    console.log(item.body)
+  }
+
+  pig.updateCarryedItem = function () {
+    var xOffSet = 0
+    var yOffSet = 0
+    var body = {x: 0, y: 0}
+    var dist = 10
+      /* switch (showedLookDirection) {
+        case UP: xOffSet = 0; yOffSet = -dist; body = {x:2, y:22}
+        break
+        case DOWN: xOffSet = 0; yOffSet = dist; body = {x:2, y:22}
+        break
+        case LEFT: xOffSet = -dist; yOffSet = 0; body = {x:22, y:2}
+        break
+        case RIGHT: xOffSet = dist; yOffSet = 0; body = {x:22, y:2}
+        break
+      } */
+      // pig.body.setSize(8 + body.x, 8 + body.y)
+    pig.carryedItem.body.x = pig.body.x + xOffSet
+    pig.carryedItem.body.y = pig.body.y + yOffSet
+  }
+
+  pig.shoot = function () {
+    if (pig.carryedItem) {
+      var item = pig.releaseCarryedItem()
+      item.isShoot = true
+      item.body.immovable = false
+
+      pig.animations.play('shoot_' + showedLookDirection)
+      pig.state = STATES.SHOOT
+
+      var dist = 16 * 3
+      var throwBack = {x: 0, y: 0}
+
+      switch (showedLookDirection) {
+        case UP: dist = {x: 0, y: -dist}; throwBack.y = 5
+          break
+        case DOWN: dist = {x: 0, y: dist}; throwBack.y = -5
+          break
+        case LEFT: dist = {x: -dist, y: 0}; throwBack.x = 5
+          break
+        case RIGHT: dist = {x: dist, y: 0}; throwBack.x = -5
+          break
+      }
+
+      item.onShoot()
+
+      item.shootTween = game.add.tween(item.body).to({
+        x: pig.x + dist.x,
+        y: pig.y + dist.y
+      }, 200, Phaser.Easing.Default, true)
+      item.shootTween.onComplete.add(function () {
+        item.body.origin.x = item.body.x
+        item.body.origin.y = item.body.y
+        item.body.immovable = true
+        item.isShoot = false
+        item.stay()
+      })
+
+      pig.body.x += throwBack.x
+      pig.body.y += throwBack.y
+    }
+  }
+
+  pig.releaseCarryedItem = function () {
+    pig.body.setSize(8, 8)
+    var item = pig.carryedItem
+    item.visible = true
+    pig.carryedItem = null
+    world.middleLayer.add(item)
+    item.isCarry = false
+    item.body.origin.x = item.body.x
+    item.body.origin.y = item.body.y
+    item.body.immovable = true
+    return item
   }
 
   pig.onHit = function (self, enemy) {
     // GenPool.onHit;
     console.log(enemy.harmless)
     if (!enemy.harmless) {
+      if (pig.carryedItem) {
+        var item = pig.releaseCarryedItem()
+      }
       world.player.fromStone()
       world.player.setUI()
     }
@@ -146,12 +371,12 @@ var Pig = function (world, x, y) {
       var newAnimation = 'stand'
 
       var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1
-
+      var fatFaktor = pig.carryedItem ? 0.5 : 1
       // Process movement and animation
       if (!(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
         function setMove (padKey, axis, multi, dirID) {
           if (Pad.isDown(padKey)) {
-            pig.body[axis] += DT * speed * diagonalFactor * multi
+            pig.body[axis] += DT * speed * fatFaktor * diagonalFactor * multi
             stand = false
             lookDirection = dirID
           }
@@ -162,12 +387,14 @@ var Pig = function (world, x, y) {
         setMove(Pad.DOWN, 'y', 1, DOWN)
 
         if (pig.animations.currentAnim.name.includes('stand') || diagonalFactor == 1) {
-          pig.animations.play('walk_' + lookDirection)
+          doWalkAnimation(lookDirection)
+          showedLookDirection = lookDirection
         }
       }
 
       if (stand) {
-        pig.animations.play('stand_' + lookDirection)
+        doStandAnimation(lookDirection)
+        showedLookDirection = lookDirection
       }
     }
   }
@@ -184,6 +411,9 @@ var Pig = function (world, x, y) {
 
   pig.teleport = function () {
     // puff!
+    if (pig.carryedItem) {
+      var item = pig.releaseCarryedItem()
+    }
     var dis = 16
     var xOff = 0
     var yOff = 0
