@@ -728,11 +728,18 @@ Game.Main.prototype = {
 
     for (var j = 0; j < this.objects.length; j++) {
       if (this.objects[j].isCarry) continue
-      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.objects[j], this.player)
+      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.objects[j], this.player, this.onObjectsPlayerCollision)
       if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.objects[j])
       if (this.objects[j].isShoot) continue
       game.physics.ninja.collide(this.objects[j], this.pig)
     };
+  },
+
+  onObjectsPlayerCollision: function (object, player) {
+    if (player.hitTween) {
+      player.hitTween.stop()
+      player.hitTween = undefined
+    }
   },
 
   checkPlayerOutOfBounds: function () {
@@ -746,6 +753,11 @@ Game.Main.prototype = {
   },
 
   onObjectEnemyCollision: function (object, enemy) {
+    if (enemy.hitTween) {
+      enemy.hitTween.stop()
+      enemy.hitTween = undefined
+    }
+
     if (object.isShoot) {
       object.shootTween.stop(true)
       object.shootTween == null
