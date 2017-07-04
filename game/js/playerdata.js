@@ -22,5 +22,5 @@ var PlayerData = {
   scytheEnergyMax: 30,
   scytheEnergyCurrentMax: 0,
   scytheEnergyCurrent: 0,
-  atk: 1
+  atk: 10
 }
