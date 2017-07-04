@@ -8,7 +8,7 @@ var L = function (key) {
   }
   var replacer = function (input) {
     if (input.includes('{') == false) return input
-    input = input.replace('{VERSION}', 'v0.16.0')
+    input = input.replace('{VERSION}', 'v0.16.1')
     // input = input.replace('{LEFT}', keyToString(Config.controlls.left.k) + getPadCode(Config.controlls.left.p));
     return input
   }
