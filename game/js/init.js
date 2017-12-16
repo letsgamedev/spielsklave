@@ -36,7 +36,14 @@ function init () {
   Game.width = s.w
   Game.height = s.h
 
-  game = new Phaser.Game(Game.width, Game.height, Phaser.CANVAS, '', null, false, false)
+  Game.config = {
+    width: Game.width,
+    height: Game.height,
+    renderer: Phaser.CANVAS,
+    enableDebug: false
+  }
+
+  game = new Phaser.Game(Game.config)
 
   game.state.add('Preloader', Game.Preloader)
   game.state.add('Main', Game.Main)
@@ -79,12 +86,12 @@ function saveItem (id, value) {
   localStorage.setItem('spielsklave_' + id, value)
 };
 
-function addAnimation (obj, name, assetsName, fps, loop) {
+function addAnimation (obj, name, assetsName, fps, loop, isNumericIndex) {
   var animNames = []
   for (var i = 0; i < 30; i++) {
     animNames.push(assetsName + '_' + i)
   };
-  return obj.animations.add(name, animNames, fps, loop)
+  return obj.animations.add(name, animNames, fps, loop, isNumericIndex)
 };
 
 function sleep (millisec) {
@@ -96,12 +103,8 @@ function sleep (millisec) {
 
 function destroyWrap (obj) {
   return function () {
-    setTimeout(obj.destroy.bind(obj), 0)
+    obj.pendingDestroy = true
   }
-}
-
-function distance (a, b) {
-  return game.math.distance(a.x, a.y, b.x, b.y)
 }
 
 function nothing () {}

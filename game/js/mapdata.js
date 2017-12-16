@@ -15,87 +15,74 @@ var MAPDATA = {
   '01': {
     backgroundColor: 0x279cf9,
     chunkCoords: [[0, 0], [0, 1]],
-    mapX: 5,
-    mapY: 3,
+    mapPos: {x: 5, y: 3},
     events: [
       {
-        tileX: 43,
-        tileY: 94,
+        tile: {x: 43, y: 94},
         obj: HouseDoor,
         dest: {
           map: '01',
-          tileX: 30,
-          tileY: 121,
+          tile: {x: 30, y: 121},
           walkIn: DOWN
         }
       },
       {
-        tileX: 20,
-        tileY: 112,
+        tile: {x: 20, y: 112},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT02')
       },
       {
-        tileX: 25,
-        tileY: 112,
+        tile: {x: 25, y: 112},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT05')
       },
       {
-        tileX: 35,
-        tileY: 112,
+        tile: {x: 35, y: 112},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT06')
       },
       {
-        tileX: 40,
-        tileY: 112,
+        tile: {x: 40, y: 112},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT07')
       },
       {
-        tileX: 20,
-        tileY: 106,
+        tile: {x: 20, y: 106},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT08')
       },
       {
-        tileX: 25,
-        tileY: 106,
+        tile: {x: 25, y: 106},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT09')
       },
       {
-        tileX: 35,
-        tileY: 106,
+        tile: {x: 35, y: 106},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT10')
       },
       {
-        tileX: 40,
-        tileY: 106,
+        tile: {x: 40, y: 106},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT11')
       },
       {
-        tileX: 24,
-        tileY: 26,
+        tile: {x: 24, y: 26},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT03')
       },
 
       {
-        tileX: 28,
-        tileY: 26,
+        tile: {x: 28, y: 26},
         obj: InfoTalk,
         img: 'tomb',
         text: L('TEXT04')
@@ -105,17 +92,14 @@ var MAPDATA = {
   '02': {
     backgroundColor: 0x279cf9,
     chunkCoords: [[0, 0], [0, 1]],
-    mapX: 4,
-    mapY: 3,
+    mapPos: {x: 4, y: 3},
     events: [
       {
-        tileX: 43,
-        tileY: 94,
+        tile: {x: 43, y: 94},
         obj: HouseDoor,
         dest: {
           map: '01',
-          tileX: 30,
-          tileY: 117,
+          tile: {x: 30, y: 117},
           walkIn: UP
         }
       }

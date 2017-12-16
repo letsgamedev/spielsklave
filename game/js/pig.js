@@ -22,7 +22,7 @@ like the demon.
 @return {Phaser.Sprite} - The pig object
 */
 var Pig = function (world, x, y) {
-  var pig = game.add.sprite(x, y, 'atlas', 'pig_walk_down_1', world.middleLayer)
+  var pig = G.Sprite(x, y, 'pig_walk_down_1', world.middleLayer)
 
   // Configure physics
   game.physics.ninja.enable(pig, 1, 0, 4)
@@ -153,17 +153,16 @@ var Pig = function (world, x, y) {
     }
   }
 
-  function doWalkAnimation (dir) {
-    var fatLevel = ''
-    if (pig.carryedItem) fatLevel = 'fat1_'
-    pig.animations.play('walk_' + fatLevel + lookDirection)
+  function doAnimationCurry (base) {
+    return function () {
+      var fatLevel = ''
+      if (pig.carryedItem) fatLevel = 'fat1_'
+      pig.animations.play(base + '_' + fatLevel + lookDirection)
+    }
   }
 
-  function doStandAnimation (dir) {
-    var fatLevel = ''
-    if (pig.carryedItem) fatLevel = 'fat1_'
-    pig.animations.play('stand_' + fatLevel + lookDirection)
-  }
+  var doWalkAnimation = doAnimationCurry('walk')
+  var doStandAnimation = doAnimationCurry('stand')
 
   pig.sitDown = function () {
     if (pig.carryedItem) {
@@ -182,6 +181,7 @@ var Pig = function (world, x, y) {
   }
 
   pig.suck = function () {
+    console.log('SUCK')
     /*
       suche alle objekte die in der entsprechenden
       richtung rumliegen und nimmt das, welches
@@ -198,23 +198,23 @@ var Pig = function (world, x, y) {
     var dist = 60
     var width = 32
 
-    var objects = world.objects.filter(function (o) {
-      var rect = null
-      switch (showedLookDirection) {
-        case UP:
-          rect = new Phaser.Rectangle(pig.x - width / 2, pig.y - dist, width, dist)
-          break
-        case DOWN:
-          rect = new Phaser.Rectangle(pig.x - width / 2, pig.y, width, dist)
-          break
-        case LEFT:
-          rect = new Phaser.Rectangle(pig.x - dist, pig.y - width / 2, dist, width)
-          break
-        case RIGHT:
-          rect = new Phaser.Rectangle(pig.x, pig.y - width / 2, dist, width)
-          break
-      }
+    var rect = null
+    switch (showedLookDirection) {
+      case UP:
+        rect = new Phaser.Rectangle(pig.x - width / 2, pig.y - dist, width, dist)
+        break
+      case DOWN:
+        rect = new Phaser.Rectangle(pig.x - width / 2, pig.y, width, dist)
+        break
+      case LEFT:
+        rect = new Phaser.Rectangle(pig.x - dist, pig.y - width / 2, dist, width)
+        break
+      case RIGHT:
+        rect = new Phaser.Rectangle(pig.x, pig.y - width / 2, dist, width)
+        break
+    }
 
+    var objects = world.objects.filter(function (o) {
       if (rect !== null && o.suckable === true) {
         return rect.intersects(o)
       }
@@ -225,36 +225,36 @@ var Pig = function (world, x, y) {
 
     if (objects.length > 0) {
       var nearestObj = objects[0]
-      var min = Phaser.Math.distance(nearestObj.x, nearestObj.y, pig.x, pig.y)
-      for (var i = 0; i < objects.length; i++) {
-        var newValue = Phaser.Math.distance(objects[i].x, objects[i].y, pig.x, pig.y)
+      var min = TB.getDistance(nearestObj, pig)
+
+      objects.forEach(object => {
+        var newValue = TB.getDistance(object, pig)
         if (newValue < min) {
-          nearestObj = objects[i]
+          nearestObj = object
           min = newValue
         }
-      }
+      })
 
-      if (nearestObj.shootTween) {
-        nearestObj.shootTween.stop(true)
-        nearestObj.shootTween = null
-      }
+      TB.stopAndClearTween(nearestObj, 'shootTween')
 
       nearestObj.onSuck()
       nearestObj.body.immovable = false
       pig.state = STATES.SUCK
       nearestObj.isCarry = true
 
-      var tween = game.add.tween(nearestObj.body).to({
+      // with this it would be possible to suck thorugh walls
+      var tween = G.Tween(nearestObj.body, {
         x: pig.x,
         y: pig.y
-      }, 8 * min, Phaser.Easing.Quadratic.In, true)
-      tween.onComplete.add(function () {
-        nearestObj.carry()
+      }, 8 * min, setItemToCarry).easing(Phaser.Easing.Quadratic.In).start()
+
+      function setItemToCarry () {
+        //nearestObj.carry()
         pig.carryItem(nearestObj)
 
         pig.state = STATES.NORMAL
         doStandAnimation(lookDirection)
-      })
+      }
     } else {
       // no suckable objects
       pig.state = STATES.SUCK
@@ -270,28 +270,12 @@ var Pig = function (world, x, y) {
   pig.carryItem = function (item) {
     pig.carryedItem = item
     item.visible = false
-    // pig.addChild(item)
     console.log(item.body)
   }
 
   pig.updateCarryedItem = function () {
-    var xOffSet = 0
-    var yOffSet = 0
-    var body = {x: 0, y: 0}
-    var dist = 10
-      /* switch (showedLookDirection) {
-        case UP: xOffSet = 0; yOffSet = -dist; body = {x:2, y:22}
-        break
-        case DOWN: xOffSet = 0; yOffSet = dist; body = {x:2, y:22}
-        break
-        case LEFT: xOffSet = -dist; yOffSet = 0; body = {x:22, y:2}
-        break
-        case RIGHT: xOffSet = dist; yOffSet = 0; body = {x:22, y:2}
-        break
-      } */
-      // pig.body.setSize(8 + body.x, 8 + body.y)
-    pig.carryedItem.body.x = pig.body.x + xOffSet
-    pig.carryedItem.body.y = pig.body.y + yOffSet
+    pig.carryedItem.body.x = pig.body.x
+    pig.carryedItem.body.y = pig.body.y
   }
 
   pig.shoot = function () {
@@ -319,17 +303,21 @@ var Pig = function (world, x, y) {
 
       item.onShoot()
 
-      item.shootTween = game.add.tween(item.body).to({
-        x: pig.x + dist.x,
-        y: pig.y + dist.y
-      }, 200, Phaser.Easing.Default, true)
-      item.shootTween.onComplete.add(function () {
+      item.body.x = pig.x
+      item.body.y = pig.y
+
+      item.shootTween = G.StepUpdateTween(item.body, {
+        x: dist.x,
+        y: dist.y
+      }, 200, normalizeShootedItem).start()
+
+      function normalizeShootedItem () {
         item.body.origin.x = item.body.x
         item.body.origin.y = item.body.y
         item.body.immovable = true
         item.isShoot = false
-        item.stay()
-      })
+        item.drop()
+      }
 
       pig.body.x += throwBack.x
       pig.body.y += throwBack.y
@@ -361,38 +349,38 @@ var Pig = function (world, x, y) {
     }
   }
 
+  function setMove (padKey, axis, multi, dirID) {
+    if (Pad.isDown(padKey)) {
+      pig.body[axis] += DT * speed * multi
+      pig.state = STATES.WALK
+      lookDirection = dirID
+    }
+  }
+
   /*
   Handels the input from Pad class. Has to be called every frame.
   */
   pig.input = function () {
-    if (pig.state == STATES.SIT) return
-    if (world.player.state == STATES.STONE && world.cursor.visible == false) {
-      var stand = true
-      var newAnimation = 'stand'
+    if (pig.state == STATES.SIT || pig.state == STATES.SUCK) return
 
-      var diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1
+    if (world.player.state == STATES.STONE && world.cursor.visible == false) {
+      pig.state = STATES.STAND
+      var diagonalFactor = Pad.isDiagonalInput() ? 0.707 : 1
+      var isTwoSideKeyDown = Pad.isCounterDirektionInput()
+
       var fatFaktor = pig.carryedItem ? 0.5 : 1
       // Process movement and animation
-      if (!(Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) && !(Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))) {
-        function setMove (padKey, axis, multi, dirID) {
-          if (Pad.isDown(padKey)) {
-            pig.body[axis] += DT * speed * fatFaktor * diagonalFactor * multi
-            stand = false
-            lookDirection = dirID
-          }
-        }
-        setMove(Pad.LEFT, 'x', -1, LEFT)
-        setMove(Pad.RIGHT, 'x', 1, RIGHT)
-        setMove(Pad.UP, 'y', -1, UP)
-        setMove(Pad.DOWN, 'y', 1, DOWN)
-
-        if (pig.animations.currentAnim.name.includes('stand') || diagonalFactor == 1) {
-          doWalkAnimation(lookDirection)
-          showedLookDirection = lookDirection
-        }
+      if (!isTwoSideKeyDown) {
+        setMove(Pad.LEFT, 'x', -1 * fatFaktor, LEFT)
+        setMove(Pad.RIGHT, 'x', 1 * fatFaktor, RIGHT)
+        setMove(Pad.UP, 'y', -1 * fatFaktor, UP)
+        setMove(Pad.DOWN, 'y', 1 * fatFaktor, DOWN)
       }
 
-      if (stand) {
+      if (pig.state === STATES.WALK && (diagonalFactor === 1 || pig.animations.currentAnim.name.indexOf('stand') !== -1)) {
+        doWalkAnimation(lookDirection)
+        showedLookDirection = lookDirection
+      } else if (pig.state === STATES.STAND) {
         doStandAnimation(lookDirection)
         showedLookDirection = lookDirection
       }
@@ -412,7 +400,7 @@ var Pig = function (world, x, y) {
   pig.teleport = function () {
     // puff!
     if (pig.carryedItem) {
-      var item = pig.releaseCarryedItem()
+      pig.releaseCarryedItem()
     }
     var dis = 16
     var xOff = 0
@@ -424,25 +412,26 @@ var Pig = function (world, x, y) {
       case LEFT: xOff = dis; break
       case RIGHT: xOff = -dis; break
     }
-
-    PigSmoke(pig, world)
-
     pig.body.x = world.player.body.x + xOff
     pig.body.y = world.player.body.y + yOff
 
+    // smoke were the pig was and were the pig will be
+    PigSmoke(pig, world)
     PigSmoke(pig.body, world)
   }
 
   pig.tweenToPlayer = function () {
     if (pig.state == STATES.SIT) pig.standUp()
     world.player.setUI()
-    var tween = game.add.tween(pig.body).to({
+
+    var tween = G.Tween(pig.body, {
       x: world.player.x,
       y: world.player.y
-    }, 500, Phaser.Easing.Default, true)
-    tween.onComplete.add(function () {
+    }, 500, clearTween).start()
+
+    function clearTween () {
       currentTween = null
-    })
+    }
     currentTween = tween
   }
 
@@ -452,7 +441,7 @@ var Pig = function (world, x, y) {
 var ReflectionPig = function (world) {
   var pig = world.pig
 
-  var reflection = game.add.sprite(0, 0, 'atlas', 'pig_walk_down_1', world.reflectionLayer)
+  var reflection = G.Sprite(0, 0, 'pig_walk_down_1', world.reflectionLayer)
   reflection.scale.y = -1
 
   reflection.animations.add('stand_up', ['pig_walk_up_1'], 12, true)
@@ -477,7 +466,7 @@ var ReflectionPig = function (world) {
 }
 
 var PigSmoke = function (xy, world) {
-  var smoke = game.add.sprite(xy.x, xy.y, 'atlas', 'pig_smoke_0', world.middleLayer)
+  var smoke = G.Sprite(xy.x, xy.y, 'pig_smoke_0', world.middleLayer)
   smoke.anchor.set(0.6)
   smoke.ySortOffset = 5
   smoke.anim = addAnimation(smoke, 'play', 'pig_smoke', 12, false)

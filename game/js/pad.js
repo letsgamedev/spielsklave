@@ -88,7 +88,7 @@ var Pad = {
 
         this.refBTNs = [this.refUP, this.refDOWN, this.refLEFT, this.refRIGHT, this.refA, this.refB, this.refX, this.refY, this.refL, this.refR, this.refSTART, this.refSELECT,this.refESC];
         this.btnALL = [this.btnUP, this.btnDOWN, this.btnLEFT, this.btnRIGHT, this.btnA, this.btnB, this.btnX, this.btnY, this.btnL, this.btnR, this.btnSTART, this.btnSELECT,this.btnESC];
-        this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadA, this.dPadB, this.dPadX, this.dPadY, this.dPadL, this.dPadR, this.dPadStart, this.dPadSelect];
+        //this.dPadAll = [this.dPadUp, this.dPadDown, this.dPadLeft, this.dPadRight, this.dPadA, this.dPadB, this.dPadX, this.dPadY, this.dPadL, this.dPadR, this.dPadStart, this.dPadSelect];
 
         game.input.gamepad.start();
 
@@ -354,5 +354,13 @@ var Pad = {
             };
         }
         return btn;
+    },
+  
+    isDiagonalInput: function() {
+      return (Pad.isDown(Pad.LEFT) !== Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) !== Pad.isDown(Pad.DOWN))
+    },
+  
+    isCounterDirektionInput: function() {
+      return (Pad.isDown(Pad.LEFT) && Pad.isDown(Pad.RIGHT)) || (Pad.isDown(Pad.UP) && Pad.isDown(Pad.DOWN))
     }
 };

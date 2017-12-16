@@ -3,17 +3,14 @@ var Scythe = function (player, world) {
   scythe.isEnergyDrain = true
   scythe.strength = 1
 
-  var sicle_down = addAnimation(player, 'scythe_down', 'dengel_scythe_down', 30, false)
-  sicle_down.onComplete.add(onFinish)
-
-  var sicle_up = addAnimation(player, 'scythe_up', 'dengel_scythe_up', 30, false)
-  sicle_up.onComplete.add(onFinish)
-
-  var sicle_left = addAnimation(player, 'scythe_left', 'dengel_scythe_left', 30, false)
-  sicle_left.onComplete.add(onFinish)
-
-  var sicle_right = addAnimation(player, 'scythe_right', 'dengel_scythe_right', 30, false)
-  sicle_right.onComplete.add(onFinish)
+  function initAnimation (dir) {
+    var sicle = addAnimation(player, 'scythe_' + dir, 'dengel_scythe_' + dir, 30, false)
+    sicle.onComplete.add(onFinish)
+  }
+  initAnimation('down')
+  initAnimation('up')
+  initAnimation('left')
+  initAnimation('right')
 
   function onFinish () {
     player.state = STATES.NORMAL
@@ -74,7 +71,7 @@ var Scythe = function (player, world) {
   var currentHitBox = null
   scythe.update = function () {
     if (isPlaying) {
-      diagonalFactor = (Pad.isDown(Pad.LEFT) || Pad.isDown(Pad.RIGHT)) && (Pad.isDown(Pad.UP) || Pad.isDown(Pad.DOWN)) ? 0.707 : 1
+      diagonalFactor = Pad.isDiagonalInput() ? 0.707 : 1
 
       setMove(Pad.LEFT, 'x', -1, LEFT)
       setMove(Pad.RIGHT, 'x', 1, RIGHT)

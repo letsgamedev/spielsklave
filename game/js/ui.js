@@ -4,13 +4,13 @@ var UI = function (world) {
   ui.cameraOffset.x = 10
   ui.cameraOffset.y = 10
 
-  var head = game.add.sprite(0, 3, 'atlas', 'ui_head', ui)
+  var head = G.Sprite(0, 3, 'ui_head', ui)
 
   var health = []
   var x = 0
   var y = 0
   for (var i = 0; i < 10; i++) {
-    var h = game.add.sprite(17 + x * 14, y * 14, 'atlas', 'health_full', ui)
+    var h = G.Sprite(17 + x * 14, y * 14, 'health_full', ui)
     x++
     if (x >= 5) {
       y++
@@ -19,15 +19,15 @@ var UI = function (world) {
     health.push(h)
   };
 
-  var visible = 0
+  var visibleHearts = 0
 
   ui.updateHealth = function () {
-    visible = 0
+    visibleHearts = 0
     for (var i = 1; i <= health.length; i++) {
       var h = health[i - 1]
       if (i * 2 <= world.player.maxHP) {
         h.visible = true
-        visible++
+        visibleHearts++
         if (world.player.hp >= i * 2) h.frameName = 'health_full'
         else if (world.player.hp == i * 2 - 1) h.frameName = 'health_half'
         else h.frameName = 'health_empty'
@@ -36,14 +36,15 @@ var UI = function (world) {
       }
     };
 
-    head.y = visible > health.length / 2 ? 3 : -2
+    head.y = visibleHearts > health.length / 2 ? 3 : -2
   }
 
   // items
   var btnOffsetX = -40
-  ui.btnY = game.add.sprite(game.width - 130 + btnOffsetX, -7, 'atlas', 'icon_id_0', ui)
-  ui.btnB = game.add.sprite(game.width - 100 + btnOffsetX, -7, 'atlas', 'icon_id_7', ui)
-  ui.btnX = game.add.sprite(game.width - 70 + btnOffsetX, -7, 'atlas', 'icon_id_1', ui)
+  ui.btnY = G.Sprite(game.width - 130 + btnOffsetX, -7, 'icon_id_0', ui)
+  ui.btnB = G.Sprite(game.width - 100 + btnOffsetX, -7, 'icon_id_7', ui)
+  ui.btnX = G.Sprite(game.width - 70 + btnOffsetX, -7, 'icon_id_1', ui)
+
   var map = MiniMap(game.width - 68, 0)
   ui.add(map)
   ui.miniMap = map
@@ -54,24 +55,15 @@ var UI = function (world) {
   var scytheBar = ScytheBar()
   ui.add(scytheBar)
 
-  ui.setIconY = function (id) {
-    setIcon(ui.btnY, id)
-  }
-
-  ui.setIconB = function (id) {
-    setIcon(ui.btnB, id)
-  }
-
-  ui.setIconX = function (id) {
-    setIcon(ui.btnX, id)
-  }
+  var setIcon = btn => id => btn.frameName = 'icon_id_' + id
+  ui.setIconY = setIcon(ui.btnY)
+  ui.setIconB = setIcon(ui.btnB)
+  ui.setIconX = setIcon(ui.btnX)
 
   ui.update = function () {
     scytheBar.update()
 
-    ui.hpLayer.forEach(function (bar) {
-      bar.update()
-    })
+    ui.hpLayer.forEach(bar => bar.update())
 
     var playerKoords = TB.convert2UIKoords(world.player)
     var semiTrans = playerKoords.y < 70 && playerKoords.x > 230
@@ -81,81 +73,77 @@ var UI = function (world) {
     ui.miniMap.alpha = semiTrans ? 0.5 : 1
     ui.miniMap.overlay.alpha = semiTrans ? 0.5 : 1
   }
-
-  function setIcon (btn, id) {
-    btn.frameName = 'icon_id_' + id
-  }
   return ui
 }
 
-var Map = function (x, y) {
+var WorldMap = function (x, y) {
   var map = game.add.group()
   map.x = x
   map.y = y
-  var openMap = game.add.sprite(0, 0, 'atlas', 'map_free')
+
+  var openMap = G.Sprite(0, 0, 'map_free')
   openMap.mask = game.add.graphics(0, 0)
   openMap.addChild(openMap.mask)
   openMap.mask.beginFill(0xffffff)
   openMap.mask.drawRect(0, 0, 1, 1)
 
-  var mapImg = game.add.sprite(0, 0, 'atlas', 'map_cloud')
+  var mapImg = G.Sprite(0, 0, 'map_cloud')
 
   map.add(mapImg)
   map.add(openMap)
 
-  map.clearField = function (tileX, tileY) {
+  map.clearField = function (tilePosition) {
     openMap.mask.beginFill(0x0)
-    openMap.mask.drawRect(tileX * 16, tileY * 16, 16, 16)
+    openMap.mask.drawRect(tilePosition.x * 16, tilePosition.y * 16, 16, 16)
   }
 
   return map
 }
 
 var MiniMap = function (x, y) {
+  var map = WorldMap(x, y)
   var oPos = {x: x, y: y}
-  var map = Map(x, y)
 
   var miniMapMask = null
   miniMapMask = game.add.graphics(0, 0)
   miniMapMask.beginFill(0x444444)
   miniMapMask.drawRoundedRect(0, 0, 16 * 3 + 1, 16 * 3 + 1, 14)
 
-  map.setCenterTile = function (tileX, tileY) {
-    console.log('create hole ', tileX, tileY)
-    map.clearField(tileX, tileY)
-    var tx = game.math.clamp(tileX, 1, 10)
-    var ty = game.math.clamp(tileY, 1, 6)
-    miniMapMask.x = (tx - 1) * 16
-    miniMapMask.y = (ty - 1) * 16
-    map.x = -(tx - 1) * 16 + oPos.x
-    map.y = -(ty - 1) * 16 + oPos.y
-  }
   map.addChild(miniMapMask)
   map.mask = miniMapMask
 
-  var overlay = game.add.sprite(x - 1, y - 1, 'atlas', 'mapoverlay2')
+  var overlay = G.Sprite(x - 1, y - 1, 'mapoverlay2')
   map.overlay = overlay
+
+  map.setCenterTile = function (tilePosition) {
+    console.log('create hole ', tilePosition.x, tilePosition.y)
+    map.clearField(tilePosition)
+    var tx = game.math.clamp(tilePosition.x, 1, 10)
+    var ty = game.math.clamp(tilePosition.y, 1, 6)
+    miniMapMask.x = (tx - 1) * 16
+    miniMapMask.y = (ty - 1) * 16
+    map.x = -miniMapMask.x + oPos.x
+    map.y = -miniMapMask.y + oPos.y
+  }
 
   return map
 }
 
 var ScytheBar = function () {
-  var container = game.add.sprite(-5, 8, 'atlas', 'scythe_bar_container')
-  var maxFill = game.add.sprite(4, 11, 'atlas', 'scythe_bar_max_down')
-  var currentFill = game.add.sprite(4, 11, 'atlas', 'scythe_bar_max')
+  var container = G.Sprite(-5, 8, 'scythe_bar_container')
+  var maxFill = G.Sprite(4, 11, 'scythe_bar_max_down')
+  var currentFill = G.Sprite(4, 11, 'scythe_bar_max')
 
-  maxFill.mask = game.add.graphics(0, 0)
-  maxFill.addChild(maxFill.mask)
-  maxFill.mask.beginFill(0xffffff)
-  maxFill.mask.drawRect(0, 0, 40, 60)
+  function createFillMask (fill) {
+    fill.mask = game.add.graphics(0, 0)
+    fill.addChild(fill.mask)
+    fill.mask.beginFill(0xffffff)
+    fill.mask.drawRect(0, 0, 40, 60)
+    container.addChild(fill)
+  }
 
-  currentFill.mask = game.add.graphics(0, 0)
-  currentFill.addChild(currentFill.mask)
-  currentFill.mask.beginFill(0xffffff)
-  currentFill.mask.drawRect(0, 0, 40, 60)
-
-  container.addChild(maxFill)
-  container.addChild(currentFill)
+  createFillMask(maxFill)
+  createFillMask(currentFill)
 
   container.update = function () {
     var max = PlayerData.scytheEnergyCurrentMax
@@ -168,73 +156,87 @@ var ScytheBar = function () {
 }
 
 var DamageText = function (x, y, text) {
-  bmp = game.add.bitmapText(x, y, 'fontDamage', text, 10, WORLD.topLayer)
-  var tween = game.add.tween(bmp).to({
-    y: y - 10
-  }, 350, Phaser.Easing.Default, true)
-  tween.onComplete.add(function () {
-    destroyWrap(bmp)
-  })
+  bmp = game.add.bitmapText(x, y, 'fontDamage', text, 10, WORLD.uiLayer)
 
-  var tween2 = game.add.tween(bmp).to({
-    alpha: 0
-  }, 150, Phaser.Easing.Default, true, 200)
+  function destroyText () {
+    destroyWrap(bmp)
+  }
+
+  G.Tween(bmp, { y: '-10' }, 350, destroyText).start()
+  G.Tween(bmp, { alpha: 0 }, 150).delay(200).start()
 }
 
 var ScytheEnergyBubble = function (reference) {
   var koords = TB.convert2UIKoords(reference)
-  var bubble = game.add.sprite(koords.x, koords.y, 'atlas', 'energy_bulb_4')
+  var bubble = G.Sprite(koords.x, koords.y, 'energy_bulb_4')
   bubble.anchor.set(0.5)
   bubble.fixedToCamera = true
   var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 10, false)
   bulbAnim.play()
   bubble.scale.set(2)
-  var tween = game.add.tween(bubble.cameraOffset).to({
+  var tween = G.TweenCubic(bubble.cameraOffset, {
     y: 18,
     x: 18
-  }, 1000, Phaser.Easing.Cubic.InOut, true)
-  tween.onComplete.add(function () {
+  }, 1000, addEnergyToPlayer).start()
+
+  function addEnergyToPlayer () {
     PlayerData.addScytheEnergy(reference.scytheEnergy)
     bubble.destroy()
-  })
+  }
 }
 
 var ScytheEnergyBubbleVarB = function (reference) {
-  var bubble = game.add.sprite(reference.x, reference.y, 'atlas', 'energy_bulb_4')
+  var bubble = G.Sprite(reference.x, reference.y, 'energy_bulb_4')
   bubble.anchor.set(0.5)
   var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, false)
   bulbAnim.play()
   bubble.scale.set(1)
-  var tween = game.add.tween(bubble.cameraOffset).to({
-  }, 700, Phaser.Easing.Cubic.InOut, true)
+  var tween = G.TweenCubic(bubble.cameraOffset, {
+  }, 700, addEnergyToPlayer).start()
+
+  // This way, and not with StepTween cause player is moving while animation
   tween.onUpdateCallback(function (tween, ratio) {
     bubble.x = Phaser.Math.linearInterpolation([bubble.x, WORLD.player.x], ratio)
     bubble.y = Phaser.Math.linearInterpolation([bubble.y, WORLD.player.y], ratio)
   })
-  tween.onComplete.add(function () {
+
+  function addEnergyToPlayer () {
     PlayerData.addScytheEnergy(reference.scytheEnergy)
     bubble.destroy()
-  })
+  }
 }
 
 var HPBar = function (reference) {
-  var bar = game.add.sprite(0, 0, 'atlas', 'lpbar_back', WORLD.ui.hpLayer)
+  var bar = G.Sprite(0, 0, 'lpbar_back', WORLD.ui.hpLayer)
+  var full = G.Sprite(2, 1, 'lpbar_full', bar)
+  var isVisible = false
+
   bar.update = function () {
-    bar.x = reference.left
-    bar.y = reference.top - 5
-
-    full.width = Math.floor((reference.hp / reference.maxHp) * 17)
-    full.width = Phaser.Math.clamp(full.width, 0, 17)
-
-    bar.visible = reference.hp !== reference.maxHp
-
-    if (full.width === 0) bar.destroy()
+    updatePosition()
+    updateFullWidth()
+    checkVisibility()
+    checkIfHPBarShouldBeDestroyed()
   }
 
-  // var bleed = game.add.sprite(2, 1, 'atlas', 'lpbar_bleed')
-  var full = game.add.sprite(2, 1, 'atlas', 'lpbar_full')
+  function updatePosition () {
+    bar.x = reference.left
+    bar.y = reference.top - 5
+  }
 
-  bar.addChild(full)
+  function updateFullWidth () {
+    full.width = Math.floor((reference.hp / reference.maxHp) * 17)
+    full.width = Phaser.Math.clamp(full.width, 0, 17)
+  }
+
+  function checkVisibility () {
+    if (isVisible) return
+    bar.visible = reference.hp !== reference.maxHp
+    if (bar.visible) isVisible = true
+  }
+
+  function checkIfHPBarShouldBeDestroyed () {
+    if (full.width === 0) bar.destroy()
+  }
 
   return bar
 }

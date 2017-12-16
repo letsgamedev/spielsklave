@@ -5,23 +5,36 @@
 @patreon https://www.patreon.com/letsgamedev
 @mail letsgamedev@gmx.de
 */
-
-Game.Preloader = function () {
-}
-
-Game.Preloader.prototype = {
-  init: function () {
+Game.Preloader = function() {
+  function init() {
     logInfo('init Preloader')
-  },
+    game.renderer.renderSession.roundPixels = true
+    // this.game.canvas.style.cursor = "none";
+    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
+    game.time.advancedTiming = true
+  }
 
-  preload: function () {
+  function create() {
+    Pad.init()
+    nextMapId = '01'
+    game.state.start('Main')
+  }
+
+  var loadSound = function (name, type, dir) {
+    type = type || 'mp3'
+    dir = dir || 'sounds/'
+
+    game.load.audio(name, dir + name + '.' + type)
+  }
+
+  function preload() {
     game.plugins.add(Fabrique.Plugins.NineSlice)
 
-    this.load.path = 'assets/'
+    game.load.path = 'assets/'
 
     game.load.atlas('atlas')
     game.load.atlas('atlas_pad')
-    this.load.image('tiles')
+    game.load.image('tiles')
     game.load.spritesheet('tiless', 'tiles.png', 8, 8)
 
     // top is 10, left is 15, right is 20 and bottom is 30 pixels in size
@@ -30,12 +43,7 @@ Game.Preloader.prototype = {
     game.load.bitmapFont('fontBig')
     game.load.bitmapFont('fontBigThin')
     game.load.bitmapFont('fontDamage')
-    var loadSound = function (name, type, dir) {
-      type = type || 'mp3'
-      dir = dir || 'sounds/'
-
-      game.load.audio(name, dir + name + '.' + type)
-    }
+    
     loadSound('player_hit', 'wav')
     loadSound('hit2', 'wav')
     loadSound('player_to_stone', 'wav')
@@ -46,12 +54,11 @@ Game.Preloader.prototype = {
     loadSound('scythe', 'wav')
     loadSound('door_open', 'wav')
     loadSound('world', 'ogg', 'music/')
-  },
-
-  create: function () {
-    // game.state.start("BlendModeTest");
-    Pad.init()
-    nextMapId = '01'
-    game.state.start('Main')
+  }
+  
+  return {
+    init,
+    create,
+    preload
   }
 }

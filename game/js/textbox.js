@@ -1,100 +1,140 @@
-var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, group
+var TextBoxBig = function (text, name) {
   var bmpTextName = null
   var bmpText = null
-  var buttonNext = null
+  var words = text.split(' ')
+  var hold = false
+  var nextWordTimer = 0.03
 
-  // Char TextBox
-  var charName = game.add.nineSlice(62, 150, 'textBoxBig', null, 84, 50, WORLD.topLayer)
-  charName.fixedToCamera = true
-  charName.visible = false
-  var tweenCN = game.add.tween(charName.cameraOffset).to({
-    y: 130
-  }, 200, Phaser.Easing.Circular.Out)
+  isEvent = true
+
+  var charName = CharacterNameBox(62, 150, name)
 
   // Main TextBox
-  var tb = game.add.nineSlice(game.width / 2, game.height - 20, 'textBoxBig', null, 20, 20, WORLD.topLayer)
+  var tb = game.add.nineSlice(game.width / 2, game.height - 20, 'textBoxBig', null, 20, 20, WORLD.uiLayer)
   tb.fixedToCamera = true
   tb.anchor.set(0.5)
+  tb.myUpdate = nothing
+
+  var buttonNext = NextPageButton(117, 20, tb)
 
   var tweenHelper = {
     width: tb.width,
     height: tb.height,
-    x: tb.cameraOffset.x,
     y: tb.cameraOffset.y
   }
 
-  // Animate In
-  var tween = game.add.tween(tweenHelper).to({
-    width: 262,
-    height: 66,
-    y: game.height - 40
-  }, 200, Phaser.Easing.Circular.Out, true)
-  tween.chain(tweenCN)
+  function openTextBox () {
+    var tween = G.Tween(tweenHelper, {
+      width: 262,
+      height: 66,
+      y: game.height - 40
+    }, 200, showText).easing(Phaser.Easing.Circular.Out).start()
+    tween.onUpdateCallback(setBoxPositionWhileAnimating, tween)
 
-  tween.onUpdateCallback(function (tween, ratio) {
+    tween.chain(charName.getTween())
+  }
+
+  function setBoxPositionWhileAnimating (tween, ratio) {
     tb.resize(tweenHelper.width, tweenHelper.height)
     tb.cameraOffset.y = tweenHelper.y
-  }, tween)
+  }
 
-  tween.onComplete.add(function () {
+  function showText () {
     if (name != undefined) charName.visible = true
     addText()
-  })
-
-  isEvent = true
+  }
 
   function addText () {
-    // Char name text
-    bmpTextName = game.add.bitmapText(10, -35, 'fontBig', name, 10, WORLD.topLayer)
-    charName.addChild(bmpTextName)
-    // BigText
-    bmpText = game.add.bitmapText(-120, -22, 'fontBig', '', 13, WORLD.topLayer)
+    charName.showName()
+
+    bmpText = game.add.bitmapText(-120, -22, 'fontBig', '', 13, WORLD.uiLayer)
     tb.addChild(bmpText)
+
     bmpText.maxWidth = 225
-    var hold = false
-    tb.timer = 0.03
+    tb.timer = nextWordTimer
+
     tb.myUpdate = function () {
       buttonNext.update()
+
       tb.timer -= DT
-      if (text.length > 0 && hold == false && tb.timer < 0) {
-        tb.timer = 0.03
-        var index = text.indexOf(' ')
-        var newWord = (index != -1) ? text.substr(0, index + 1) : text
-        var oldText = bmpText._text
-        bmpText.setText(oldText + newWord)
-        if (bmpText.textHeight / 18 > 3) {
+
+      if (hold == false && tb.timer < 0) {
+        resetTimer()
+        var newWord = addNextWord()
+
+        if (isTextInValidHeight() === false) {
           hold = true
-          bmpText.setText(oldText)
+          putLastWordBack(newWord)
+          bmpText.setText(removeLastWord(bmpText._text))
         } else {
-          text = index != -1 ? text.substr(index + 1) : ''
+          hold = words.length === 0
         }
 
-        if (text.length == 0) {
-          hold = true
-        }
+        if (hold) buttonNext.show()
       } else {
-        if (Pad.justDown(Pad.A)) {
-          bmpText.setText('')
-          hold = false
-          if (text.length == 0) {
-            removeTextBox()
-          }
-        }
+        checkInput()
       }
+    }
+  }
+
+  function addNextWord () {
+    var newWord = getNextWord()
+    var oldText = bmpText._text
+    bmpText.setText(oldText + ' ' + newWord)
+    return newWord
+  }
+
+  function removeLastWord (text) {
+    var lastIndex = text.lastIndexOf(' ')
+    return text.substring(0, lastIndex)
+  }
+
+  function getNextWord () {
+    return words.length > 0 ? words.shift() : ''
+  }
+
+  function putLastWordBack (lastWord) {
+    words.unshift(lastWord)
+  }
+
+  function isTextInValidHeight () {
+    return bmpText.textHeight / 18 <= 3
+  }
+
+  function resetTimer () {
+    tb.timer = nextWordTimer
+  }
+
+  function checkInput () {
+    if (Pad.justDown(Pad.A)) {
+      if (hold === true) {
+        nextTextPage()
+      } else {
+        showCompletePage()
+      }
+    }
+  }
+
+  function nextTextPage () {
+    bmpText.setText('')
+    hold = false
+    buttonNext.hide()
+
+    if (words.length == 0) {
+      removeTextBox()
+    }
+  }
+
+  function showCompletePage () {
+    let lastWordAdded
+    while (words.length > 0 && isTextInValidHeight()) {
+      lastWordAdded = addNextWord()
     }
 
-    var buttonNext = game.add.sprite(117, 20, 'atlas', 'textboxbutton0', WORLD.topLayer)
-    buttonNext.swapTime = 0.5
-    buttonNext.visible = false
-    buttonNext.update = function () {
-      buttonNext.swapTime -= DT
-      buttonNext.visible = hold
-      if (buttonNext.swapTime < 0) {
-        buttonNext.swapTime = 0.5
-        buttonNext.frameName = (buttonNext.frameName == 'textboxbutton0' ? 'textboxbutton1' : 'textboxbutton0')
-      }
+    if (isTextInValidHeight() === false) {
+      putLastWordBack(lastWordAdded)
+      bmpText.setText(removeLastWord(bmpText._text))
     }
-    tb.addChild(buttonNext)
   }
 
   function removeTextBox () {
@@ -104,17 +144,64 @@ var TextBoxBig = function (text, name) { // x, y, key, frame, width, height, gro
     isEvent = false
   }
 
-  tb.myUpdate = function () {}
-
   currentEvent = tb
+  openTextBox()
+}
+
+var NextPageButton = function (x, y, parent) {
+  var buttonNext = G.Sprite(117, 20, 'textboxbutton0', parent)
+  buttonNext.swapTime = 0.5
+  buttonNext.visible = false
+
+  buttonNext.update = function () {
+    buttonNext.swapTime -= DT
+    if (buttonNext.swapTime < 0) {
+      buttonNext.swapTime = 0.5
+      buttonNext.frameName = (buttonNext.frameName == 'textboxbutton0' ? 'textboxbutton1' : 'textboxbutton0')
+    }
+  }
+
+  buttonNext.show = function () {
+    buttonNext.visible = true
+  }
+
+  buttonNext.hide = function () {
+    buttonNext.visible = false
+  }
+
+  return buttonNext
+}
+
+var CharacterNameBox = function (x, y, name) {
+  var charName = game.add.nineSlice(x, y, 'textBoxBig', null, 84, 50, WORLD.uiLayer)
+  charName.fixedToCamera = true
+  charName.visible = false
+
+  var bmpTextName = game.add.bitmapText(10, 5, 'fontBig', name, 13, WORLD.uiLayer)
+  charName.addChild(bmpTextName)
+  bmpTextName.visible = false
+
+  charName.getTween = function () {
+    var tweenCN = G.Tween(charName.cameraOffset, {
+      y: 130
+    }, 200).easing(Phaser.Easing.Circular.Out)
+    return tweenCN
+  }
+
+  charName.showName = function () {
+    bmpTextName.visible = true
+  }
+
+  return charName
 }
 
 var HeadIcon = function (reference, offsetX, offsetY) {
-  var icon = game.add.sprite(offsetX, offsetY, 'atlas', 'icon_eye')
+  var icon = G.Sprite(offsetX, offsetY, 'icon_eye')
   reference.setIcon = function (id) {
     icon.frameName = id
   }
   reference.addChild(icon)
+
   icon.visible = false
 
   reference.headIcon = icon

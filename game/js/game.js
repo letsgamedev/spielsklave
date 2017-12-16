@@ -30,10 +30,11 @@ var TEST3 = null
 
 var WORLD = null
 
-var firstStart = false
+var isFirstStart = true
 
 var globalMusicVolume = 0.5
 var globalSoundVolume = 1
+var gamePlayTimeInSeconds = 0
 
 var MAP = {
   OBJECTS: 3,
@@ -63,10 +64,6 @@ Game.Main = function () {
 Game.Main.prototype = {
   init: function () {
     logInfo('init Main')
-    game.renderer.renderSession.roundPixels = true
-    // this.game.canvas.style.cursor = "none";
-    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
-    game.time.advancedTiming = true
 
     this.oldChunkDirection = null
     this.currentChunk = null
@@ -82,20 +79,15 @@ Game.Main.prototype = {
   Time to render debug objecs or apply some canvas filters!
   */
   render: function () {
+    if (Game.config.enableDebug === false) return
     if (!DEBUG) {
       game.debug.body(this.pig)
       game.debug.body(this.player)
-      for (var i = 0; i < this.enemies.length; i++) {
-        game.debug.body(this.enemies[i])
-      };
 
-      for (var i = 0; i < this.objects.length; i++) {
-        game.debug.body(this.objects[i])
-      };
+      this.enemies.forEach(game.debug.body)
+      this.objects.forEach(game.debug.body)
+      this.events.forEach(game.debug.body)
 
-      for (var i = 0; i < this.events.length; i++) {
-        game.debug.body(this.events[i])
-      };
       var pu = Pad.isDown(Pad.UP) ? 'U' : '-'
       var pd = Pad.isDown(Pad.DOWN) ? 'D' : '-'
       var pl = Pad.isDown(Pad.LEFT) ? 'L' : '-'
@@ -117,16 +109,7 @@ Game.Main.prototype = {
   preRender: function () {
     this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING)
   },
-
-  swapLight: function () {
-    var finAlpha = this.overlay.alpha == 0 ? 1 : 0
-
-    var tween = game.add.tween(this.overlay).to({
-      alpha: finAlpha
-    }, 3000, Phaser.Easing.Cubic.InOut, true)
-    timeEvent(60, this.swapLight, this)
-  },
-
+  
   /**
   Load all the additional assets we need to use.
   */
@@ -147,11 +130,8 @@ Game.Main.prototype = {
 
     this.reflectionLayer = game.add.group()
     this.initMap()
-    this.bottomLayer = game.add.group()
     this.middleLayer = game.add.group()
-        // this.topLayerTiles = this.map.createLayer(MAP.TOP);
-    this.topLayerTiles = this.createMapLayer(MAP.TOP)
-    this.topLayer = game.add.group()
+    this.topLayerTiles = this.map.createTopLayer()
 
     if (LastMapInfo) {
       console.log('playertiles', LastMapInfo.player.x, LastMapInfo.player.y)
@@ -161,31 +141,28 @@ Game.Main.prototype = {
     }
     this.pig = Pig(this, this.player.x, this.player.y)
 
+    this.addClouds()
+
+    this.addTimeOverlay()
+
+    this.addUI()
+
+    this.camera = GameCamera(this)
+
     this.reflectionLayer.add(ReflectionPlayer(this))
     this.reflectionLayer.add(ReflectionPig(this))
 
     this.cursor = Cursor(this)
 
-    this.addClouds()
-
-      // Day/Night Overlay
-    this.addTimeOverlay()
-
-      // Add UI
-    this.uiLayer = game.add.group()
-    this.ui = UI(this)
-    this.uiLayer.add(this.ui)
-    this.ui.updateHealth()
-
     this.prepareChunks()
 
-    this.updateCamera(true)
+    this.camera.updatePosition(true)
     this.setCurrentChunk()
 
     this.isInTransition = false
 
       // Prepare the Fadein Effect
-    this.updateCamera(true)
+    this.camera.updatePosition(true)
     if (LastMapInfo) {
       switch (LastMapInfo.mapEntryDirection) {
         case LEFT:
@@ -196,12 +173,15 @@ Game.Main.prototype = {
           break
       }
       var that = this
+      var oppositDirection = TB.getOppositDirection(LastMapInfo.mapEntryDirection)
+
       setTimeout(function () {
-        that.player.walkAuto(that.getOppositDirection(LastMapInfo.mapEntryDirection), 2)
+        that.player.walkAuto(oppositDirection, 2)
       }, 400)
-      SwipeFade(this, LastMapInfo.mapEntryDirection, 'in', function () {
-        this.isInTransition = false
-      }.bind(this))
+
+      SwipeFade.in(oppositDirection, function () {
+        that.isInTransition = false
+      })
     } else {
       game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
     }
@@ -217,8 +197,8 @@ Game.Main.prototype = {
 
     if (game.device.desktop == false) this.uiLayer.add(Pad.addVirtualButtons(game))
 
-    if (firstStart == false) {
-      firstStart = true
+    if (isFirstStart) {
+      isFirstStart = false
       timeEvent(0.1, function () {
         TextBoxBig(L('TEXT01'))
       })
@@ -233,21 +213,15 @@ Game.Main.prototype = {
     this.game.physics.ninja.gravity = 0
   },
 
+  addUI: function() {
+    this.uiLayer = game.add.group()
+    this.ui = UI(this)
+    this.uiLayer.add(this.ui)
+    this.ui.updateHealth()
+  },
+
   addTimeOverlay: function () {
-    this.overlay = game.add.graphics(0, 0)
-    this.overlay.fixedToCamera = true
-    this.overlay.blendMode = 4// 2
-    var night = 0x0000a0
-    var dawn = 0xe04040
-    this.overlay.alpha = LastMapInfo ? LastMapInfo.timeOverlay.alpha : 0
-    this.overlay.tint = night
-      /* this.overlay.update = function() {
-        var proc = (Math.sin(game.time.time * 0.00001) + 1) / 2;
-        this.alpha = 0//proc;
-      } */
-    // timeEvent(30, this.swapLight, this) // TODO: make this more "real" cause by state swap this starts new so the game could be sunny all the time
-    this.overlay.beginFill(0xffffff)
-    this.overlay.drawRect(0, 0, game.width, game.height)
+    this.overlay = DayNightOverlay(30)
   },
 
   prepareChunks: function () {
@@ -265,68 +239,43 @@ Game.Main.prototype = {
         var y = j * 512
         this.chunks[i][j] = {
           events: [],
-          startXTile: i * 8,
-          startYTile: j * 8,
           x: x,
           y: y,
           width: 512,
           height: 512,
-          left: x,
-          top: y,
-          right: x + 512,
-          bottom: y + 512,
+          bounds: {
+            left: x,
+            top: y,
+            right: x + 512,
+            bottom: y + 512
+          },
           collisitionTiles: null
         }
 
-        this.chunks[i][j].collisitionTiles = this.getCollisitionTiles(this.chunks[i][j])
-        this.chunks[i][j].events = this.getEvents(this.chunks[i][j])
+        this.chunks[i][j].collisitionTiles = this.map.getCollisitionTiles(this.chunks[i][j].bounds)
+        this.chunks[i][j].events = this.getEvents(this.chunks[i][j].bounds)
       }
     }
 
     console.log('chunks count', this.chunks)
   },
 
-  getCollisitionTiles: function (chunkBounds) {
-    var tilesForChunk = []
-    for (var i = 0; i < this.tiles.length; i++) {
-      var t = this.tiles[i]
-      if (chunkBounds.left < t.origin.x && t.origin.x < chunkBounds.right) {
-        if (chunkBounds.top < t.origin.y && t.origin.y < chunkBounds.bottom) {
-          tilesForChunk.push(t)
-        }
-      }
-    }
-    console.log('tiles for chunk', tilesForChunk.length)
-
-    return tilesForChunk
-  },
-
   getEvents: function (bounds) {
-    var result = []
-    var events = MAPDATA[nextMapId].events
-    for (var i = 0; i < events.length; i++) {
-      var e = events[i]
-      if (bounds.left <= e.tileX * 8 && e.tileX * 8 < bounds.right) {
-        if (bounds.top <= e.tileY * 8 && e.tileY * 8 < bounds.bottom) {
-          result.push(e)
-        }
-      }
-    };
-    return result
+    var eventsInChunk = MAPDATA[nextMapId].events.filter((event) =>
+      TB.isInRange(bounds.left, event.tile.x * 8, bounds.right) &&
+      TB.isInRange(bounds.top, event.tile.y * 8, bounds.bottom)
+    )
+    console.log('events found:', eventsInChunk.length)
+    return eventsInChunk
   },
 
-  position2Chunk: function (x, y) {
-    return this.chunks[Math.floor(x / 512)][Math.floor(y / 512)]
-  },
+  
 
   setCurrentChunk: function () {
-    var isValidChunkCoord = false
     var nx = Math.floor(this.player.x / 512)
     var ny = Math.floor(this.player.y / 512)
-    for (var i = 0; i < MAPDATA[nextMapId].chunkCoords.length; i++) {
-      var d = MAPDATA[nextMapId].chunkCoords[i]
-      if (d[0] == nx && d[1] == ny) isValidChunkCoord = true
-    }
+    var isValidChunkCoord = MAPDATA[nextMapId].chunkCoords.some(
+      chunkCoord => chunkCoord[0] == nx && chunkCoord[1] == ny)
 
     if (isValidChunkCoord) {
       if (this.currentChunk) {
@@ -336,7 +285,12 @@ Game.Main.prototype = {
         this.prepareNextChunk()
 
         this.isInTransition = true
-        this.tweenToCurrentChunk()
+        this.pig.tweenToPlayer()
+        function initNewChunk () {
+          this.setWorldBoundsForCurrentChunk()
+          this.cleanOldChunk()
+        }
+        this.camera.tweenToCurrentChunk(this.oldChunk.bounds, this.currentChunk.bounds, this.oldChunkDirection, initNewChunk.bind(this))
       } else {
         this.prepareNextChunk()
         this.setWorldBoundsForCurrentChunk()
@@ -346,67 +300,37 @@ Game.Main.prototype = {
     }
   },
 
-  tweenToCurrentChunk: function () {
-    this.pig.tweenToPlayer()
-    var x = Math.min(this.oldChunk.left, this.currentChunk.left)
-    var y = Math.min(this.oldChunk.top, this.currentChunk.top)
-    var w = Math.max(this.oldChunk.left, this.currentChunk.left) + 512
-    var h = Math.max(this.oldChunk.top, this.currentChunk.top) + 512
-    game.world.setBounds(x, y, w, h)
-
-    var cx = 0
-    var cy = 0
-    var offSet = 16 * 13.5
-
-    switch (this.oldChunkDirection) {
-      case UP: cy = offSet; break
-      case DOWN: cy = -offSet; break
-      case LEFT: cx = offSet; break
-      case RIGHT: cx = -offSet; break
-    }
-
-    var tween = game.add.tween(this.camera).to({
-      x: this.camera.x + cx,
-      y: this.camera.y + cy
-    }, 1000, Phaser.Easing.Cubic.InOut, true)
-
-    tween.onComplete.add(function () {
-      this.setWorldBoundsForCurrentChunk()
-      this.isInTransition = false
-      this.cleanOldChunk()
-    }, this)
-  },
-
   prepareNextChunk: function () {
     this.oldChunk = this.currentChunk
     this.currentChunk = this.position2Chunk(this.player.x, this.player.y)
-    this.currentChunk.events = this.getEvents(this.currentChunk)
+    this.currentChunk.events = this.getEvents(this.currentChunk.bounds)
     this.addEnemies()
     this.addObjects()
     this.addEvents()
-    console.log(MAPDATA[nextMapId].mapX, this.currentChunk.x, 512, MAPDATA[nextMapId].mapY, this.currentChunk.y, 512)
-    this.ui.miniMap.setCenterTile(MAPDATA[nextMapId].mapX + this.currentChunk.x / 512, MAPDATA[nextMapId].mapY + this.currentChunk.y / 512)
+    
+    var tilePosition = {
+      x: MAPDATA[nextMapId].mapPos.x + this.currentChunk.x / 512,
+      y: MAPDATA[nextMapId].mapPos.y + this.currentChunk.y / 512
+    }
+    this.ui.miniMap.setCenterTile(tilePosition)
+  },
+
+  position2Chunk: function (x, y) {
+    return this.chunks[Math.floor(x / 512)][Math.floor(y / 512)]
   },
 
   setWorldBoundsForCurrentChunk: function () {
-    game.world.setBounds(this.currentChunk.left, this.currentChunk.top, this.currentChunk.width, this.currentChunk.height)
+    game.world.setBounds(this.currentChunk.bounds.left, this.currentChunk.bounds.top, this.currentChunk.width, this.currentChunk.height)
   },
 
   cleanOldChunk: function () {
-    for (var i = 0; i < this.oldChunk.enemies.length; i++) {
-      this.oldChunk.enemies[i].destroy()
+    function destroyAllInArray (array) {
+      array.forEach(element => element.destroy())
+      return []
     }
-    this.oldChunk.enemies = []
-
-    for (var i = 0; i < this.oldChunk.events.length; i++) {
-      this.oldChunk.events[i].destroy()
-    }
-    this.oldChunk.events = []
-
-    for (var i = 0; i < this.oldChunk.objects.length; i++) {
-      this.oldChunk.objects[i].destroy()
-    }
-    this.oldChunk.objects = []
+    this.oldChunk.enemies = destroyAllInArray(this.oldChunk.enemies)
+    this.oldChunk.events = destroyAllInArray(this.oldChunk.events)
+    this.oldChunk.objects = destroyAllInArray(this.oldChunk.objects)
   },
 
   /**
@@ -414,79 +338,24 @@ Game.Main.prototype = {
   Also define which tiles have slopes.
   */
   initMap: function () {
-    this.map = this.add.tilemap('map')
-
-        // this.map.addTilesetImage("tiles", 'tiles'); //sets a image key to a json tileset name key
-    this.layer = this.createMapLayer(MAP.GROUND)
-    this.layerHelper = this.map.createLayer(MAP.GROUND)
-
-    var slopeMap = [0, // first is ignored
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 3, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 3, 1, 1, 1, 1, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 4, 1, 1, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 4, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 0, 30, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 0, 0, 15, 14, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0,
-      1, 0, 0, 1, 18, 14, 15, 19, 3, 2, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0,
-      5, 0, 0, 4, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      0, 3, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-      3, 1, 1, 5, 0, 0, 4, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-      1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 2, 0, 0, 1, 1,
-      1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-      1, 1, 1, 2, 0, 0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 5, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 4, 1, 1, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 4, 1, 1, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ]
-
-    this.tiles = game.physics.ninja.convertTilemap(this.map, MAP.GROUND, slopeMap)
-
-    this.layerHelper.resizeWorld()
-    this.layerHelper.visible = false
+    this.map = GameMap(this)
+    this.tiles = this.map.getTiles()
   },
 
   addEnemies: function () {
     this.enemies = []
     var ids = [
       {tileId: 17, className: LittleEgg},
-      {tileId: 801, className: LittleEgg}
+      {tileId: 801, className: LittleEgg}// why tom?
     ]
 
-    var that = this
-
-    for (var i = 0; i < ids.length; i++) {
-      var enemyId = ids[i]
-      var result = this.findTilesWithID(MAP.OBJECTS, enemyId.tileId, this.currentChunk)
-      result.forEach(function addEnemy (tile) {
-        var enemy = enemyId.className(that, tile.x * 8, tile.y * 8)
-        that.enemies.push(enemy)
+    ids.forEach(enemyId => {
+      var tiles = this.map.findTilesWithID(MAP.OBJECTS, enemyId.tileId, this.currentChunk.bounds)
+      tiles.forEach(tile => {
+        var enemy = enemyId.className(this, tile.x * 8, tile.y * 8)
+        this.enemies.push(enemy)
       })
-    };
-
+    })
     console.log('enemies', this.enemies.length)
   },
 
@@ -504,110 +373,33 @@ Game.Main.prototype = {
       {tileId: 484, className: FenceMaker(2)}
     ]
 
-    var that = this
-
-    ids.forEach(function (objectId) {
-      var tiles = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
-      tiles.forEach(function addObject (tile) {
-        var object = objectId.className(that, tile.x * 8, tile.y * 8)
-        that.objects.push(object)
+    ids.forEach(objectId => {
+      var tiles = this.map.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk.bounds)
+      tiles.forEach(tile => {
+        var object = objectId.className(this, tile.x * 8, tile.y * 8)
+        this.objects.push(object)
       })
-    }.bind(this))
-
-    /* for (var i = 0; i < ids.length; i++) {
-      var objectId = ids[i]
-      var tiles = this.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk)
-      tiles.forEach(function addObject (tile) {
-        var object = objectId.className(that, tile.x * 8, tile.y * 8)
-        that.objects.push(object)
-      })
-    }; */
+    })
 
     console.log('objects', this.objects.length)
   },
 
   addEvents: function () {
-    this.events = []
-    var events = this.currentChunk.events
-    for (var i = 0; i < events.length; i++) {
-      var e = events[i]
-      var obj = e.obj(this, e)
-      this.events.push(obj)
-    };
+    this.events = this.currentChunk.events.map(event => event.obj(this, event))
     console.log('event count: ' + this.events.length)
   },
 
   addClouds: function () {
     var world = this
     for (var i = 0; i < 4; i++) {
-      var x = game.rnd.between(0, this.map.width * 8)
-      var y = game.rnd.between(0, this.map.height * 8)
-      let c = game.add.sprite(x, y, 'atlas', 'cloud0')
-      c.blendMode = 8
-      c.tint = 0x999999
-      c.alpha = 0.5
-      c.scale.set(2)
-      c.xSpeed = game.rnd.between(3, 15)
-      c.ySpeed = game.rnd.between(3, 15)
-      c.update = function () {
-        c.x += DT * c.xSpeed
-        c.y += DT * c.xSpeed
-        if (c.top > world.map.height * 8) c.y = -c.height
-        if (c.left > world.map.width * 8) c.x = -c.width
+      let position = {
+        x: game.rnd.between(0, this.map.width * 8),
+        y: game.rnd.between(0, this.map.height * 8)
       }
+
+      let speed = { min: 3, max: 15 }
+      let cloud = Cloud(this, position, speed)
     };
-  },
-
-  moveCameraTo: function (x, y) {
-    var tween = game.add.tween(game.camera).to({
-      x: x,
-      y: y
-    }, 500, Phaser.Easing.Cubic.InOut, true)
-  },
-
-  updateCamera: function (isInstant) {
-    if (this.isInTransition && isInstant != true) return
-    var lookOffsetY = 0
-    var lookOffsetX = 0
-    var lookOffsetDistance = 0
-    var follower = this.player.state == STATES.STONE ? this.pig : this.player
-    switch (follower.lookDirection) {
-      case UP: lookOffsetY = lookOffsetDistance; break
-      case DOWN: lookOffsetY = -lookOffsetDistance; break
-      case LEFT: lookOffsetX = lookOffsetDistance; break
-      case RIGHT: lookOffsetX = -lookOffsetDistance; break
-    }
-
-    var xd = follower.body.x - (this.camera.x + Game.width / 2 - 8 + lookOffsetX)
-    var yd = follower.body.y - (this.camera.y + Game.height / 2 + lookOffsetY)
-
-    if (isInstant) {
-      this.camera.x = Math.floor(this.camera.x + xd)
-      this.camera.y = Math.floor(this.camera.y + yd)
-    } else {
-      this.camera.x = Math.floor(this.camera.x + (xd * 1.0))
-      this.camera.y = Math.floor(this.camera.y + (yd * 1.0))
-    }
-
-    this.camera.x = follower.body.x - Game.width / 2
-    this.camera.y = follower.body.y - Game.height / 2
-
-    game.camera.x += game.camera._shake.xx
-    game.camera.y += game.camera._shake.yy
-  },
-
-  findTilesWithID: function (layerNr, tileId, bounds) {
-    bounds = bounds || {left: 0, top: 0, right: this.map.widthInPixels, bottom: this.map.heightInPixels}
-    var result = []
-
-    var data = this.map.layers[layerNr].data
-
-    data.forEach(function (line) {
-      result = result.concat(line.filter(function (tile) {
-        return tile.index === tileId && (bounds.left / 8 <= tile.x && tile.x < bounds.right / 8) && (bounds.top / 8 <= tile.y && tile.y < bounds.bottom / 8)
-      }))
-    })
-    return result
   },
 
   /**
@@ -616,17 +408,18 @@ Game.Main.prototype = {
   */
   update: function () {
     DT = this.time.physicsElapsedMS * 0.001
+    gamePlayTimeInSeconds += DT
+
     if (this.isInTransition) return
+
     Pad.checkJustDown()
     this.inputController.update()
 
     if (isEvent) {
       currentEvent.myUpdate()
     } else {
-      // this.player.input();
       this.player.attachedEvent = null
       this.pig.update()
-      // this.pig.input();
       this.myUpdateOn(this.enemies)
       this.myUpdateOn(this.objects)
       this.myUpdateOn(this.events)
@@ -637,13 +430,14 @@ Game.Main.prototype = {
 
     this.ui.updateHealth()
     PlayerData.regenerateScytheEnergy()
+
     this.checkForDeath()
 
     this.checkPlayerOutOfBounds()
 
     this.player.myPostUpdate()
 
-    this.updateCamera()
+    this.camera.updatePosition()
   },
 
   myUpdateOn: function (array) {
@@ -660,41 +454,37 @@ Game.Main.prototype = {
 
   collision: function () {
     var r
+    var collisitionTilesLength = this.currentChunk.collisitionTiles.length
+    var isPlayerStone = this.player.state == STATES.STONE
+
+    function check (e) {
+      if ((e.isFix || e.isCarry) && !e.isShoot) return
+
+      r = e.body.aabb.collideAABBVsTile(tile)
+      var isInWorldBounds = game.world.bounds.containsRect(e.body)
+      if (r || isInWorldBounds == false) {
+        TB.stopAndClearTween(e, 'hitTween')
+        TB.stopAndClearTween(e, 'shootTween')
+      }
+    }
+
+    function checkArray (array) {
+      var arrayLength = array.length
+      for (var j = 0; j < arrayLength; j++) {
+        check(array[j])
+      };
+    }
+
     // Collision detection
-    for (var i = 0; i < this.currentChunk.collisitionTiles.length; i++) {
+
+    // Test collision between entities and tiles
+    for (var i = 0; i < collisitionTilesLength; i++) {
       var tile = this.currentChunk.collisitionTiles[i].tile
 
-      if (this.player.state == STATES.STONE) {
+      if (isPlayerStone) {
         this.player.shell.body.aabb.collideAABBVsTile(tile)
       }
 
-      function check (e) {
-        if (e.isFix || e.isCarry) {
-          if (e.isShoot) {
-            // nothing
-          } else {
-            return
-          }
-        }
-        r = e.body.aabb.collideAABBVsTile(tile)
-        var isInWorldBounds = game.world.bounds.containsRect(e.body)
-        if (r || isInWorldBounds == false) {
-          if (e.hitTween) {
-            e.hitTween.stop()
-            e.hitTween = undefined
-          }
-          if (e.shootTween) {
-            e.shootTween.stop(true)
-            e.shootTween = undefined
-          }
-        }
-      }
-      function checkArray (array) {
-        var arrayLength = array.length
-        for (var j = 0; j < arrayLength; j++) {
-          check(array[j])
-        };
-      }
       checkArray(this.enemies)
       checkArray(this.objects)
       checkArray(this.events)
@@ -702,44 +492,66 @@ Game.Main.prototype = {
       check(this.pig)
     }
 
-    // Dont do this in the for loop cause this would be super dumb!
-    if (this.player.state == STATES.STONE) {
+    // Collision Shell and Pig
+    if (isPlayerStone) {
       game.physics.ninja.collide(this.player.shell, this.pig)
     }
-      // Overlap with enemies
-    for (var i = 0; i < this.enemies.length; i++) {
-      if (this.player.state != STATES.STONE) game.physics.ninja.overlap(this.player, this.enemies[i], this.player.onHit)
-      if (this.player.state == STATES.STONE || this.cursor.visible) game.physics.ninja.overlap(this.pig, this.enemies[i], this.pig.onHit)
-      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.enemies[i])
-      for (var j = 0; j < this.events.length; j++) {
-        game.physics.ninja.collide(this.events[j], this.enemies[i])
+
+    // Overlap with enemies
+    var enemiesLength = this.enemies.length
+    for (var i = 0; i < enemiesLength; i++) {
+      var enemy = this.enemies[i]
+      if (!isPlayerStone) game.physics.ninja.overlap(this.player, enemy, this.player.onHit)
+      if (isPlayerStone || this.cursor.visible) game.physics.ninja.overlap(this.pig, enemy, this.pig.onHit)
+      if (isPlayerStone) game.physics.ninja.collide(this.player.shell, enemy)
+
+      // enemy with events
+      var eventsLength = this.events.length
+      for (var j = 0; j < eventsLength; j++) {
+        game.physics.ninja.collide(this.events[j], enemy)
       };
-      for (var j = 0; j < this.objects.length; j++) {
-        if (this.objects[j].isCarry) continue
-        game.physics.ninja.collide(this.objects[j], this.enemies[i], this.onObjectEnemyCollision)
+
+      // enemy with objects
+      var objectsLength = this.objects.length
+      for (var j = 0; j < objectsLength; j++) {
+        var obj = this.objects[j]
+        if (obj.isCarry) continue
+        game.physics.ninja.collide(obj, enemy, this.onObjectEnemyCollision)
       };
     };
 
-    for (var j = 0; j < this.events.length; j++) {
-      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.events[j], this.player, this.events[j].onCollide)
-      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.events[j])
-      game.physics.ninja.collide(this.events[j], this.pig)
+    // Events with player and pig
+    var eventsLength = this.events.length
+    for (var j = 0; j < eventsLength; j++) {
+      var event = this.events[j]
+      if (!isPlayerStone) game.physics.ninja.collide(event, this.player, event.onCollide)
+      if (isPlayerStone) game.physics.ninja.collide(this.player.shell, event)
+      game.physics.ninja.collide(event, this.pig)
     };
 
-    for (var j = 0; j < this.objects.length; j++) {
-      if (this.objects[j].isCarry) continue
-      if (this.player.state != STATES.STONE) game.physics.ninja.collide(this.objects[j], this.player, this.onObjectsPlayerCollision)
-      if (this.player.state == STATES.STONE) game.physics.ninja.collide(this.player.shell, this.objects[j])
-      if (this.objects[j].isShoot) continue
-      game.physics.ninja.collide(this.objects[j], this.pig)
+    // Objects with player and pig
+    var objectsLength = this.objects.length
+    for (var j = 0; j < objectsLength; j++) {
+      var obj = this.objects[j]
+      if (obj.isCarry) continue
+      if (!isPlayerStone) game.physics.ninja.collide(obj, this.player, this.onObjectsPlayerCollision)
+      if (isPlayerStone) game.physics.ninja.collide(this.player.shell, obj)
+      if (obj.isShoot) {
+        for (var k = 0; k < objectsLength; k++) {
+          var objK = this.objects[k]
+          if (obj === objK) continue
+          game.physics.ninja.collide(obj, objK, function (obj, other) {
+            TB.stopAndClearTween(obj, 'shootTween')
+          })
+        }
+      } else {
+        game.physics.ninja.collide(obj, this.pig)
+      }
     };
   },
 
   onObjectsPlayerCollision: function (object, player) {
-    if (player.hitTween) {
-      player.hitTween.stop()
-      player.hitTween = undefined
-    }
+    TB.stopAndClearTween(player, 'hitTween')
   },
 
   checkPlayerOutOfBounds: function () {
@@ -753,14 +565,10 @@ Game.Main.prototype = {
   },
 
   onObjectEnemyCollision: function (object, enemy) {
-    if (enemy.hitTween) {
-      enemy.hitTween.stop()
-      enemy.hitTween = undefined
-    }
+    TB.stopAndClearTween(enemy, 'hitTween')
 
     if (object.isShoot) {
-      object.shootTween.stop(true)
-      object.shootTween == null
+      TB.stopAndClearTween(object, 'shootTween')
       enemy.onHit(object.getDmg(), object)
       object.onBreak()
     }
@@ -776,59 +584,16 @@ Game.Main.prototype = {
       x: this.player.x,
       y: this.player.y
     }
-    this.player.walkAuto(this.getOppositDirection(this.oldChunkDirection))
-    SwipeFade(this, this.oldChunkDirection, 'out', function () {
+    this.player.walkAuto(TB.getOppositDirection(this.oldChunkDirection))
+    SwipeFade.out(this.oldChunkDirection, function () {
       game.stage.backgroundColor = 0x000000
-      this.startNextMap('OverWorld', null, null, 'out')
+      this.goToNextArea()
     }.bind(this))
   },
 
-  getOppositDirection: function (dir) {
-    if (dir == UP) return DOWN
-    if (dir == DOWN) return UP
-    if (dir == LEFT) return RIGHT
-    if (dir == RIGHT) return LEFT
-  },
-
-  startNextMap: function (mapId, tileX, tileY, walkInFrom) {
-    var startTileX = null
-    var startTileY = null
-    var direction = null
-    var oldMapCoord = {
-      x: MAPDATA[this.currentMapId].mapX + Math.trunc(this.currentChunk.x / 512),
-      y: MAPDATA[this.currentMapId].mapY + Math.trunc(this.currentChunk.y / 512)
-    }
-
-    if (mapId === 'OverWorld') {
-      var newMapCoords = {
-        x: MAPDATA[this.currentMapId].mapX + Math.floor(this.onLeavePlayerPos.x / 512),
-        y: MAPDATA[this.currentMapId].mapY + Math.floor(this.onLeavePlayerPos.y / 512)
-      }
-      nextMapId = MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)
-
-      var newMap = MAPDATA[MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)]
-
-      var chunkOffSet = {
-        x: newMapCoords.x - newMap.mapX,
-        y: newMapCoords.y - newMap.mapY
-      }
-      startTileX = TB.loopClamp(Math.floor(this.onLeavePlayerPos.x / 8), 0, 63) + chunkOffSet.x * 64
-      startTileY = TB.loopClamp(Math.floor(this.onLeavePlayerPos.y / 8), 0, 63) + chunkOffSet.y * 64
-
-      direction = this.oldChunkDirection
-    } else {
-      // hart Teleport
-      nextMapId = mapId
-      startTileX = tileX
-      startTileY = tileY
-      direction = walkInFrom
-    }
-
+  setLastMapInfoAndRunNextMap: function(playerPos, direction) {
     LastMapInfo = {
-      player: {
-        x: startTileX,
-        y: startTileY
-      },
+      player: playerPos,
       mapEntryDirection: direction,
       timeOverlay: {
         alpha: this.overlay.alpha
@@ -837,79 +602,30 @@ Game.Main.prototype = {
     game.state.start('Main')
   },
 
-  createMapLayer: function (id) {
-    var name = 'map_' + id
-    var layer = game.add.renderTexture(this.map.width * 8, this.map.height * 8, name, true)
+  teleportToNewMap: function(mapId, tile, walkInFrom) {
+    nextMapId = mapId
+    this.setLastMapInfoAndRunNextMap(tile, walkInFrom)
+  },
+  
+  goToNextArea: function () {
+    var newMapCoords = {
+      x: MAPDATA[this.currentMapId].mapPos.x + Math.floor(this.onLeavePlayerPos.x / 512),
+      y: MAPDATA[this.currentMapId].mapPos.y + Math.floor(this.onLeavePlayerPos.y / 512)
+    }
+    nextMapId = MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)
 
-    var tile = null
-    var w = this.map.width
-    var h = this.map.height
-    var dx = 0
-    var dy = 0
-    var clearTexture = true
-    var stamp = game.add.sprite(0, 0, 'tiless', 0)
+    var newMap = MAPDATA[nextMapId]
 
-    for (var y = 0; y < h; y++) {
-      for (var x = 0; x < w; x++) {
-        tile = this.map.getTile(x, y, id)
-        if (tile) {
-          stamp.frame = tile.index - 1
-          layer.renderXY(stamp, dx, dy, clearTexture)
-          clearTexture = false
-        }
-
-        dx += 8
-      }
-
-      dx = 0
-      dy += 8
+    var chunkOffSet = {
+      x: newMapCoords.x - newMap.mapPos.x,
+      y: newMapCoords.y - newMap.mapPos.y
     }
 
-    stamp.destroy()
-    return game.add.sprite(0, 0, layer)
+    var startTile = {
+      x: TB.loopClamp(Math.floor(this.onLeavePlayerPos.x / 8), 0, 63) + chunkOffSet.x * 64,
+      y: TB.loopClamp(Math.floor(this.onLeavePlayerPos.y / 8), 0, 63) + chunkOffSet.y * 64
+    }
+
+    this.setLastMapInfoAndRunNextMap(startTile, this.oldChunkDirection)
   }
-
-  /* renderMapToTexture: function(render) {
-    console.log("taka a snap");
-    var texture = game.add.renderTexture(512, 512, "mapFade", true);
-    texture.render(this.layer);
-    //texture.render(this.groundDetail);
-    texture.render(this.topLayerTiles);
-    //game.add.sprite(10,10, texture);
-  } */
-}
-
-Game.teleport = function (mapId, tileX, tileY) {
-  LastMapInfo = null
-}
-
-/**
-This is the mouse pointer substitue for
-a second player. The pig will follow
-this cursor with a direkt line.
-
-@param {object} world - The current state
-
-@return {Phaser.Sprite} - The coursor/pointer object
-*/
-var Cursor = function (world) {
-  var cursor = game.add.sprite(0, 0, 'atlas', 'cursor')
-  cursor.anchor.set(0, 0)
-  cursor.change = false
-  cursor.update = function () {
-    var nx = Math.round(game.input.mousePointer.position.x) + game.camera.x
-    var ny = Math.floor(game.input.mousePointer.position.y) + game.camera.y
-
-    cursor.change = (nx != cursor.x || ny != cursor.y)
-
-    cursor.x = nx
-    cursor.y = ny
-
-    var distance = game.math.distance(world.pig.x, world.pig.y, cursor.x, cursor.y)
-    cursor.alpha = distance < 16 ? 0.5 : 1
-  }
-
-  cursor.visible = PlayerData.isKoop
-
-  return cursor
 }

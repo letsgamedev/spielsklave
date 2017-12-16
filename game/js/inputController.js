@@ -39,18 +39,16 @@ var InputController = function (world) {
           pig.input()
 
           if (Pad.justDown(Pad.B)) {
-            if (pig.state == STATES.NORMAL) {
-              pig.sitDown()
-            } else {
+            if (pig.state == STATES.SIT) {
               pig.standUp()
+            } else {
+              pig.sitDown()
             }
           } else if (Pad.justDown(Pad.Y)) {
-            if (pig.state == STATES.NORMAL) {
-              if (pig.carryedItem) {
-                pig.shoot()
-              } else {
-                pig.suck()
-              }
+            if (pig.carryedItem) {
+              pig.shoot()
+            } else {
+              pig.suck()
             }
           }
         }
