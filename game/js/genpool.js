@@ -19,12 +19,12 @@ GenPool.onHit = function (self, other) {
   GenPool.throwBack(self, other, 20)
 
   self.damageSave = true
-  playSound('player_hit')
+  G.playSound('player_hit')
 
-  sleep(20)
+  G.sleep(20)
 
   game.camera.shake(0.02, 70, true, Phaser.Camera.SHAKE_BOTH, false)
-  timeEvent(0.15, function () { self.damageSave = false })
+  G.timeEvent(0.15, function () { self.damageSave = false })
 }
 
 GenPool.throwBack = function (self, other, hitDistance, speed) {

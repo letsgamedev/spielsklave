@@ -22,7 +22,7 @@ function SimpleJSTest () {
       addSuccess()
     } else {
       addFail()
-      addFailDescription(configObject.description)
+      addFailDescription(description)
     }
   }
 

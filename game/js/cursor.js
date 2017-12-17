@@ -7,7 +7,7 @@ this cursor with a direkt line.
 
 @return {Phaser.Sprite} - The coursor/pointer object
 */
-var Cursor = function (world) {
+var Cursor = function (world) {// eslint-disable-line
   var cursor = G.Sprite(0, 0, 'cursor')
   cursor.anchor.set(0, 0)
   cursor.change = false
@@ -15,7 +15,7 @@ var Cursor = function (world) {
     var nx = Math.round(game.input.mousePointer.position.x) + game.camera.x
     var ny = Math.floor(game.input.mousePointer.position.y) + game.camera.y
 
-    cursor.change = (nx != cursor.x || ny != cursor.y)
+    cursor.change = (nx !== cursor.x || ny !== cursor.y)
 
     cursor.x = nx
     cursor.y = ny

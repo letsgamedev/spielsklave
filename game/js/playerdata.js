@@ -1,4 +1,4 @@
-var PlayerData = function() {
+var PlayerData = (function () {// eslint-disable-line
   var calcedAtk = 0
   var scytheEnergyMax = 30
   var atk = 10
@@ -27,8 +27,8 @@ var PlayerData = function() {
     regenerateScytheEnergy: function () {
       playerData.scytheEnergyCurrentMax = Phaser.Math.clamp(playerData.scytheEnergyCurrentMax + DT * 90, 0, scytheEnergyMax)
       playerData.scytheEnergyCurrent = Phaser.Math.clamp(playerData.scytheEnergyCurrent + DT * 30, 0, playerData.scytheEnergyCurrentMax)
-    },
+    }
   }
 
   return playerData
-}()
+}())

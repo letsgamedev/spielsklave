@@ -1,4 +1,4 @@
-var UI = function (world) {
+var UI = function (world) {// eslint-disable-line
   var ui = game.add.group()
   ui.fixedToCamera = true
   ui.cameraOffset.x = 10
@@ -29,7 +29,7 @@ var UI = function (world) {
         h.visible = true
         visibleHearts++
         if (world.player.hp >= i * 2) h.frameName = 'health_full'
-        else if (world.player.hp == i * 2 - 1) h.frameName = 'health_half'
+        else if (world.player.hp === i * 2 - 1) h.frameName = 'health_half'
         else h.frameName = 'health_empty'
       } else {
         h.visible = false
@@ -55,7 +55,7 @@ var UI = function (world) {
   var scytheBar = ScytheBar()
   ui.add(scytheBar)
 
-  var setIcon = btn => id => btn.frameName = 'icon_id_' + id
+  var setIcon = btn => id => { btn.frameName = 'icon_id_' + id }
   ui.setIconY = setIcon(ui.btnY)
   ui.setIconB = setIcon(ui.btnB)
   ui.setIconX = setIcon(ui.btnX)
@@ -155,26 +155,26 @@ var ScytheBar = function () {
   return container
 }
 
-var DamageText = function (x, y, text) {
-  bmp = game.add.bitmapText(x, y, 'fontDamage', text, 10, WORLD.uiLayer)
+var DamageText = function (x, y, text) {// eslint-disable-line
+  let bmp = game.add.bitmapText(x, y, 'fontDamage', text, 10, WORLD.uiLayer)
 
   function destroyText () {
-    destroyWrap(bmp)
+    TB.destroyWrap(bmp)
   }
 
   G.Tween(bmp, { y: '-10' }, 350, destroyText).start()
   G.Tween(bmp, { alpha: 0 }, 150).delay(200).start()
 }
 
-var ScytheEnergyBubble = function (reference) {
+var ScytheEnergyBubble = function (reference) {// eslint-disable-line
   var koords = TB.convert2UIKoords(reference)
   var bubble = G.Sprite(koords.x, koords.y, 'energy_bulb_4')
   bubble.anchor.set(0.5)
   bubble.fixedToCamera = true
-  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 10, false)
+  var bulbAnim = G.addAnimation(bubble, 'bulb', 'energy_bulb', 10, false)
   bulbAnim.play()
   bubble.scale.set(2)
-  var tween = G.TweenCubic(bubble.cameraOffset, {
+  G.TweenCubic(bubble.cameraOffset, {
     y: 18,
     x: 18
   }, 1000, addEnergyToPlayer).start()
@@ -185,10 +185,10 @@ var ScytheEnergyBubble = function (reference) {
   }
 }
 
-var ScytheEnergyBubbleVarB = function (reference) {
+var ScytheEnergyBubbleVarB = function (reference) {// eslint-disable-line
   var bubble = G.Sprite(reference.x, reference.y, 'energy_bulb_4')
   bubble.anchor.set(0.5)
-  var bulbAnim = addAnimation(bubble, 'bulb', 'energy_bulb', 16, false)
+  var bulbAnim = G.addAnimation(bubble, 'bulb', 'energy_bulb', 16, false)
   bulbAnim.play()
   bubble.scale.set(1)
   var tween = G.TweenCubic(bubble.cameraOffset, {
@@ -206,7 +206,7 @@ var ScytheEnergyBubbleVarB = function (reference) {
   }
 }
 
-var HPBar = function (reference) {
+var HPBar = function (reference) {// eslint-disable-line
   var bar = G.Sprite(0, 0, 'lpbar_back', WORLD.ui.hpLayer)
   var full = G.Sprite(2, 1, 'lpbar_full', bar)
   var isVisible = false

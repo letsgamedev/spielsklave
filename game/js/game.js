@@ -7,14 +7,10 @@
 */
 
 /**
-Some SUPER EVEL GLOBAL variables!
+Some SUPER EVEL GLOBAL letiables!
 */
-var DOWN = 'down'
-var UP = 'up'
-var LEFT = 'left'
-var RIGHT = 'right'
-var DEBUG = true
-var STATES = {
+
+let STATES = {
   NORMAL: 0,
   STONE: 1,
   WALK: 2,
@@ -24,41 +20,29 @@ var STATES = {
   SUCK: 6,
   SHOOT: 7
 }
-var TEST = null
-var TEST2 = null
-var TEST3 = null
+let TEST = null
 
-var WORLD = null
+let WORLD = null// eslint-disable-line
 
-var isFirstStart = true
+let isFirstStart = true
 
-var globalMusicVolume = 0.5
-var globalSoundVolume = 1
-var gamePlayTimeInSeconds = 0
-
-var MAP = {
+let MAP = {
   OBJECTS: 3,
   TOP: 2,
   GROUND_DETAIL: 1,
   GROUND: 0
 }
 
-var nextMapId = null
-var LastMapInfo = null
+let LastMapInfo = null
 
-var backgroundMusic = null
-
-var flip = true
-
-var isEvent = false
-var currentEvent = null
+let backgroundMusic = null
 
 /**
 The Main state represants the "inGame" stuff.
 That means, everything you can actually play.
 */
 Game.Main = function () {
-  // variable stuff
+  // letiable stuff
 }
 
 Game.Main.prototype = {
@@ -80,24 +64,24 @@ Game.Main.prototype = {
   */
   render: function () {
     if (Game.config.enableDebug === false) return
-    if (!DEBUG) {
-      game.debug.body(this.pig)
-      game.debug.body(this.player)
 
-      this.enemies.forEach(game.debug.body)
-      this.objects.forEach(game.debug.body)
-      this.events.forEach(game.debug.body)
+    game.debug.body(this.pig)
+    game.debug.body(this.player)
 
-      var pu = Pad.isDown(Pad.UP) ? 'U' : '-'
-      var pd = Pad.isDown(Pad.DOWN) ? 'D' : '-'
-      var pl = Pad.isDown(Pad.LEFT) ? 'L' : '-'
-      var pr = Pad.isDown(Pad.RIGHT) ? 'R' : '-'
-      var pj = Pad.isDown(Pad.X) ? 'X' : '-'
-      var ps = Pad.isDown(Pad.A) ? 'A' : '-'
-      game.debug.text(pu + pd + pl + pr + pj + ps, 5, 10)
+    this.enemies.forEach((e) => game.debug.body(e))
+    this.objects.forEach((e) => game.debug.body(e))
+    this.events.forEach((e) => game.debug.body(e))
 
-      if (this.player.shell) game.debug.body(this.player.shell)
-    }
+    let pu = Pad.isDown(Pad.UP) ? 'U' : '-'
+    let pd = Pad.isDown(Pad.DOWN) ? 'D' : '-'
+    let pl = Pad.isDown(Pad.LEFT) ? 'L' : '-'
+    let pr = Pad.isDown(Pad.RIGHT) ? 'R' : '-'
+    let pj = Pad.isDown(Pad.X) ? 'X' : '-'
+    let ps = Pad.isDown(Pad.A) ? 'A' : '-'
+    game.debug.text(pu + pd + pl + pr + pj + ps, 5, 10)
+
+    if (this.player.shell) game.debug.body(this.player.shell)
+
     game.debug.geom(TEST, 'rgba(255,0,0,0.5)')
         // if (TEST) game.debug.rectangle(TEST);
         // if (TEST2) game.debug.rectangle(TEST2.getHitBox());
@@ -109,12 +93,12 @@ Game.Main.prototype = {
   preRender: function () {
     this.middleLayer.sort('y', Phaser.Group.SORT_ASCENDING)
   },
-  
+
   /**
   Load all the additional assets we need to use.
   */
   preload: function () {
-    this.load.tilemap('map', 'map_' + nextMapId + '.json', null, Phaser.Tilemap.TILED_JSON)
+    this.load.tilemap('map', 'map_' + GameData.nextMapId + '.json', null, Phaser.Tilemap.TILED_JSON)
   },
 
   /**
@@ -165,15 +149,15 @@ Game.Main.prototype = {
     this.camera.updatePosition(true)
     if (LastMapInfo) {
       switch (LastMapInfo.mapEntryDirection) {
-        case LEFT:
+        case C.LEFT:
           this.player.body.x += -16 * 2
           break
-        case RIGHT:
+        case C.RIGHT:
           this.player.body.x += 16 * 2
           break
       }
-      var that = this
-      var oppositDirection = TB.getOppositDirection(LastMapInfo.mapEntryDirection)
+      let that = this
+      let oppositDirection = TB.getOppositDirection(LastMapInfo.mapEntryDirection)
 
       setTimeout(function () {
         that.player.walkAuto(oppositDirection, 2)
@@ -183,23 +167,23 @@ Game.Main.prototype = {
         that.isInTransition = false
       })
     } else {
-      game.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
+      game.stage.backgroundColor = MAPDATA[GameData.nextMapId].backgroundColor
     }
-    this.currentMapId = nextMapId
+    this.currentMapId = GameData.nextMapId
 
       // Set Music
     if (backgroundMusic == null) {
-      backgroundMusic = playMusic('world', 0.75, true)
-    } else if (backgroundMusic.name != 'world') {
+      backgroundMusic = G.playMusic('world', 0.75, true)
+    } else if (backgroundMusic.name !== 'world') {
       backgroundMusic.fadeOut(1)
-      backgroundMusic = playMusic('world', 0.75, true)
+      backgroundMusic = G.playMusic('world', 0.75, true)
     }
 
-    if (game.device.desktop == false) this.uiLayer.add(Pad.addVirtualButtons(game))
+    if (game.device.desktop === false) this.uiLayer.add(Pad.addVirtualButtons(game))
 
     if (isFirstStart) {
       isFirstStart = false
-      timeEvent(0.1, function () {
+      G.timeEvent(0.1, function () {
         TextBoxBig(L('TEXT01'))
       })
     }
@@ -213,7 +197,7 @@ Game.Main.prototype = {
     this.game.physics.ninja.gravity = 0
   },
 
-  addUI: function() {
+  addUI: function () {
     this.uiLayer = game.add.group()
     this.ui = UI(this)
     this.uiLayer.add(this.ui)
@@ -226,17 +210,16 @@ Game.Main.prototype = {
 
   prepareChunks: function () {
     console.log(this.map)
-    var chunksW = this.map.width / 64
-    var chunksH = this.map.height / 64
-    var chunkCount = chunksW * chunksH
+    let chunksW = this.map.width / 64
+    let chunksH = this.map.height / 64
 
     // So the chunks are adressed chunk[x][y]
     this.chunks = new Array(chunksW)
-    for (var i = 0; i < this.chunks.length; i++) {
+    for (let i = 0; i < this.chunks.length; i++) {
       this.chunks[i] = new Array(chunksH)
-      for (var j = 0; j < this.chunks[i].length; j++) {
-        var x = i * 512
-        var y = j * 512
+      for (let j = 0; j < this.chunks[i].length; j++) {
+        let x = i * 512
+        let y = j * 512
         this.chunks[i][j] = {
           events: [],
           x: x,
@@ -261,7 +244,7 @@ Game.Main.prototype = {
   },
 
   getEvents: function (bounds) {
-    var eventsInChunk = MAPDATA[nextMapId].events.filter((event) =>
+    let eventsInChunk = MAPDATA[GameData.nextMapId].events.filter((event) =>
       TB.isInRange(bounds.left, event.tile.x * 8, bounds.right) &&
       TB.isInRange(bounds.top, event.tile.y * 8, bounds.bottom)
     )
@@ -269,13 +252,16 @@ Game.Main.prototype = {
     return eventsInChunk
   },
 
-  
-
   setCurrentChunk: function () {
-    var nx = Math.floor(this.player.x / 512)
-    var ny = Math.floor(this.player.y / 512)
-    var isValidChunkCoord = MAPDATA[nextMapId].chunkCoords.some(
-      chunkCoord => chunkCoord[0] == nx && chunkCoord[1] == ny)
+    let nx = Math.floor(this.player.x / 512)
+    let ny = Math.floor(this.player.y / 512)
+    let isValidChunkCoord = MAPDATA[GameData.nextMapId].chunkCoords.some(
+      chunkCoord => chunkCoord[0] === nx && chunkCoord[1] === ny)
+
+    function initNewChunk () {
+      this.setWorldBoundsForCurrentChunk()
+      this.cleanOldChunk()
+    }
 
     if (isValidChunkCoord) {
       if (this.currentChunk) {
@@ -286,10 +272,7 @@ Game.Main.prototype = {
 
         this.isInTransition = true
         this.pig.tweenToPlayer()
-        function initNewChunk () {
-          this.setWorldBoundsForCurrentChunk()
-          this.cleanOldChunk()
-        }
+
         this.camera.tweenToCurrentChunk(this.oldChunk.bounds, this.currentChunk.bounds, this.oldChunkDirection, initNewChunk.bind(this))
       } else {
         this.prepareNextChunk()
@@ -307,10 +290,10 @@ Game.Main.prototype = {
     this.addEnemies()
     this.addObjects()
     this.addEvents()
-    
-    var tilePosition = {
-      x: MAPDATA[nextMapId].mapPos.x + this.currentChunk.x / 512,
-      y: MAPDATA[nextMapId].mapPos.y + this.currentChunk.y / 512
+
+    let tilePosition = {
+      x: MAPDATA[GameData.nextMapId].mapPos.x + this.currentChunk.x / 512,
+      y: MAPDATA[GameData.nextMapId].mapPos.y + this.currentChunk.y / 512
     }
     this.ui.miniMap.setCenterTile(tilePosition)
   },
@@ -344,15 +327,15 @@ Game.Main.prototype = {
 
   addEnemies: function () {
     this.enemies = []
-    var ids = [
+    let ids = [
       {tileId: 17, className: LittleEgg},
       {tileId: 801, className: LittleEgg}// why tom?
     ]
 
     ids.forEach(enemyId => {
-      var tiles = this.map.findTilesWithID(MAP.OBJECTS, enemyId.tileId, this.currentChunk.bounds)
+      let tiles = this.map.findTilesWithID(MAP.OBJECTS, enemyId.tileId, this.currentChunk.bounds)
       tiles.forEach(tile => {
-        var enemy = enemyId.className(this, tile.x * 8, tile.y * 8)
+        let enemy = enemyId.className(this, tile.x * 8, tile.y * 8)
         this.enemies.push(enemy)
       })
     })
@@ -361,7 +344,7 @@ Game.Main.prototype = {
 
   addObjects: function () {
     this.objects = []
-    var ids = [// tiled id + 1
+    let ids = [// tiled id + 1
       {tileId: 38, className: Stone},
       {tileId: 503, className: FenceMaker(0)},
       {tileId: 505, className: FenceMaker(1)},
@@ -374,9 +357,9 @@ Game.Main.prototype = {
     ]
 
     ids.forEach(objectId => {
-      var tiles = this.map.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk.bounds)
+      let tiles = this.map.findTilesWithID(MAP.OBJECTS, objectId.tileId, this.currentChunk.bounds)
       tiles.forEach(tile => {
-        var object = objectId.className(this, tile.x * 8, tile.y * 8)
+        let object = objectId.className(this, tile.x * 8, tile.y * 8)
         this.objects.push(object)
       })
     })
@@ -390,15 +373,14 @@ Game.Main.prototype = {
   },
 
   addClouds: function () {
-    var world = this
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       let position = {
         x: game.rnd.between(0, this.map.width * 8),
         y: game.rnd.between(0, this.map.height * 8)
       }
 
       let speed = { min: 3, max: 15 }
-      let cloud = Cloud(this, position, speed)
+      Cloud(this, position, speed)
     };
   },
 
@@ -407,16 +389,16 @@ Game.Main.prototype = {
   so time to get some input and update charakters and objects!
   */
   update: function () {
-    DT = this.time.physicsElapsedMS * 0.001
-    gamePlayTimeInSeconds += DT
+    window.DT = this.time.physicsElapsedMS * 0.001
+    GameData.gamePlayTimeInSeconds += DT
 
     if (this.isInTransition) return
 
     Pad.checkJustDown()
     this.inputController.update()
 
-    if (isEvent) {
-      currentEvent.myUpdate()
+    if (GameData.currentEvent) {
+      GameData.currentEvent.myUpdate()
     } else {
       this.player.attachedEvent = null
       this.pig.update()
@@ -441,7 +423,7 @@ Game.Main.prototype = {
   },
 
   myUpdateOn: function (array) {
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       array[i].myUpdate()
     };
   },
@@ -453,43 +435,43 @@ Game.Main.prototype = {
   },
 
   collision: function () {
-    var r
-    var collisitionTilesLength = this.currentChunk.collisitionTiles.length
-    var isPlayerStone = this.player.state == STATES.STONE
+    let r
+    let collisitionTilesLength = this.currentChunk.collisitionTiles.length
+    let isPlayerStone = this.player.state === STATES.STONE
 
-    function check (e) {
+    function check (e, tile) {
       if ((e.isFix || e.isCarry) && !e.isShoot) return
 
       r = e.body.aabb.collideAABBVsTile(tile)
-      var isInWorldBounds = game.world.bounds.containsRect(e.body)
-      if (r || isInWorldBounds == false) {
+      let isInWorldBounds = game.world.bounds.containsRect(e.body)
+      if (r || isInWorldBounds === false) {
         TB.stopAndClearTween(e, 'hitTween')
         TB.stopAndClearTween(e, 'shootTween')
       }
     }
 
-    function checkArray (array) {
-      var arrayLength = array.length
-      for (var j = 0; j < arrayLength; j++) {
-        check(array[j])
+    function checkArray (array, tile) {
+      let arrayLength = array.length
+      for (let j = 0; j < arrayLength; j++) {
+        check(array[j], tile)
       };
     }
 
     // Collision detection
 
     // Test collision between entities and tiles
-    for (var i = 0; i < collisitionTilesLength; i++) {
-      var tile = this.currentChunk.collisitionTiles[i].tile
+    for (let tileIndex = 0; tileIndex < collisitionTilesLength; tileIndex++) {
+      let tile = this.currentChunk.collisitionTiles[tileIndex].tile
 
       if (isPlayerStone) {
         this.player.shell.body.aabb.collideAABBVsTile(tile)
       }
 
-      checkArray(this.enemies)
-      checkArray(this.objects)
-      checkArray(this.events)
-      check(this.player)
-      check(this.pig)
+      checkArray(this.enemies, tile)
+      checkArray(this.objects, tile)
+      checkArray(this.events, tile)
+      check(this.player, tile)
+      check(this.pig, tile)
     }
 
     // Collision Shell and Pig
@@ -498,47 +480,47 @@ Game.Main.prototype = {
     }
 
     // Overlap with enemies
-    var enemiesLength = this.enemies.length
-    for (var i = 0; i < enemiesLength; i++) {
-      var enemy = this.enemies[i]
+    let enemiesLength = this.enemies.length
+    for (let i = 0; i < enemiesLength; i++) {
+      let enemy = this.enemies[i]
       if (!isPlayerStone) game.physics.ninja.overlap(this.player, enemy, this.player.onHit)
       if (isPlayerStone || this.cursor.visible) game.physics.ninja.overlap(this.pig, enemy, this.pig.onHit)
       if (isPlayerStone) game.physics.ninja.collide(this.player.shell, enemy)
 
       // enemy with events
-      var eventsLength = this.events.length
-      for (var j = 0; j < eventsLength; j++) {
+      let eventsLength = this.events.length
+      for (let j = 0; j < eventsLength; j++) {
         game.physics.ninja.collide(this.events[j], enemy)
       };
 
       // enemy with objects
-      var objectsLength = this.objects.length
-      for (var j = 0; j < objectsLength; j++) {
-        var obj = this.objects[j]
+      let objectsLength = this.objects.length
+      for (let j = 0; j < objectsLength; j++) {
+        let obj = this.objects[j]
         if (obj.isCarry) continue
         game.physics.ninja.collide(obj, enemy, this.onObjectEnemyCollision)
       };
     };
 
     // Events with player and pig
-    var eventsLength = this.events.length
-    for (var j = 0; j < eventsLength; j++) {
-      var event = this.events[j]
+    let eventsLength = this.events.length
+    for (let j = 0; j < eventsLength; j++) {
+      let event = this.events[j]
       if (!isPlayerStone) game.physics.ninja.collide(event, this.player, event.onCollide)
       if (isPlayerStone) game.physics.ninja.collide(this.player.shell, event)
       game.physics.ninja.collide(event, this.pig)
     };
 
     // Objects with player and pig
-    var objectsLength = this.objects.length
-    for (var j = 0; j < objectsLength; j++) {
-      var obj = this.objects[j]
+    let objectsLength = this.objects.length
+    for (let j = 0; j < objectsLength; j++) {
+      let obj = this.objects[j]
       if (obj.isCarry) continue
       if (!isPlayerStone) game.physics.ninja.collide(obj, this.player, this.onObjectsPlayerCollision)
       if (isPlayerStone) game.physics.ninja.collide(this.player.shell, obj)
       if (obj.isShoot) {
-        for (var k = 0; k < objectsLength; k++) {
-          var objK = this.objects[k]
+        for (let k = 0; k < objectsLength; k++) {
+          let objK = this.objects[k]
           if (obj === objK) continue
           game.physics.ninja.collide(obj, objK, function (obj, other) {
             TB.stopAndClearTween(obj, 'shootTween')
@@ -555,12 +537,12 @@ Game.Main.prototype = {
   },
 
   checkPlayerOutOfBounds: function () {
-    if (this.player.state == STATES.STONE) return
-    if (game.world.bounds.contains(this.player.x, this.player.y) == false) {
-      if (this.player.x < game.world.bounds.left) this.onLeaveChunk(RIGHT)
-      if (this.player.x > game.world.bounds.right) this.onLeaveChunk(LEFT)
-      if (this.player.y < game.world.bounds.top) this.onLeaveChunk(DOWN)
-      if (this.player.y > game.world.bounds.bottom) this.onLeaveChunk(UP)
+    if (this.player.state === STATES.STONE) return
+    if (game.world.bounds.contains(this.player.x, this.player.y) === false) {
+      if (this.player.x < game.world.bounds.left) this.onLeaveChunk(C.RIGHT)
+      if (this.player.x > game.world.bounds.right) this.onLeaveChunk(C.LEFT)
+      if (this.player.y < game.world.bounds.top) this.onLeaveChunk(C.DOWN)
+      if (this.player.y > game.world.bounds.bottom) this.onLeaveChunk(C.UP)
     }
   },
 
@@ -591,7 +573,7 @@ Game.Main.prototype = {
     }.bind(this))
   },
 
-  setLastMapInfoAndRunNextMap: function(playerPos, direction) {
+  setLastMapInfoAndRunNextMap: function (playerPos, direction) {
     LastMapInfo = {
       player: playerPos,
       mapEntryDirection: direction,
@@ -602,26 +584,26 @@ Game.Main.prototype = {
     game.state.start('Main')
   },
 
-  teleportToNewMap: function(mapId, tile, walkInFrom) {
-    nextMapId = mapId
+  teleportToNewMap: function (mapId, tile, walkInFrom) {
+    GameData.nextMapId = mapId
     this.setLastMapInfoAndRunNextMap(tile, walkInFrom)
   },
-  
+
   goToNextArea: function () {
-    var newMapCoords = {
+    let newMapCoords = {
       x: MAPDATA[this.currentMapId].mapPos.x + Math.floor(this.onLeavePlayerPos.x / 512),
       y: MAPDATA[this.currentMapId].mapPos.y + Math.floor(this.onLeavePlayerPos.y / 512)
     }
-    nextMapId = MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)
+    GameData.nextMapId = MAPDATA.getMapIdFromCoords(newMapCoords.x, newMapCoords.y)
 
-    var newMap = MAPDATA[nextMapId]
+    let newMap = MAPDATA[GameData.nextMapId]
 
-    var chunkOffSet = {
+    let chunkOffSet = {
       x: newMapCoords.x - newMap.mapPos.x,
       y: newMapCoords.y - newMap.mapPos.y
     }
 
-    var startTile = {
+    let startTile = {
       x: TB.loopClamp(Math.floor(this.onLeavePlayerPos.x / 8), 0, 63) + chunkOffSet.x * 64,
       y: TB.loopClamp(Math.floor(this.onLeavePlayerPos.y / 8), 0, 63) + chunkOffSet.y * 64
     }

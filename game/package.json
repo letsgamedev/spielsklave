@@ -1,0 +1,21 @@
+{
+  "standard": {
+    "globals": [ 
+    	"SimpleJSTest",	"Game",	"L", "G", 
+    	"Config", "Phaser",	"LittleEgg",
+    	"HPBar", "game", "C", "GenPool",
+    	"logInfo", "nothing", "HouseDoor",
+			"InfoTalk", "STATES", "Scythe",
+			"Pad", "DT", "PlayerShell",
+			"HeadIcon", "ReflectionPlayer",
+			"DamageText", "ScytheEnergyBubbleVarB",
+			"ScytheEnergyBubble", "PigSmoke", "TB",
+			"PlayerData", "SwipeFade", "TextBoxBig",
+			"LastMapInfo", "MAP", "WORLD", "InputController",
+			"Player", "Pig", "GameCamera", "ReflectionPig",
+			"Cursor", "MAPDATA", "UI", "DayNightOverlay",
+			"GameMap", "Stone", "FenceMaker",
+			"Cloud", "GameData", "Fabrique", "PIXI"
+    ]
+  }
+}

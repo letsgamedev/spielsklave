@@ -15,7 +15,7 @@
 // 8, 12, 24
 // 8, 12, 24
 
-function init () {
+function init () {// eslint-disable-line
   logInfo('init init')
 
   var Size = {
@@ -40,10 +40,12 @@ function init () {
     width: Game.width,
     height: Game.height,
     renderer: Phaser.CANVAS,
-    enableDebug: false
+    enableDebug: false,
+    globalMusicVolume: 0.5,
+    globalSoundVolume: 1
   }
 
-  game = new Phaser.Game(Game.config)
+  window.game = new Phaser.Game(Game.config)
 
   game.state.add('Preloader', Game.Preloader)
   game.state.add('Main', Game.Main)
@@ -52,72 +54,22 @@ function init () {
   game.state.start('Preloader')
 };
 
-function timeEvent (seconds, func, scope) {
-  game.time.events.add(Phaser.Timer.SECOND * seconds, func, scope)
-};
-
-function playMusic (name, volume, loop, pitch) {
-  volume = (volume === null || volume === undefined) ? 1 : volume
-  return sound(name, volume * globalMusicVolume, loop, pitch)
-}
-
-function playSound (name, volume, loop, pitch) {
-  volume = (volume === null || volume === undefined) ? 1 : volume
-  return sound(name, volume * globalSoundVolume, loop, pitch)
-}
-
-function sound (name, volume, loop, pitch) {
-  console.log('sound', name, volume)
-  var sound = game.add.audio(name, volume, loop)
-  sound.play()
-  if (sound._sound) sound._sound.playbackRate.value = pitch || 1
-  return sound
-};
-
 function logInfo (text) {
   console.log('%c' + text, 'color: #A8009D')
 };
 
-function loadItem (id) {
-  return localStorage.getItem('spielsklave_' + id)
-};
-
-function saveItem (id, value) {
-  localStorage.setItem('spielsklave_' + id, value)
-};
-
-function addAnimation (obj, name, assetsName, fps, loop, isNumericIndex) {
-  var animNames = []
-  for (var i = 0; i < 30; i++) {
-    animNames.push(assetsName + '_' + i)
-  };
-  return obj.animations.add(name, animNames, fps, loop, isNumericIndex)
-};
-
-function sleep (millisec) {
-  game.paused = true
-  setTimeout(function () {
-    game.paused = false
-  }, millisec)
-};
-
-function destroyWrap (obj) {
-  return function () {
-    obj.pendingDestroy = true
-  }
-}
-
-function nothing () {}
+function nothing () {}// eslint-disable-line
 
 function getParams () {
-  qs = document.location.search.split('+').join(' ')
+  let qs = document.location.search.split('+').join(' ')
 
-  var params = {},
-    tokens,
-    re = /[?&]?([^=]+)=([^&]*)/g
-
-  while (tokens = re.exec(qs)) {
+  let params = {}
+  let tokens
+  let re = /[?&]?([^=]+)=([^&]*)/g
+  tokens = re.exec(qs)
+  while (tokens) {
     params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2])
+    tokens = re.exec(qs)
   }
 
   return params

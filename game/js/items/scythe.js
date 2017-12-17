@@ -1,10 +1,10 @@
-var Scythe = function (player, world) {
+var Scythe = function (player, world) {// eslint-disable-line
   var scythe = {}
   scythe.isEnergyDrain = true
   scythe.strength = 1
 
   function initAnimation (dir) {
-    var sicle = addAnimation(player, 'scythe_' + dir, 'dengel_scythe_' + dir, 30, false)
+    var sicle = G.addAnimation(player, 'scythe_' + dir, 'dengel_scythe_' + dir, 30, false)
     sicle.onComplete.add(onFinish)
   }
   initAnimation('down')
@@ -18,11 +18,11 @@ var Scythe = function (player, world) {
     player.animations.play('stand_' + player.lookDirection)
   }
 
-  isPlaying = false
+  let isPlaying = false
 
   scythe.action = function () {
     player.state = STATES.INUSE
-    playSound('scythe')
+    G.playSound('scythe')
     isPlaying = true
     PlayerData.calcAtk()
     PlayerData.subScytheEnergy(20)
@@ -73,10 +73,10 @@ var Scythe = function (player, world) {
     if (isPlaying) {
       diagonalFactor = Pad.isDiagonalInput() ? 0.707 : 1
 
-      setMove(Pad.LEFT, 'x', -1, LEFT)
-      setMove(Pad.RIGHT, 'x', 1, RIGHT)
-      setMove(Pad.UP, 'y', -1, UP)
-      setMove(Pad.DOWN, 'y', 1, DOWN)
+      setMove(Pad.LEFT, 'x', -1, C.LEFT)
+      setMove(Pad.RIGHT, 'x', 1, C.RIGHT)
+      setMove(Pad.UP, 'y', -1, C.UP)
+      setMove(Pad.DOWN, 'y', 1, C.DOWN)
 
       var hb = hitbox[player.lookDirection][player.frameName.slice(-1)]
       if (hb) {

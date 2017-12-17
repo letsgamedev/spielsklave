@@ -1,4 +1,4 @@
-var InfoTalk = function (world, eventData) {
+var InfoTalk = function (world, eventData) {// eslint-disable-line
   var it = G.Sprite(eventData.tile.x * 8, eventData.tile.y * 8 - 4, eventData.img, world.middleLayer)
   game.physics.ninja.enable(it, 1)
   it.isFix = true
@@ -10,7 +10,7 @@ var InfoTalk = function (world, eventData) {
     var dist = TB.getDistance(world.player, it)
 
     if (dist < 14 && world.player.attachedEvent == null) {
-      if (world.player.lookDirection == UP && world.player.y > it.y) {
+      if (world.player.lookDirection === C.UP && world.player.y > it.y) {
         world.player.attachedEvent = it
         world.player.setIcon('icon_eye')
         world.player.headIcon.visible = true

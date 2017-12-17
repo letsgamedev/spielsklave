@@ -15,7 +15,7 @@ This is the Player aka the demon contructor.
 
 @return {Phaser.Sprite} - The player object
 */
-var Player = function (world, x, y) {
+var Player = function (world, x, y) {// eslint-disable-line
  // Private variables
   var speed = 80
 
@@ -48,17 +48,17 @@ var Player = function (world, x, y) {
   player.animations.add('stand_down', ['dengel_stand_down_0'], 12, true)
   player.animations.add('stand_left', ['dengel_stand_left_0'], 12, true)
   player.animations.add('stand_right', ['dengel_stand_right_0'], 12, true)
-  addAnimation(player, 'walk_down', 'dengel_walk_down', 20, true)
-  addAnimation(player, 'walk_up', 'dengel_walk_up', 20, true)
-  addAnimation(player, 'walk_left', 'dengel_walk_left', 20, true)
-  addAnimation(player, 'walk_right', 'dengel_walk_right', 20, true)
+  G.addAnimation(player, 'walk_down', 'dengel_walk_down', 20, true)
+  G.addAnimation(player, 'walk_up', 'dengel_walk_up', 20, true)
+  G.addAnimation(player, 'walk_left', 'dengel_walk_left', 20, true)
+  G.addAnimation(player, 'walk_right', 'dengel_walk_right', 20, true)
 
   player.animations.play('stand_down')
 
   player.inChange = false
   player.damageSave = false
   player.humanInput = true
-  player.lookDirection = DOWN
+  player.lookDirection = C.DOWN
 
   player.update = function () {
     if (player.item1) player.item1.update()
@@ -84,10 +84,10 @@ var Player = function (world, x, y) {
     // Process movement and animation
     if (player.state !== STATES.STONE && player.state !== STATES.INUSE) {
       if (!isTwoSideKeyDown) {
-        setMove(Pad.LEFT, 'x', -1, LEFT)
-        setMove(Pad.RIGHT, 'x', 1, RIGHT)
-        setMove(Pad.UP, 'y', -1, UP)
-        setMove(Pad.DOWN, 'y', 1, DOWN)
+        setMove(Pad.LEFT, 'x', -1, C.LEFT)
+        setMove(Pad.RIGHT, 'x', 1, C.RIGHT)
+        setMove(Pad.UP, 'y', -1, C.UP)
+        setMove(Pad.DOWN, 'y', 1, C.DOWN)
       }
 
       if (player.state === STATES.WALK && (diagonalFactor === 1 || player.animations.currentAnim.name.indexOf('stand') !== -1)) {
@@ -100,22 +100,12 @@ var Player = function (world, x, y) {
 
   player.onHit = GenPool.onHit
 
-  // Helper for turn on/off stone swap
-  function setHumanInput (isOn) {
-    player.humanInput = isOn
-    if (isOn) {
-      fromStone()
-    } else {
-      toStone()
-    }
-  }
-
   function swapStone () {
     if (player.inChange) return
-    if (player.state == STATES.STONE) {
+    if (player.state === STATES.STONE) {
       fromStone()
       player.setUI()
-      if (world.pig.state == STATES.NORMAL) world.pig.teleport()
+      if (world.pig.state === STATES.NORMAL) world.pig.teleport()
     } else {
       toStone()
       world.pig.setUI()
@@ -138,7 +128,7 @@ var Player = function (world, x, y) {
 
   // shatters the stone statue and get back the demon char
   function fromStone () {
-    if (player.state == STATES.STONE) {
+    if (player.state === STATES.STONE) {
       player.shell.shutter()
       player.state = STATES.NORMAL
       player.inChange = true
@@ -153,13 +143,13 @@ var Player = function (world, x, y) {
     var y = 0
 
     switch (dir) {
-      case UP: y = -16 * tiles; break
-      case DOWN: y = 16 * tiles; break
-      case LEFT: x = -16 * tiles; break
-      case RIGHT: x = 16 * tiles; break
+      case C.UP: y = -16 * tiles; break
+      case C.DOWN: y = 16 * tiles; break
+      case C.LEFT: x = -16 * tiles; break
+      case C.RIGHT: x = 16 * tiles; break
     }
 
-    var tween = G.Tween(player.body, {
+    G.Tween(player.body, {
       x: player.x + x,
       y: player.y + y
     }, 200 * tiles).start()
@@ -186,7 +176,7 @@ var Player = function (world, x, y) {
   return player
 }
 
-var ReflectionPlayer = function (world) {
+var ReflectionPlayer = function (world) {// eslint-disable-line
   var player = world.player
 
   var reflection = G.Sprite(0, 0, 'player_walk_down_1', world.reflectionLayer)
@@ -196,15 +186,15 @@ var ReflectionPlayer = function (world) {
   reflection.animations.add('stand_down', ['player_walk_down_1'], 12, true)
   reflection.animations.add('stand_left', ['player_walk_left_1'], 12, true)
   reflection.animations.add('stand_right', ['player_walk_right_1'], 12, true)
-  addAnimation(reflection, 'walk_down', 'player_walk_down', 10, true)
-  addAnimation(reflection, 'walk_up', 'player_walk_up', 10, true)
-  addAnimation(reflection, 'walk_left', 'player_walk_left', 10, true)
-  addAnimation(reflection, 'walk_right', 'player_walk_right', 10, true)
+  G.addAnimation(reflection, 'walk_down', 'player_walk_down', 10, true)
+  G.addAnimation(reflection, 'walk_up', 'player_walk_up', 10, true)
+  G.addAnimation(reflection, 'walk_left', 'player_walk_left', 10, true)
+  G.addAnimation(reflection, 'walk_right', 'player_walk_right', 10, true)
   reflection.alpha = 0.75
   world.player.reflection = reflection
 
   reflection.myUpdate = function () {
-    var follow = player.state == STATES.STONE ? player.shell : player
+    var follow = player.state === STATES.STONE ? player.shell : player
     reflection.x = follow.body.x - 32
     reflection.y = follow.body.y + 50
 

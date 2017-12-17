@@ -1,11 +1,8 @@
-var TextBoxBig = function (text, name) {
-  var bmpTextName = null
+var TextBoxBig = function (text, name) {// eslint-disable-line
   var bmpText = null
   var words = text.split(' ')
   var hold = false
   var nextWordTimer = 0.03
-
-  isEvent = true
 
   var charName = CharacterNameBox(62, 150, name)
 
@@ -40,7 +37,7 @@ var TextBoxBig = function (text, name) {
   }
 
   function showText () {
-    if (name != undefined) charName.visible = true
+    if (name !== undefined) charName.visible = true
     addText()
   }
 
@@ -58,7 +55,7 @@ var TextBoxBig = function (text, name) {
 
       tb.timer -= DT
 
-      if (hold == false && tb.timer < 0) {
+      if (hold === false && tb.timer < 0) {
         resetTimer()
         var newWord = addNextWord()
 
@@ -120,7 +117,7 @@ var TextBoxBig = function (text, name) {
     hold = false
     buttonNext.hide()
 
-    if (words.length == 0) {
+    if (words.length === 0) {
       removeTextBox()
     }
   }
@@ -140,11 +137,10 @@ var TextBoxBig = function (text, name) {
   function removeTextBox () {
     tb.destroy()
     charName.destroy()
-    currentEvent = null
-    isEvent = false
+    GameData.currentEvent = null
   }
 
-  currentEvent = tb
+  GameData.currentEvent = tb
   openTextBox()
 }
 
@@ -157,7 +153,7 @@ var NextPageButton = function (x, y, parent) {
     buttonNext.swapTime -= DT
     if (buttonNext.swapTime < 0) {
       buttonNext.swapTime = 0.5
-      buttonNext.frameName = (buttonNext.frameName == 'textboxbutton0' ? 'textboxbutton1' : 'textboxbutton0')
+      buttonNext.frameName = (buttonNext.frameName === 'textboxbutton0' ? 'textboxbutton1' : 'textboxbutton0')
     }
   }
 
@@ -195,7 +191,7 @@ var CharacterNameBox = function (x, y, name) {
   return charName
 }
 
-var HeadIcon = function (reference, offsetX, offsetY) {
+var HeadIcon = function (reference, offsetX, offsetY) {// eslint-disable-line
   var icon = G.Sprite(offsetX, offsetY, 'icon_eye')
   reference.setIcon = function (id) {
     icon.frameName = id

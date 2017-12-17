@@ -15,7 +15,7 @@ LittleEgg is one of the first enemies in game
 
 @return {Phaser.Sprite} - The little egg enemy object
 */
-var LittleEgg = function (world, x, y) {
+var LittleEgg = function (world, x, y) {// eslint-disable-line
   var egg = G.Sprite(x, y, 'little_egg_hatch_0', world.middleLayer)
 
   egg.strength = 1
@@ -24,15 +24,15 @@ var LittleEgg = function (world, x, y) {
   egg.scytheEnergy = 10
 
   egg.originPos = {x: x, y: y}
-  addAnimation(egg, 'stand_down', 'little_egg_stand_down', 3, true)
-  addAnimation(egg, 'stand_up', 'little_egg_stand_up', 3, true)
-  addAnimation(egg, 'stand_left', 'little_egg_stand_left', 3, true)
-  addAnimation(egg, 'stand_right', 'little_egg_stand_right', 3, true)
-  addAnimation(egg, 'walk_down', 'little_egg_walk_down', 12, true)
-  addAnimation(egg, 'walk_up', 'little_egg_walk_up', 12, true)
-  addAnimation(egg, 'walk_left', 'little_egg_walk_left', 12, true)
-  addAnimation(egg, 'walk_right', 'little_egg_walk_right', 12, true)
-  addAnimation(egg, 'hatch', 'little_egg_hatch', 24, false)
+  G.addAnimation(egg, 'stand_down', 'little_egg_stand_down', 3, true)
+  G.addAnimation(egg, 'stand_up', 'little_egg_stand_up', 3, true)
+  G.addAnimation(egg, 'stand_left', 'little_egg_stand_left', 3, true)
+  G.addAnimation(egg, 'stand_right', 'little_egg_stand_right', 3, true)
+  G.addAnimation(egg, 'walk_down', 'little_egg_walk_down', 12, true)
+  G.addAnimation(egg, 'walk_up', 'little_egg_walk_up', 12, true)
+  G.addAnimation(egg, 'walk_left', 'little_egg_walk_left', 12, true)
+  G.addAnimation(egg, 'walk_right', 'little_egg_walk_right', 12, true)
+  G.addAnimation(egg, 'hatch', 'little_egg_hatch', 24, false)
 
   egg.hpbar = HPBar(egg)
 
@@ -45,7 +45,7 @@ var LittleEgg = function (world, x, y) {
   // Configure physics
   game.physics.ninja.enable(egg, 1)
   egg.body.drag = 0.1
-  var lookDirection = DOWN
+  var lookDirection = C.DOWN
 
   // Config body size and alignment
   egg.body.setSize(12, 12)
@@ -67,14 +67,14 @@ var LittleEgg = function (world, x, y) {
     if (hitSaveTime > 0) return
     hitSaveTime = 0.15
     egg.tint = 0x62B3F5
-    playSound('hit2', 0.25)
+    G.playSound('hit2', 0.25)
     var dmg = self
     DamageText(egg.x, egg.y - 15, dmg)
     GenPool.throwBack(egg, world.player, 20, 100)
     egg.hp -= dmg
     if (egg.hp <= 0) {
       if (other.isEnergyDrain) {
-        if (Game.variant == 1)ScytheEnergyBubbleVarB(egg)
+        if (Game.variant === 1)ScytheEnergyBubbleVarB(egg)
         else ScytheEnergyBubble(egg)
       }
       egg.die()
@@ -84,9 +84,9 @@ var LittleEgg = function (world, x, y) {
   }
 
   egg.die = function () {
-    timeEvent(0.1, function () {
+    G.timeEvent(0.1, function () {
       PigSmoke(egg, world)
-      playSound('explosion1')
+      G.playSound('explosion1')
       egg.kill()
     })
   }
@@ -104,10 +104,10 @@ var LittleEgg = function (world, x, y) {
         if (hatchCheck()) hatch()
         break
       case HATCHING:
-        if (egg.frameName == 'little_egg_hatch_4' && isBushSet == false && egg.hp == egg.maxHp) {
+        if (egg.frameName === 'little_egg_hatch_4' && isBushSet === false && egg.hp === egg.maxHp) {
           isBushSet = true
           Bush(world, egg.originPos.x, egg.originPos.y)
-          playSound('little_egg_hatch')
+          G.playSound('little_egg_hatch')
           egg.body.y++
         }
         break
@@ -143,10 +143,10 @@ var LittleEgg = function (world, x, y) {
   */
   function setNewMove () {
     switch (game.rnd.between(0, 7)) {
-      case 0: xDir = 1; yDir = 0; lookDirection = RIGHT; break
-      case 1: xDir = -1; yDir = 0; lookDirection = LEFT; break
-      case 2: xDir = 0; yDir = 1; lookDirection = DOWN; break
-      case 3: xDir = 0; yDir = -1; lookDirection = UP; break
+      case 0: xDir = 1; yDir = 0; lookDirection = C.RIGHT; break
+      case 1: xDir = -1; yDir = 0; lookDirection = C.LEFT; break
+      case 2: xDir = 0; yDir = 1; lookDirection = C.DOWN; break
+      case 3: xDir = 0; yDir = -1; lookDirection = C.UP; break
       default: xDir = 0; yDir = 0
     }
 
@@ -155,7 +155,7 @@ var LittleEgg = function (world, x, y) {
   }
 
   function setAnimation () {
-    var kind = (xDir == 0 && yDir == 0) ? 'stand_' : 'walk_'
+    var kind = (xDir === 0 && yDir === 0) ? 'stand_' : 'walk_'
     egg.animations.play(kind + lookDirection)
   }
 

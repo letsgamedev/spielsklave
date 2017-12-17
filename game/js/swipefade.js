@@ -1,4 +1,4 @@
-var SwipeFade = (function () {
+var SwipeFade = (function () {// eslint-disable-line
   var currentCallback = nothing
   var container = null
 
@@ -20,7 +20,7 @@ var SwipeFade = (function () {
   }
 
   function tweenContainer (position) {
-    var tween = G.TweenCubic(container.cameraOffset, {
+    G.TweenCubic(container.cameraOffset, {
       x: position.x,
       y: position.y
     }, 800, callBackAndDestroy).start()
@@ -52,52 +52,54 @@ var SwipeFade = (function () {
     createZigZagLine(position, false)
   }
 
-  function swipeFromLeftToCenter () {
-    createVerticalZigZagLine({x: -24, y: 24})
-    addBlackScreenShape({x: -12, y: 0, ax: 1, ay: 0})
-    tweenContainer({x: game.width + 24, y: 0})
-  }
+  const swipeFrom = {
+    leftToCenter () {
+      createVerticalZigZagLine({x: -24, y: 24})
+      addBlackScreenShape({x: -12, y: 0, ax: 1, ay: 0})
+      tweenContainer({x: game.width + 24, y: 0})
+    },
 
-  function swipeFromRightToCenter () {
-    createVerticalZigZagLine({x: game.width, y: 24})
-    addBlackScreenShape({x: game.width + 12, y: 0, ax: 0, ay: 0})
-    tweenContainer({x: -game.width - 12, y: 0})
-  }
+    rightToCenter () {
+      createVerticalZigZagLine({x: game.width, y: 24})
+      addBlackScreenShape({x: game.width + 12, y: 0, ax: 0, ay: 0})
+      tweenContainer({x: -game.width - 12, y: 0})
+    },
 
-  function swipeFromUpToCenter () {
-    createHorizontalZigZagLine({x: 24, y: -24})
-    addBlackScreenShape({x: 0, y: -12, ax: 0, ay: 1})
-    tweenContainer({x: 0, y: game.height + 36})
-  }
+    upToCenter () {
+      createHorizontalZigZagLine({x: 24, y: -24})
+      addBlackScreenShape({x: 0, y: -12, ax: 0, ay: 1})
+      tweenContainer({x: 0, y: game.height + 36})
+    },
 
-  function swipeFromDownToCenter () {
-    createHorizontalZigZagLine({x: 24, y: game.height})
-    addBlackScreenShape({x: 0, y: game.height + 12, ax: 0, ay: 0})
-    tweenContainer({x: 0, y: -game.height - 24})
-  }
+    downToCenter () {
+      createHorizontalZigZagLine({x: 24, y: game.height})
+      addBlackScreenShape({x: 0, y: game.height + 12, ax: 0, ay: 0})
+      tweenContainer({x: 0, y: -game.height - 24})
+    },
 
-  function swipeFromCenterToRight () {
-    createVerticalZigZagLine({x: -24, y: 24})
-    addBlackScreenShape({x: -12, y: 0, ax: 0, ay: 0})
-    tweenContainer({x: game.width + 24, y: 0})
-  }
+    centerToRight () {
+      createVerticalZigZagLine({x: -24, y: 24})
+      addBlackScreenShape({x: -12, y: 0, ax: 0, ay: 0})
+      tweenContainer({x: game.width + 24, y: 0})
+    },
 
-  function swipeFromCenterToLeft () {
-    createVerticalZigZagLine({x: game.width + 12, y: 24})
-    addBlackScreenShape({x: 0, y: 0, ax: 0, ay: 0})
-    tweenContainer({x: -game.width - 36, y: 0})
-  }
+    centerToLeft () {
+      createVerticalZigZagLine({x: game.width + 12, y: 24})
+      addBlackScreenShape({x: 0, y: 0, ax: 0, ay: 0})
+      tweenContainer({x: -game.width - 36, y: 0})
+    },
 
-  function swipeFromCenterToDown () {
-    createHorizontalZigZagLine({x: 24, y: -36})
-    addBlackScreenShape({x: 0, y: game.height, ax: 0, ay: 1})
-    tweenContainer({x: 0, y: game.height + 36})
-  }
+    centerToDown () {
+      createHorizontalZigZagLine({x: 24, y: -36})
+      addBlackScreenShape({x: 0, y: game.height, ax: 0, ay: 1})
+      tweenContainer({x: 0, y: game.height + 36})
+    },
 
-  function swipeFromCenterToUp () {
-    createHorizontalZigZagLine({x: 24, y: game.height})
-    addBlackScreenShape({x: 0, y: game.height + 12, ax: 0, ay: 1})
-    tweenContainer({x: 0, y: -game.height - 24})
+    centerToUp () {
+      createHorizontalZigZagLine({x: 24, y: game.height})
+      addBlackScreenShape({x: 0, y: game.height + 12, ax: 0, ay: 1})
+      tweenContainer({x: 0, y: -game.height - 24})
+    }
   }
 
   function setWorldTransitionOn () {
@@ -105,7 +107,7 @@ var SwipeFade = (function () {
   }
 
   function setWorldBackground () {
-    WORLD.stage.backgroundColor = MAPDATA[nextMapId].backgroundColor
+    WORLD.stage.backgroundColor = MAPDATA[GameData.nextMapId].backgroundColor
   }
 
   function prepareWorld () {
@@ -114,9 +116,9 @@ var SwipeFade = (function () {
   }
 
   function swipeFunctionCall (from, to) {
-    from = TB.capitalise(from.toLowerCase())
+    from = from.toLowerCase()
     to = TB.capitalise(to.toLowerCase())
-    eval('swipeFrom' + from + 'To' + to)()
+    swipeFrom[from + 'To' + to]()
   }
 
   function swipeIn (to, callBack) {

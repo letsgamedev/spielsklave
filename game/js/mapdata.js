@@ -1,4 +1,4 @@
-var MAPDATA = {
+var MAPDATA = {// eslint-disable-line
   getMapIdFromCoords: function (x, y) { // 12x8
     var map = [
       '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--',
@@ -23,7 +23,7 @@ var MAPDATA = {
         dest: {
           map: '01',
           tile: {x: 30, y: 121},
-          walkIn: DOWN
+          walkIn: C.DOWN
         }
       },
       {
@@ -100,7 +100,7 @@ var MAPDATA = {
         dest: {
           map: '01',
           tile: {x: 30, y: 117},
-          walkIn: UP
+          walkIn: C.UP
         }
       }
     ]

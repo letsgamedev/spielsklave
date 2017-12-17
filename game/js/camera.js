@@ -1,7 +1,7 @@
-var GameCamera = function(world) {
-	var camera = world.camera
+var GameCamera = function(world) {// eslint-disable-line
+  var camera = world.camera
 
-	camera.tweenToCurrentChunk = function (oldChunkBounds, newChunkBounds, oldChunkDirection, onComplete) {
+  camera.tweenToCurrentChunk = function (oldChunkBounds, newChunkBounds, oldChunkDirection, onComplete) {
     var x = Math.min(oldChunkBounds.left, newChunkBounds.left)
     var y = Math.min(oldChunkBounds.top, newChunkBounds.top)
     var w = Math.max(oldChunkBounds.left, newChunkBounds.left) + 512
@@ -13,16 +13,15 @@ var GameCamera = function(world) {
     var offSet = 16 * 13.5
 
     switch (oldChunkDirection) {
-      case UP: cy = offSet; break
-      case DOWN: cy = -offSet; break
-      case LEFT: cx = offSet; break
-      case RIGHT: cx = -offSet; break
+      case C.UP: cy = offSet; break
+      case C.DOWN: cy = -offSet; break
+      case C.LEFT: cx = offSet; break
+      case C.RIGHT: cx = -offSet; break
     }
 
-
-    function releaseWorldFix() {
-    	world.isInTransition = false
-    	onComplete()
+    function releaseWorldFix () {
+      world.isInTransition = false
+      onComplete()
     }
 
     G.TweenCubic(camera, {
@@ -40,11 +39,11 @@ var GameCamera = function(world) {
 
   camera.updatePosition = function (isInstant) {
     // delete all kommented stuff on march 2018
-    if (world.isInTransition && isInstant != true) return
+    if (world.isInTransition && isInstant !== true) return
     /* var lookOffsetY = 0
     var lookOffsetX = 0
     var lookOffsetDistance = 0 */
-    var follower = world.player.state == STATES.STONE ? world.pig : world.player
+    var follower = world.player.state === STATES.STONE ? world.pig : world.player
 
     /* switch (follower.lookDirection) {
       case UP: lookOffsetY = lookOffsetDistance; break
@@ -71,5 +70,5 @@ var GameCamera = function(world) {
     game.camera.y += game.camera._shake.yy
   }
 
-	return camera
+  return camera
 }

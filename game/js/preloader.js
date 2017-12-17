@@ -5,8 +5,8 @@
 @patreon https://www.patreon.com/letsgamedev
 @mail letsgamedev@gmx.de
 */
-Game.Preloader = function() {
-  function init() {
+Game.Preloader = function () {
+  function init () {
     logInfo('init Preloader')
     game.renderer.renderSession.roundPixels = true
     // this.game.canvas.style.cursor = "none";
@@ -14,9 +14,9 @@ Game.Preloader = function() {
     game.time.advancedTiming = true
   }
 
-  function create() {
+  function create () {
     Pad.init()
-    nextMapId = '01'
+    GameData.nextMapId = '01'
     game.state.start('Main')
   }
 
@@ -27,7 +27,7 @@ Game.Preloader = function() {
     game.load.audio(name, dir + name + '.' + type)
   }
 
-  function preload() {
+  function preload () {
     game.plugins.add(Fabrique.Plugins.NineSlice)
 
     game.load.path = 'assets/'
@@ -43,7 +43,7 @@ Game.Preloader = function() {
     game.load.bitmapFont('fontBig')
     game.load.bitmapFont('fontBigThin')
     game.load.bitmapFont('fontDamage')
-    
+
     loadSound('player_hit', 'wav')
     loadSound('hit2', 'wav')
     loadSound('player_to_stone', 'wav')
@@ -55,7 +55,7 @@ Game.Preloader = function() {
     loadSound('door_open', 'wav')
     loadSound('world', 'ogg', 'music/')
   }
-  
+
   return {
     init,
     create,

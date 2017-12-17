@@ -1,5 +1,5 @@
-var PlayerShell = function (world, player) {
-  shell = G.Sprite(player.body.x - 32, player.body.y - 32, 'player_to_stone_0', world.middleLayer)
+var PlayerShell = function (world, player) {// eslint-disable-line
+  var shell = G.Sprite(player.body.x - 32, player.body.y - 32, 'player_to_stone_0', world.middleLayer)
   game.physics.ninja.enable(shell)
   shell.isBroked = false
   shell.body.bounce = 0
@@ -18,13 +18,13 @@ var PlayerShell = function (world, player) {
     var dx = Math.round(shell.body.x - shell.body.oldPos.x)
     var dy = Math.round(shell.body.y - shell.body.oldPos.y)
 
-    if (dx != 0 || dy != 0) {
-      if (shell.sound == null && shellSoundPuffer == false) {
-        shell.sound = playSound('stone_push', 1, true)
+    if (dx !== 0 || dy !== 0) {
+      if (shell.sound == null && shellSoundPuffer === false) {
+        shell.sound = G.playSound('stone_push', 1, true)
       } else {
         shellSoundPuffer = false
       }
-    } else if (dx == 0 && dy == 0) {
+    } else if (dx === 0 && dy === 0) {
       if (shell.sound != null) {
         shellSoundPuffer = true
         shell.sound.stop()
@@ -44,13 +44,13 @@ var PlayerShell = function (world, player) {
     }
   }
 
-  shell.fromStone = addAnimation(shell, 'from_stone', 'dengel_from_stone', 24)
+  shell.fromStone = G.addAnimation(shell, 'from_stone', 'dengel_from_stone', 24)
 
   shell.shutter = function () {
     shell.body.y += 1
     shell.update = function () {}
     shell.fromStone.play()
-    playSound('player_from_stone')
+    G.playSound('player_from_stone')
   }
 
   shell.fromStone.onComplete.add(function () {
@@ -60,11 +60,11 @@ var PlayerShell = function (world, player) {
       shell.destroy()
     }, 10)
   })
-  shell.toStone = addAnimation(shell, 'to_stone', 'dengel_to_stone', 24, false, true)
+  shell.toStone = G.addAnimation(shell, 'to_stone', 'dengel_to_stone', 24, false, true)
   shell.toStone.onComplete.add(function () {
     player.inChange = false
   })
   shell.toStone.play()
-  playSound('player_to_stone')
+  G.playSound('player_to_stone')
   return shell
 }

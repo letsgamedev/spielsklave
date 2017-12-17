@@ -1,4 +1,4 @@
-var Cloud = function(world, position, speed) {
+var Cloud = function(world, position, speed) {// eslint-disable-line
   let cloud = G.Sprite(position.x, position.y, 'cloud0')
   cloud.blendMode = 8
   cloud.tint = 0x999999

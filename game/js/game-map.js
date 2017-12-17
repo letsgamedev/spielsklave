@@ -1,7 +1,7 @@
-var GameMap = function(world) {
-	var map = world.add.tilemap('map')
+var GameMap = function(world) {// eslint-disable-line
+  var map = world.add.tilemap('map')
 
-	var slopeMap = [0, // first is ignored
+  var slopeMap = [0, // first is ignored
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
     1, 1, 1, 1, 0, 3, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -44,7 +44,7 @@ var GameMap = function(world) {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   ]
 
-  var layer = createMapLayer(MAP.GROUND)
+  createMapLayer(MAP.GROUND)
   var layerHelper = map.createLayer(MAP.GROUND)
 
   var tiles = game.physics.ninja.convertTilemap(map, MAP.GROUND, slopeMap)
@@ -52,7 +52,7 @@ var GameMap = function(world) {
   layerHelper.resizeWorld()
   layerHelper.visible = false
 
-	function createMapLayer(id) {
+  function createMapLayer (id) {
     var name = 'map_' + id
     var layer = game.add.renderTexture(map.width * 8, map.height * 8, name, true)
 
@@ -84,12 +84,12 @@ var GameMap = function(world) {
     return game.add.sprite(0, 0, layer)
   }
 
-  map.getTiles = function() {
-  	return tiles
+  map.getTiles = function () {
+    return tiles
   }
 
-  map.createTopLayer  = function() {
-  	return createMapLayer(MAP.TOP)
+  map.createTopLayer = function () {
+    return createMapLayer(MAP.TOP)
   }
 
   map.getCollisitionTiles = function (chunkBounds) {
