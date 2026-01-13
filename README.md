@@ -10,6 +10,12 @@
 
 Bei Spielsklave handelt es sich um eine [Videoreihe](https://www.youtube.com/playlist?list=PL1td_Fr5vMGNqmdJOfnxDPKo_nO87Rs47), in der **du** darüber abstimmen kannst, was ich als Nächstes entwickeln soll!
 
+## RELEASED!!!!
+
+SPINDLE, das Projekt, welches aus Spielsklave entstand ist nun endlich draussen! Es ist wirklich wundervoll geworden und kann [HIER](https://store.steampowered.com/app/1386750/Spindle/) auf Steam begutachtet werden!
+
+![Logo](img/spindle_logo.png)
+
 ## Das Spiel
 
 [Hier](https://letsgamedev.github.io/spielsklave/) kannst du das Spiel in der aktuellen Version spielen!
